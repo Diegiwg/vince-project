@@ -1,8 +1,9 @@
 import fs from "fs";
-import { Server, Socket } from "socket.io";
-
 import path from "path";
+import { Server, Socket } from "socket.io";
 import { fileURLToPath } from "url";
+
+import { DEBUG } from "./Debug.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -15,7 +16,7 @@ async function dynamicRegisterEvents(io) {
         const module = await import(`./Events/${event}`);
 
         for (let internal_event of Object.keys(module)) {
-            console.log(`Registering ${internal_event} event...`);
+            DEBUG(`Registering ${internal_event} event...`);
             module[internal_event](io);
         }
     }

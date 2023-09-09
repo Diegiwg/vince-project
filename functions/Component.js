@@ -1,6 +1,8 @@
 import fs from "fs";
 import mustache from "mustache";
 
+import { DEBUG } from "./Debug.js";
+
 /** @param {string} name */
 function loadComponent(name) {
     try {
@@ -40,10 +42,13 @@ function findComponents(html, page_content) {
             );
         }
 
-        const content_html = mustache.render(content, {
+        const local_data = {
             props: content_props,
             page: page_content,
-        });
+        };
+        DEBUG(local_data);
+
+        const content_html = mustache.render(content, local_data);
         loaded_components[component] = content_html.trim();
     }
 

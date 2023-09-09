@@ -1,17 +1,16 @@
 import express from "express";
+import fs from "fs";
 import { createServer } from "http";
-import { Server } from "socket.io";
-
+import { jsmin } from "jsmin";
 import path from "path";
+import { Server } from "socket.io";
 import { fileURLToPath } from "url";
+
+import { CONFIG } from "./config.js";
+import { loadEventHandler } from "./functions/Events.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-import { loadEventHandler } from "./functions/Events.js";
-
-// Get a Random Port
-const PORT = 9999;
 
 const app = express();
 const server = createServer(app);
@@ -20,9 +19,16 @@ const io = new Server(server);
 loadEventHandler(io);
 
 app.get("/", (_, res) => {
-    res.sendFile(path.join(__dirname, "app.html"));
+    const app_html = fs.readFileSync(path.join(__dirname, "app.html"), "utf8");
+    const app_js = fs.readFileSync(path.join(__dirname, "app.js"), "utf8");
+
+    const minified = jsmin(app_js, 3);
+    const html = app_html.replace("<!script>", `<script>${minified}</script>`);
+
+    res.setHeader("Content-Type", "text/html");
+    res.send(html);
 });
 
-server.listen(PORT, () => {
-    console.log(`Server is listening on http://localhost:${PORT}`);
+server.listen(CONFIG.port, () => {
+    console.log(`Server is listening on http://localhost:${CONFIG.port}`);
 });

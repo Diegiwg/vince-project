@@ -5,9 +5,22 @@
     <p c="local-data"></p>
 
     <script>
-        setInterval(() => {
-            Component("local-data").innerText = localStorage.getItem("data");
-        });
+        (function () {
+            const instance = setInterval(() => {
+                try {
+                    /** @type {HTMLDivElement} */
+                    const component = Component("local-data");
+                    const data = localStorage.getItem("data");
+
+                    if (component.value === data) return;
+
+                    component.value = data;
+                    component.innerText = data;
+                } catch {
+                    clearInterval(instance);
+                }
+            });
+        })();
     </script>
 
     <style>
