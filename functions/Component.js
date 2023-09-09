@@ -12,7 +12,7 @@ function loadComponent(name) {
 }
 
 /** @param {string} html */
-function findComponents(html) {
+function findComponents(html, page_content) {
     const components = html.match(/<{1}!{1}(.)*>{1}/gim);
     if (!components) {
         return;
@@ -40,7 +40,10 @@ function findComponents(html) {
             );
         }
 
-        const content_html = mustache.render(content, content_props);
+        const content_html = mustache.render(content, {
+            props: content_props,
+            page: page_content,
+        });
         loaded_components[component] = content_html.trim();
     }
 
@@ -48,8 +51,8 @@ function findComponents(html) {
 }
 
 /** @param {string} html */
-export function renderComponents(html) {
-    const components = findComponents(html);
+export function renderComponents(html, page_content) {
+    const components = findComponents(html, page_content);
     if (!components) {
         return html;
     }
