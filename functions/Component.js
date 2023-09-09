@@ -42,13 +42,14 @@ function findComponents(html, page_content) {
             );
         }
 
-        const local_data = {
+        const local_content = {
             props: content_props,
-            page: page_content,
+            props_raw: JSON.stringify(content_props),
+            ...page_content,
         };
-        DEBUG(local_data);
+        DEBUG(`COMPONENT[${name}]`, local_content);
 
-        const content_html = mustache.render(content, local_data);
+        const content_html = mustache.render(content, local_content);
         loaded_components[component] = content_html.trim();
     }
 

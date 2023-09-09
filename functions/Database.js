@@ -8,3 +8,8 @@ import { DB } from "./FakeDB.js";
 export function findUserByEmail(email) {
     return DB.users.find((user) => user.email === email);
 }
+
+export function validateUserSession(id, token) {
+    const user = DB.users.find((user) => user.id === id);
+    return user && user.token === token;
+}

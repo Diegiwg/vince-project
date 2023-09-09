@@ -1,18 +1,17 @@
 <h1>Login</h1>
 
-<form>
+<form c="LoginForm">
     <label>Email: <input type="email" name="email" /></label>
     <label>Password: <input type="password" name="password" /></label>
     <input type="submit" value="Login" />
 </form>
 
 <script>
-    const form = document.querySelector("form");
-    form.addEventListener("submit", (event) => {
+    Component("LoginForm").addEventListener("submit", (event) => {
         event.preventDefault();
 
-        const email = form.querySelector("[name=email]");
-        const password = form.querySelector("[name=password]");
+        const email = Component("LoginForm", " [name=email]");
+        const password = Component("LoginForm", " [name=password]");
 
         if (!email.value || !password.value) return;
 

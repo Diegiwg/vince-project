@@ -19,6 +19,23 @@ window.EmitEvent = (event_name, data) => {
     socket.emit(event_name, data);
 };
 
+// Client
+
+let data = {};
+
+setInterval(() => {
+    localStorage.setItem("data", JSON.stringify(data));
+}, 100);
+
+const loaded = localStorage.getItem("data");
+if (loaded) {
+    data = JSON.parse(loaded);
+}
+
+let first_page = setInterval(() => {
+    EmitEvent("Event::Init", data);
+}, 1_000);
+
 // Const Events Listeners
 
 ListenEvent("disconnect", () => {
@@ -34,24 +51,9 @@ ListenEvent("Event::RenderPage", (payload) => {
         .createRange()
         .createContextualFragment(payload.content);
     app.replaceChildren(html);
+
+    if (first_page) {
+        clearInterval(first_page);
+        first_page = null;
+    }
 });
-
-let data = {};
-
-setInterval(() => {
-    localStorage.setItem("data", JSON.stringify(data));
-}, 100);
-
-const loaded = localStorage.getItem("data");
-if (loaded) {
-    data = JSON.parse(loaded);
-}
-
-if (!data.id || !data.token)
-    EmitEvent("Event::RenderPage", {
-        page: "Login",
-    });
-else
-    EmitEvent("Event::RenderPage", {
-        page: "Home",
-    });
