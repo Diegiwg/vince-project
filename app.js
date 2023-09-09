@@ -1,6 +1,8 @@
 const socket = io();
 const app = document.querySelector("app");
 
+// Utils Functions
+
 window.Component = (component, extra_selectors) => {
     if (!component) return;
     if (!extra_selectors) extra_selectors = "";
@@ -16,6 +18,14 @@ window.ListenEvent = (event_name, callback) => {
 window.EmitEvent = (event_name, data) => {
     socket.emit(event_name, data);
 };
+
+// Const Events Listeners
+
+ListenEvent("disconnect", () => {
+    setTimeout(() => {
+        window.location.reload();
+    }, 100);
+});
 
 ListenEvent("Event::RenderPage", (payload) => {
     data = { ...data, ...payload };

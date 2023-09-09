@@ -1,5 +1,5 @@
 // Using a FakeDB for Testing //
-import { DB } from "../FakeDatabase.js";
+import { DB } from "./FakeDB.js";
 
 /**
  *  @param {String} email
