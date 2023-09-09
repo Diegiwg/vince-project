@@ -1,0 +1,26 @@
+<h1>Login</h1>
+
+<form>
+    <label>Email: <input type="email" name="email" /></label>
+    <label>Password: <input type="password" name="password" /></label>
+    <input type="submit" value="Login" />
+</form>
+
+<script>
+    const form = document.querySelector("form");
+    form.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const email = form.querySelector("[name=email]");
+        const password = form.querySelector("[name=password]");
+
+        if (!email.value || !password.value) return;
+
+        EmitEvent("Event::Login", {
+            email: email.value,
+            password: password.value,
+        });
+    });
+</script>
+
+<!LocalData>

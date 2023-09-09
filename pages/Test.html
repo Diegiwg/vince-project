@@ -1,0 +1,13 @@
+<div>
+    <h1>Test</h1>
+
+    <button>Voltar</button>
+</div>
+
+<script>
+    document.querySelector("button").onclick = () => {
+        EmitEvent("Event::RenderPage", {
+            page: "Home",
+        });
+    };
+</script>

@@ -1,0 +1,55 @@
+<Chat>
+    <div c="Chat">
+        <h1>Chat {{page}}</h1>
+
+        <ul></ul>
+
+        <form>
+            <input type="text" />
+        </form>
+    </div>
+
+    <script>
+        Component("Chat", "> form").onsubmit =
+            /** @param {SubmitEvent} event  */
+            (event) => {
+                event.preventDefault();
+
+                /** @type {HTMLInputElement} */
+                const user_message = Component("Chat", "> form > input");
+                if (!user_message.value) {
+                    return;
+                }
+
+                EmitEvent("Event::NewMessage", {
+                    room: "{{page}}",
+                    message: user_message.value,
+                });
+                user_message.value = "";
+            };
+
+        ListenEvent("Event::NewMessage", (data) => {
+            const { message } = data;
+            if (!message) return;
+
+            Component("Chat", "> ul").innerHTML += `<p>${message}</p>`;
+        });
+
+        EmitEvent("Event::RegisterRoom", { room: "{{page}}" });
+    </script>
+
+    <style>
+        [c="Chat"] {
+            background: aliceblue;
+
+            > ul {
+                height: 250px;
+                overflow-y: scroll;
+
+                > p {
+                    word-wrap: break-word;
+                }
+            }
+        }
+    </style>
+</Chat>

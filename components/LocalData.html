@@ -1,0 +1,21 @@
+<LocalData>
+    <br />
+    <br />
+    <hr />
+    <p c="local-data"></p>
+
+    <script>
+        setInterval(() => {
+            Component("local-data").innerText = localStorage.getItem("data");
+        });
+    </script>
+
+    <style>
+        [c="local-data"] {
+            > p {
+                word-wrap: break-word;
+                word-break: break-all;
+            }
+        }
+    </style>
+</LocalData>
