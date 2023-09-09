@@ -9,8 +9,8 @@ export function renderPage(io) {
         if (!page) return;
 
         client.emit("Event::RenderPage", {
-            page: "Home",
-            content: await loadPage(page),
+            page,
+            content: await loadPage(page, data),
         });
     });
 }

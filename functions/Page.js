@@ -12,12 +12,14 @@ async function evalPageData(name) {
     }
 }
 
-export async function loadPage(name) {
+export async function loadPage(name, data) {
     try {
         let html = fs.readFileSync(`pages/${name}.html`, "utf8");
         const content = await evalPageData(name);
-        html = renderComponents(html, content);
-        return mustache.render(html, content);
+
+        html = renderComponents(html, content); // Really need pass to Component a custom data?
+
+        return mustache.render(html, { ...content, ...data });
     } catch {
         return;
     }
