@@ -3,7 +3,6 @@ import { jsmin } from "jsmin";
 import mustache from "mustache";
 
 import { renderComponents } from "./Component.js";
-import { DEBUG } from "./Debug.js";
 
 async function evalPageData(name) {
     try {
@@ -38,7 +37,6 @@ export async function loadPage(name, data) {
             page: { ...content, ...data },
             page_raw: JSON.stringify({ ...content, ...data }),
         };
-        DEBUG(`PAGE[${name}]`, local_content);
 
         html = renderComponents(html, local_content); // Really need pass to Component a custom data?
         html = mustache.render(html, local_content);

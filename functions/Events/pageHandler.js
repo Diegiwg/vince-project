@@ -1,3 +1,4 @@
+import { DEBUG } from "../Debug.js";
 import { loadPage } from "../Page.js";
 
 /** @param {import("../Models").io} io  */
@@ -5,6 +6,7 @@ export function renderPage(io) {
     const { client } = io;
 
     client.on("Event::RenderPage", async (data) => {
+        DEBUG("Event::RenderPage");
         const { page } = data;
         if (!page) return;
 

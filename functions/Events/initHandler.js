@@ -1,4 +1,5 @@
 import { validateUserSession } from "../Database.js";
+import { DEBUG } from "../Debug.js";
 import { loadPage } from "../Page.js";
 
 async function loginPage(client) {
@@ -7,6 +8,7 @@ async function loginPage(client) {
         content: await loadPage("Login"),
     });
 }
+
 async function homePage(client) {
     client.emit("Event::RenderPage", {
         page: "Home",
@@ -19,6 +21,7 @@ export function inicialConnection(io) {
     const { client } = io;
 
     client.on("Event::Init", (data) => {
+        DEBUG("Event::Init");
         const { id, token } = data;
 
         if (!id || !token || !validateUserSession(id, token))

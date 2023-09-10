@@ -1,5 +1,5 @@
 function load() {
     return {
-        user: { name: "John Doe" },
+        page: "Home",
     };
 }

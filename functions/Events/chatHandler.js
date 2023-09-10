@@ -1,8 +1,11 @@
+import { DEBUG } from "../Debug.js";
+
 /** @param {import("../Models").io} io */
 export function newMessage(io) {
     const { client, server } = io;
 
     client.on("Event::NewMessage", (data) => {
+        DEBUG("Event::NewMessage");
         const { room, message } = data;
         if (!room || !message) return;
 
@@ -15,6 +18,7 @@ export function registerRoom(io) {
     const { client } = io;
 
     client.on("Event::RegisterRoom", (data) => {
+        DEBUG("Event::RegisterRoom");
         const { room } = data;
         if (!room) return;
 

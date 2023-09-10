@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 
 import { findUserByEmail } from "../Database.js";
+import { DEBUG } from "../Debug.js";
 import { LoginSchema } from "../Models.js";
 import { loadPage } from "../Page.js";
 
@@ -12,6 +13,7 @@ export function login(io) {
         "Event::Login",
         /** @param {import("../Models").Login} data  */
         async (data) => {
+            DEBUG("Event::Login");
             LoginSchema.parse(data);
 
             // Try find user on DB
