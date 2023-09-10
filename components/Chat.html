@@ -1,6 +1,6 @@
 <Chat>
     <div c="Chat">
-        <h1>Chat {{page.page}}</h1>
+        <h1>Chat {{page}}</h1>
 
         <ul></ul>
 
@@ -22,7 +22,7 @@
                 }
 
                 EmitEvent("Event::NewMessage", {
-                    room: "{{page.page}}",
+                    room: "{{page}}",
                     message: user_message.value,
                 });
                 user_message.value = "";
@@ -36,7 +36,7 @@
             if (component) component.innerHTML += `<p>${message}</p>`;
         });
 
-        EmitEvent("Event::RegisterRoom", { room: "{{page.page}}" });
+        EmitEvent("Event::RegisterRoom", { room: "{{page}}" });
     </script>
 
     <style>

@@ -33,13 +33,13 @@ export async function loadPage(name, data) {
         let html = fs.readFileSync(`pages/${name}.html`, "utf8");
         const content = await evalPageData(name);
 
-        const local_content = {
-            page: { ...content, ...data },
-            page_raw: JSON.stringify({ ...content, ...data }),
+        const page = {
+            ...content,
+            ...data,
         };
 
-        html = renderComponents(html, local_content); // Really need pass to Component a custom data?
-        html = mustache.render(html, local_content);
+        html = renderComponents(html, page); // Really need pass to Component a custom data?
+        html = mustache.render(html, page);
         html = minifyJavascript(html);
 
         return html;
