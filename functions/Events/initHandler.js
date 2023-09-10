@@ -1,5 +1,5 @@
-import { validateUserSession } from "../Database.js";
 import { DEBUG } from "../Debug.js";
+import { validateUserSession } from "../FakeDB.js";
 import { emitRenderPageEvent } from "../Page.js";
 
 /** @param {import("../Models.js").io} io  */
