@@ -15,11 +15,19 @@ export function ParseSchema(schema, data) {
     }
 }
 
+/** @typedef {{client: Socket, server: Server}} io */
+
 /** @typedef {z.infer<typeof UserSchema>} User */
 export let UserSchema = z.object({
     id: z.number(),
     email: z.string().email(),
     password: z.string(),
+    token: z.string(),
+});
+
+/** @typedef {z.infer<typeof SessionSchema>} Session */
+export let SessionSchema = z.object({
+    id: z.number(),
     token: z.string(),
 });
 
@@ -29,10 +37,14 @@ export let LoginSchema = z.object({
     password: z.string(),
 });
 
-/** @typedef {{client: Socket, server: Server}} io */
-
 /** @typedef {z.infer<typeof CreateAccountSchema>} CreateAccount */
 export let CreateAccountSchema = z.object({
     email: z.string().email(),
     password: z.string(),
+});
+
+/** @typedef {z.infer<typeof NewMessageSchema>} NewMessage */
+export let NewMessageSchema = z.object({
+    room: z.string(),
+    message: z.string(),
 });

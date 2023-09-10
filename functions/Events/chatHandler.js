@@ -1,16 +1,26 @@
 import { DEBUG } from "../Debug.js";
+import { validateUserSession } from "../FakeDB.js";
+import { NewMessageSchema, ParseSchema } from "../Models.js";
 
 /** @param {import("../Models").io} io */
 export function newMessage(io) {
     const { client, server } = io;
 
-    client.on("Event::NewMessage", (data) => {
-        DEBUG("Event::NewMessage");
-        const { room, message } = data;
-        if (!room || !message) return;
+    client.on(
+        "Event::NewMessage",
+        /** @param {import("../Models").NewMessage} data */
+        (data) => {
+            DEBUG("Event::NewMessage");
 
-        server.to(room).emit("Event::NewMessage", { message });
-    });
+            if (!validateUserSession(data)) return;
+            if (!ParseSchema(NewMessageSchema, data)) return;
+
+            const { room, message } = data;
+            if (!room || !message) return;
+
+            server.to(room).emit("Event::NewMessage", { message });
+        }
+    );
 }
 
 /** @param {import("../Models").io} io */

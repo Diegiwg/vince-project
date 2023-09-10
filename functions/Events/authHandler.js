@@ -17,16 +17,18 @@ export function login(io) {
         async (data) => {
             DEBUG("Event::Login");
 
+            DEBUG(data);
+
             if (!ParseSchema(LoginSchema, data)) return;
 
             // Try find user on DB
             const user = findUserByEmail(data.email);
             if (!user) return;
 
-            let { id, token, password } = user;
+            let { id, token } = user;
 
             // Check password
-            if (!validateUserPassword(id, password)) return;
+            if (!validateUserPassword(id, data.password)) return;
 
             // Update the token
             token = generateNewSessionToken(id);

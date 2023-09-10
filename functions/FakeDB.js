@@ -1,7 +1,8 @@
 // FakeDB for Testing //
 import bcrypt from "bcrypt";
-
 import fs from "fs";
+
+import { ParseSchema, SessionSchema } from "./Models.js";
 
 export let DB = {
     load: () => {
@@ -27,7 +28,12 @@ export function findUserByEmail(email) {
     return DB.users.find((user) => user.email === email);
 }
 
-export function validateUserSession(id, token) {
+/** @param {import("./Models").Session data} */
+export function validateUserSession(data) {
+    const { id, token } = data;
+
+    if (!ParseSchema(SessionSchema, { id, token })) return false;
+
     const user = DB.users.find((user) => user.id === id);
     return user && user.token === token;
 }
