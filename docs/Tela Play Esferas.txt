@@ -1,0 +1,18 @@
+
+    Título da Sala
+Informações da sala:
+
+    Tela do Chat
+Campo do chat
+
+Atacar:
+Jogar um dado:
+Passar a vez:
+
+Estatísticas:
+Inventário:
+Habilidades:
+Magias
+Anotações:
+
+Sair da sala
