@@ -15,9 +15,9 @@ window.ListenEvent = (event_name, callback) => {
     socket._callbacks["$" + event_name] = [callback];
 };
 
-window.EmitEvent = (event_name, data) => {
+window.EmitEvent = (event_name, custom_data) => {
     const payload = {
-        ...data,
+        ...custom_data,
         id: Object.keys(data).includes("id") ? data.id : "",
         token: Object.keys(data).includes("token") ? data.token : "",
     };

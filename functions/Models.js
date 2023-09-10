@@ -20,6 +20,7 @@ export function ParseSchema(schema, data) {
 /** @typedef {z.infer<typeof UserSchema>} User */
 export let UserSchema = z.object({
     id: z.number(),
+    name: z.string(),
     email: z.string().email(),
     password: z.string(),
     token: z.string(),
@@ -39,6 +40,7 @@ export let LoginSchema = z.object({
 
 /** @typedef {z.infer<typeof CreateAccountSchema>} CreateAccount */
 export let CreateAccountSchema = z.object({
+    name: z.string(),
     email: z.string().email(),
     password: z.string(),
 });

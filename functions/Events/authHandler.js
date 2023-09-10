@@ -1,5 +1,6 @@
 import { DEBUG } from "../Debug.js";
 import {
+    createAccount,
     findUserByEmail,
     generateNewSessionToken,
     validateUserPassword,
@@ -42,14 +43,14 @@ export function login(io) {
 }
 
 /** @param {import("../Models").io} io */
-export function createAccount(io) {
+export function registerAccount(io) {
     const { client } = io;
 
     client.on(
-        "Event::CreateAccount",
+        "Event::RegisterAccount",
         /** @param {import("../Models").CreateAccount} data */
         async (data) => {
-            DEBUG("Event::CreateAccount");
+            DEBUG("Event::RegisterAccount");
 
             if (!ParseSchema(CreateAccountSchema, data)) return;
 

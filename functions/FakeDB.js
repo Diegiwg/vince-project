@@ -2,6 +2,7 @@
 import bcrypt from "bcrypt";
 import fs from "fs";
 
+import { DEBUG } from "./Debug.js";
 import { ParseSchema, SessionSchema } from "./Models.js";
 
 export let DB = {
@@ -28,9 +29,15 @@ export function findUserByEmail(email) {
     return DB.users.find((user) => user.email === email);
 }
 
+export function findUserBySession(token) {
+    return DB.users.find((user) => user.token === token);
+}
+
 /** @param {import("./Models").Session data} */
 export function validateUserSession(data) {
     const { id, token } = data;
+
+    DEBUG("validateUserSession", data);
 
     if (!ParseSchema(SessionSchema, data)) return false;
 
