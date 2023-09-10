@@ -47,3 +47,12 @@ export async function loadPage(name, data) {
         return;
     }
 }
+
+export async function emitRenderPageEvent(client, name, data) {
+    client.emit("Event::RenderPage", {
+        page: name,
+        content: await loadPage(name),
+
+        ...data,
+    });
+}

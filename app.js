@@ -16,7 +16,13 @@ window.ListenEvent = (event_name, callback) => {
 };
 
 window.EmitEvent = (event_name, data) => {
-    socket.emit(event_name, data);
+    const payload = {
+        ...data,
+        id: Object.keys(data).includes("id") ? data.id : "",
+        token: Object.keys(data).includes("token") ? data.token : "",
+    };
+
+    socket.emit(event_name, payload);
 };
 
 // Client

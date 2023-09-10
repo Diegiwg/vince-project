@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import { findUserByEmail } from "../Database.js";
 import { DEBUG } from "../Debug.js";
 import { LoginSchema } from "../Models.js";
-import { loadPage } from "../Page.js";
+import { emitRenderPageEvent } from "../Page.js";
 
 /** @param {import("../Models").io} io */
 export function login(io) {
@@ -32,10 +32,7 @@ export function login(io) {
             );
             if (!validPassword) return;
 
-            server.emit("Event::RenderPage", {
-                page: "Home",
-                content: await loadPage("Home"),
-
+            emitRenderPageEvent(client, "Home", {
                 id: user.id,
                 token: user.token,
             });
