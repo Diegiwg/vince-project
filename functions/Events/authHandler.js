@@ -14,7 +14,12 @@ export function login(io) {
         /** @param {import("../Models").Login} data  */
         async (data) => {
             DEBUG("Event::Login");
-            LoginSchema.parse(data);
+
+            try {
+                LoginSchema.parse(data);
+            } catch {
+                return;
+            }
 
             // Try find user on DB
             const user = findUserByEmail(data.email);
