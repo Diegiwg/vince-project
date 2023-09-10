@@ -51,11 +51,12 @@ ListenEvent("disconnect", () => {
 });
 
 ListenEvent("Event::RenderPage", (payload) => {
-    data = { ...data, ...payload };
+    const { content } = payload;
+    delete payload.content;
 
-    const html = document
-        .createRange()
-        .createContextualFragment(payload.content);
+    data = payload;
+
+    const html = document.createRange().createContextualFragment(content);
     app.replaceChildren(html);
 
     if (first_page) {

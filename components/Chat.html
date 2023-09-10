@@ -32,7 +32,8 @@
             const { message } = data;
             if (!message) return;
 
-            Component("Chat", "> ul").innerHTML += `<p>${message}</p>`;
+            const component = Component("Chat", "> ul");
+            if (component) component.innerHTML += `<p>${message}</p>`;
         });
 
         EmitEvent("Event::RegisterRoom", { room: "{{page.page}}" });
