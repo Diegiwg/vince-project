@@ -1,6 +1,8 @@
 import fs from "fs";
 import mustache from "mustache";
 
+import { DEBUG } from "./Debug.js";
+
 /** @param {string} name */
 function loadComponent(name) {
     try {
@@ -19,12 +21,9 @@ function findComponents(html, page_content) {
     }
 
     let loaded_components = {};
-    let content_props = {};
-
     for (let component of components) {
         const name = component.replace("<!", "").split(/[>|\s]/)[0];
-        const content = loadComponent(name);
-
+        let content = loadComponent(name);
         if (!content) continue;
 
         // Try to find props
@@ -35,21 +34,18 @@ function findComponents(html, page_content) {
         }
 
         for (let prop of props) {
-            content_props[prop.split("=")[0]] = eval(
-                prop.split("={")[1].split("}")[0]
+            const prop_name = `[[${prop.split("=")[0]}]]`;
+            content = content.replaceAll(
+                prop_name,
+                eval(prop.split("={")[1].split("}")[0])
             );
         }
 
-        const local_content = {
-            props: content_props,
-            props_raw: JSON.stringify(content_props),
-            ...page_content,
-        };
-
-        const content_html = mustache.render(content, local_content);
+        let content_html = mustache.render(content, page_content);
         loaded_components[component] = content_html.trim();
     }
 
+    DEBUG("LoadedComponents", Object.keys(loaded_components));
     return loaded_components;
 }
 
@@ -64,5 +60,5 @@ export function renderComponents(html, page_content) {
         html = html.replace(component, components[component]);
     }
 
-    return html;
+    return renderComponents(html, page_content);
 }
