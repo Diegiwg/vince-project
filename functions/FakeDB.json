@@ -1,1 +1,1 @@
-{"users":[{"id":1,"email":"test@test.com","password":"$2b$10$yJEcAYLWL74KGvLVutaJSukW0zJvVBTODVKrHHeEHPkJsF9FiXecO","token":"$2b$10$1UF8zrHn5wEGqpBM8Wwdn."},{"id":2,"email":"user2@test.com","password":"$2b$10$yJEcAYLWL74KGvLVutaJSukW0zJvVBTODVKrHHeEHPkJsF9FiXecO","token":"!22"}]}
+{"users":[{"id":1,"email":"test@test.com","password":"$2b$10$yJEcAYLWL74KGvLVutaJSukW0zJvVBTODVKrHHeEHPkJsF9FiXecO","token":"$2b$10$tNsEDUSlGIaFA6wDrNhh2e"},{"id":2,"email":"user2@test.com","password":"$2b$10$yJEcAYLWL74KGvLVutaJSukW0zJvVBTODVKrHHeEHPkJsF9FiXecO","token":"!22"}]}

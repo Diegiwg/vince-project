@@ -39,6 +39,7 @@ if (loaded) {
 }
 
 let first_page = setInterval(() => {
+    console.log(data);
     EmitEvent("Event::Init", data);
 }, 1_000);
 

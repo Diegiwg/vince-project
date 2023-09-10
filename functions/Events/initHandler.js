@@ -6,13 +6,18 @@ import { emitRenderPageEvent } from "../Page.js";
 export function inicialConnection(io) {
     const { client } = io;
 
-    client.on("Event::Init", (data) => {
-        DEBUG("Event::Init");
-        const { id, token } = data;
+    client.on(
+        "Event::Init",
+        /** @param {import("../Models.js").Session} data */
+        (data) => {
+            DEBUG("Event::Init");
 
-        if (!id || !token || !validateUserSession(id, token))
-            return emitRenderPageEvent(client, "Login");
+            const { id, token } = data;
 
-        return emitRenderPageEvent(client, "Home", data);
-    });
+            if (!id || !token || !validateUserSession(data))
+                return emitRenderPageEvent(client, "Login");
+
+            return emitRenderPageEvent(client, "Home", data);
+        }
+    );
 }

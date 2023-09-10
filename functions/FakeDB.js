@@ -32,7 +32,7 @@ export function findUserByEmail(email) {
 export function validateUserSession(data) {
     const { id, token } = data;
 
-    if (!ParseSchema(SessionSchema, { id, token })) return false;
+    if (!ParseSchema(SessionSchema, data)) return false;
 
     const user = DB.users.find((user) => user.id === id);
     return user && user.token === token;
