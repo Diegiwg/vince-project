@@ -18,6 +18,7 @@
     name: String,
     email: String,
     password: String,
+    token: String,
 
     characters: Character[]
 }
@@ -29,10 +30,30 @@
 {
     id: Number,
     name: String,
+    level: Number,
+    permanent_death: Boolean,
     race: Race,
     class: Class,
-    attributes: Attributes
+    attributes: Attributes,
 
     profile: Profile,
+}
+```
+
+- Atributos de Personagem:
+
+```javascript
+{
+    hp: Number,
+    mp: Number,
+    sp: Number,
+    experience: Number,
+    strength: Number,
+    agility: Number,
+    vitality: Number,
+    intelligence: Number,
+    spirituality: Number,
+
+    character: Character
 }
 ```
