@@ -19,8 +19,11 @@ const io = new Server(server);
 loadEventHandler(io);
 
 app.get("/", (_, res) => {
-    const app_html = fs.readFileSync(path.join(__dirname, "app.html"), "utf8");
-    const app_js = fs.readFileSync(path.join(__dirname, "app.js"), "utf8");
+    const app_html = fs.readFileSync(
+        path.join(__dirname, "app/app.html"),
+        "utf8"
+    );
+    const app_js = fs.readFileSync(path.join(__dirname, "app/app.js"), "utf8");
 
     const minified = jsmin(app_js, 3);
     const html = app_html.replace("<!script>", `<script>${minified}</script>`);
