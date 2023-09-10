@@ -1,20 +1,20 @@
-import { DEBUG } from "../Debug.js";
+import { DEBUG } from "../functions/Debug.js";
 import {
     createAccount,
     findUserByEmail,
     generateNewSessionToken,
     validateUserPassword,
-} from "../FakeDB.js";
-import { LoginSchema, ParseSchema } from "../Models.js";
-import { emitRenderPageEvent } from "../Page.js";
+} from "../functions/FakeDB.js";
+import { LoginSchema, ParseSchema } from "../functions/Models.js";
+import { emitRenderPageEvent } from "../functions/Page.js";
 
-/** @param {import("../Models").io} io */
+/** @param {import("../functions/Models.js").io} io */
 export function login(io) {
     const { client } = io;
 
     client.on(
         "Event::Login",
-        /** @param {import("../Models").Login} data  */
+        /** @param {import("../functions/Models.js").Login} data  */
         async (data) => {
             DEBUG("Event::Login");
 
@@ -42,13 +42,13 @@ export function login(io) {
     );
 }
 
-/** @param {import("../Models").io} io */
+/** @param {import("../functions/Models.js").io} io */
 export function registerAccount(io) {
     const { client } = io;
 
     client.on(
         "Event::RegisterAccount",
-        /** @param {import("../Models").CreateAccount} data */
+        /** @param {import("../functions/Models.js").CreateAccount} data */
         async (data) => {
             DEBUG("Event::RegisterAccount");
 

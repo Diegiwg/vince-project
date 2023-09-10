@@ -1,6 +1,6 @@
-import { DEBUG } from "../Debug.js";
-import { findUserBySession, validateUserSession } from "../FakeDB.js";
-import { NewMessageSchema, ParseSchema } from "../Models.js";
+import { DEBUG } from "../functions/Debug.js";
+import { findUserBySession, validateUserSession } from "../functions/FakeDB.js";
+import { NewMessageSchema, ParseSchema } from "../functions/Models.js";
 
 /** @param {import("../Models").io} io */
 export function newMessage(io) {
@@ -18,11 +18,9 @@ export function newMessage(io) {
             const { room, message } = data;
             const user_name = findUserBySession(data.token).name;
 
-            server
-                .to(room)
-                .emit("Event::NewMessage", {
-                    message: `${user_name}: ${message}`,
-                });
+            server.to(room).emit("Event::NewMessage", {
+                message: `${user_name}: ${message}`,
+            });
         }
     );
 }
