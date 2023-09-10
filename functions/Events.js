@@ -9,11 +9,11 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 async function dynamicRegisterEvents(io) {
-    const events = fs.readdirSync(path.join(__dirname, "Events"));
+    const events = fs.readdirSync(path.join(__dirname, "events"));
     if (!events) return;
 
     for (let event of events) {
-        const module = await import(`./Events/${event}`);
+        const module = await import(`./events/${event}`);
 
         for (let internal_event of Object.keys(module)) {
             DEBUG(`Registering ${internal_event} event...`);
