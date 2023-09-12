@@ -1,6 +1,6 @@
 import { DEBUG } from "../functions/Debug.js";
 import { findUserBySession, validateUserSession } from "../functions/FakeDB.js";
-import { NewMessageSchema, ParseSchema } from "../functions/Models.js";
+import { NewMessageSchema } from "../functions/Models.js";
 
 /** @param {import("../Models").io} io */
 export function newMessage(io) {
@@ -13,7 +13,7 @@ export function newMessage(io) {
             DEBUG("Event::NewMessage");
 
             if (!validateUserSession(data)) return;
-            if (!ParseSchema(NewMessageSchema, data)) return;
+            if (!NewMessageSchema.safeParse(data).success) return;
 
             const { room, message } = data;
             const user_name = findUserBySession(data.token).name;

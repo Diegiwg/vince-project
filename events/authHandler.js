@@ -7,8 +7,8 @@ import {
     validateUserSession,
 } from "../functions/FakeDB.js";
 import {
+    CreateAccountSchema,
     LoginSchema,
-    ParseSchema,
     SessionSchema,
 } from "../functions/Models.js";
 import { emitRenderPageEvent } from "../functions/Page.js";
@@ -23,9 +23,7 @@ export function login(io) {
         async (data) => {
             DEBUG("Event::Login");
 
-            DEBUG(data);
-
-            if (!ParseSchema(LoginSchema, data)) return;
+            if (!LoginSchema.safeParse(data).success) return;
 
             // Try find user on DB
             const user = findUserByEmail(data.email);
@@ -57,7 +55,7 @@ export function registerAccount(io) {
         async (data) => {
             DEBUG("Event::RegisterAccount");
 
-            if (!ParseSchema(CreateAccountSchema, data)) return;
+            if (!CreateAccountSchema.safeParse(data).success) return;
 
             // Try find user on DB
             const emailInUse = findUserByEmail(data.email);
@@ -84,7 +82,7 @@ export function logout(io) {
         (data) => {
             DEBUG("Event::Logout");
 
-            if (!ParseSchema(SessionSchema, data)) return;
+            if (!SessionSchema.safeParse(data).success) return;
             if (!validateUserSession(data)) return;
 
             emitRenderPageEvent(client, "Login");

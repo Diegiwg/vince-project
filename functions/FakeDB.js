@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import fs from "fs";
 
 import { DEBUG } from "./Debug.js";
-import { ParseSchema, SessionSchema } from "./Models.js";
+import { SessionSchema } from "./Models.js";
 
 export let DB = {
     load: () => {
@@ -39,7 +39,7 @@ export function validateUserSession(data) {
 
     DEBUG("validateUserSession", data);
 
-    if (!ParseSchema(SessionSchema, data)) return false;
+    if (!SessionSchema.safeParse(data).success) return false;
 
     const user = DB.users.find((user) => user.id === id);
     return user && user.token === token;
