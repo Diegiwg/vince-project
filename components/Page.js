@@ -5,6 +5,10 @@ export class ExPage extends LitElement {
         content: { type: String },
     };
 
+    constructor() {
+        super();
+    }
+
     registerEventListener() {
         ListenEvent("RenderPage", (payload) => {
             const { content } = payload;
@@ -23,12 +27,8 @@ export class ExPage extends LitElement {
         });
     }
 
-    render() {
-        return html`<div>${this.content}</div>`;
-    }
-
-    constructor() {
-        super();
+    connectedCallback() {
+        super.connectedCallback();
 
         this.registerEventListener();
 
@@ -36,6 +36,17 @@ export class ExPage extends LitElement {
         setTimeout(() => {
             window.Component("page", this.shadowRoot);
         });
+    }
+
+    disconnectedCallback() {
+        super.disconnectedCallback();
+
+        RemoveEvent("RenderPage");
+        delete window.components["page"];
+    }
+
+    render() {
+        return html`<div>${this.content}</div>`;
     }
 }
 
