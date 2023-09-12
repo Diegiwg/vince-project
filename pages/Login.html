@@ -1,25 +1,25 @@
 <h1>Login</h1>
 
-<form c="LoginForm">
+<form>
     <label>Email: <input type="email" name="email" /></label>
     <label>Password: <input type="password" name="password" /></label>
     <input type="submit" value="Login" />
 </form>
 
 <script>
-    Component("LoginForm").addEventListener("submit", (event) => {
-        event.preventDefault();
+    components.page
+        .querySelector("form")
+        .addEventListener("submit", (event) => {
+            event.preventDefault();
 
-        const email = Component("LoginForm", " [name=email]");
-        const password = Component("LoginForm", " [name=password]");
+            const email = components.page.querySelector("[name=email]");
+            const password = components.page.querySelector("[name=password]");
 
-        if (!email.value || !password.value) return;
+            if (!email.value || !password.value) return;
 
-        EmitEvent("Event::Login", {
-            email: email.value,
-            password: password.value,
+            EmitEvent("Login", {
+                email: email.value,
+                password: password.value,
+            });
         });
-    });
 </script>
-
-<!LocalData>

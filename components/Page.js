@@ -31,6 +31,11 @@ export class ExPage extends LitElement {
         super();
 
         this.registerEventListener();
+
+        // Enable search elements in page by components.page
+        setTimeout(() => {
+            window.Component("page", this.shadowRoot);
+        });
     }
 }
 

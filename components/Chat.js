@@ -15,7 +15,7 @@ export class ExChat extends LitElement {
         }
     `;
 
-    registerEventListener() {
+    registerEvents() {
         ListenEvent("NewMessage", (payload) => {
             this.data = [...this.data, payload.message];
 
@@ -24,6 +24,10 @@ export class ExChat extends LitElement {
                     this.messagesRef.value.scrollHeight;
             }, 1);
         });
+
+        EmitEvent("RegisterRoom", {
+            room: data.page,
+        });
     }
 
     messageInputCallback(el) {
@@ -31,7 +35,7 @@ export class ExChat extends LitElement {
             const value = this.messageInputRef.value.value;
             if (!value) return;
 
-            EmitEvent("NewMessage", { message: value });
+            EmitEvent("NewMessage", { room: data.page, message: value });
             this.messageInputRef.value.value = "";
         };
     }
@@ -41,9 +45,9 @@ export class ExChat extends LitElement {
             <hr />
             <ul ${ref(this.messagesRef)}>
                 ${this.data.map((item) => {
-                    return html`<ex-chat-message
-                        message=${item}
-                    ></ex-chat-message>`;
+                    return html`
+                        <ex-chat-message message=${item}> </ex-chat-message>
+                    `;
                 })}
             </ul>
             <hr />
@@ -64,7 +68,7 @@ export class ExChat extends LitElement {
         this.messagesRef = createRef();
         this.messageInputRef = createRef();
 
-        this.registerEventListener();
+        this.registerEvents();
     }
 }
 
