@@ -44,13 +44,3 @@ if (loaded) {
 window.first_page = setInterval(() => {
     EmitEvent("Init", data);
 }, 1_000);
-
-// Const Events Listeners
-
-ListenEvent("disconnect", () => {
-    console.log("Reloading...");
-
-    setTimeout(() => {
-        window.location.reload();
-    }, 100);
-});

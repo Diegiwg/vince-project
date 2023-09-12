@@ -10,6 +10,16 @@ export class ExPage extends LitElement {
     }
 
     registerEventListener() {
+        console.log("Registering events...");
+
+        socket.on("disconnect", () => {
+            console.log("Reloading...");
+
+            setTimeout(() => {
+                window.location.reload();
+            }, 100);
+        });
+
         ListenEvent("RenderPage", (payload) => {
             const { content } = payload;
             delete payload.content;
