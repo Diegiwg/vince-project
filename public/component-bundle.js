@@ -64,18 +64,43 @@ customElements.define("ex-page", ExPage);
 
 export class ExChat extends LitElement {
     static properties = {
-        data: { type: Array },
-        messagesRef: { type: HTMLUListElement },
-        messageInputRef: { type: HTMLInputElement },
+        data: { type: [String] },
+        messagesRef: {},
+        messageInputRef: {},
     };
 
     static styles = css`
-        ul {
-            height: 300px;
-            overflow-y: scroll;
-
+        :host {
+            display: block;
+            background-color: #363636;
             padding: 0;
             margin: 0;
+            width: 600px;
+        }
+
+        ul {
+            height: 250px;
+            overflow-y: scroll;
+            padding: 1rem;
+            margin: 0;
+
+            > p {
+                margin: 0;
+                padding: 0;
+                color: #e9e9e9e1;
+            }
+        }
+
+        div {
+            display: flex;
+
+            > input {
+                width: 80%;
+            }
+
+            > button {
+                width: 20%;
+            }
         }
     `;
 
@@ -125,16 +150,18 @@ export class ExChat extends LitElement {
         return html`
             <ul ${ref(this.messagesRef)}>
                 ${repeat(this.data, (message) => {
-                    return html` <p>${message}</p> `;
+                    return html`<p>${message}</p>`;
                 })}
             </ul>
-            <input
-                ${ref(this.messageInputRef)}
-                @keyup=${this.sendMessageCallback}
-                type="text"
-                placeholder="Digite algo..."
-            />
-            <button @click="${this.sendMessageCallback}">Enviar</button>
+            <div>
+                <input
+                    ${ref(this.messageInputRef)}
+                    @keyup=${this.sendMessageCallback}
+                    type="text"
+                    placeholder="Digite algo..."
+                />
+                <button @click="${this.sendMessageCallback}">Enviar</button>
+            </div>
         `;
     }
 }
