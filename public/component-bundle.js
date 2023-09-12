@@ -110,8 +110,6 @@ export class ExChat extends LitElement {
             }, 1);
         });
 
-        console.log(data);
-
         EmitEvent("RegisterRoom", {
             room: data.page,
         });
@@ -132,6 +130,7 @@ export class ExChat extends LitElement {
             </ul>
             <input
                 ${ref(this.messageInputRef)}
+                @keyup=${this.sendMessageCallback}
                 type="text"
                 placeholder="Digite algo..."
             />

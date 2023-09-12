@@ -1,5 +1,6 @@
 import { LitElement, css, html } from "lit";
 import { createRef, ref } from "lit/directives/ref";
+import { repeat } from "lit/directives/repeat";
 
 export class ExChat extends LitElement {
     static properties = {
@@ -18,7 +19,28 @@ export class ExChat extends LitElement {
         }
     `;
 
-    registerEvents() {
+    constructor() {
+        super();
+
+        this.data = [];
+        this.messagesRef = createRef();
+        this.messageInputRef = createRef();
+    }
+
+    /** @param {KeyboardEvent | MouseEvent} event  */
+    sendMessageCallback(event) {
+        if (event.type === "keyup" && event.key !== "Enter") return;
+
+        const value = this.messageInputRef.value.value;
+        if (!value) return;
+
+        EmitEvent("NewMessage", { room: data.page, message: value });
+        this.messageInputRef.value.value = "";
+    }
+
+    connectedCallback() {
+        super.connectedCallback();
+
         ListenEvent("NewMessage", (payload) => {
             this.data = [...this.data, payload.message];
 
@@ -33,69 +55,27 @@ export class ExChat extends LitElement {
         });
     }
 
-    /** @param {HTMLElement} el */
-    inputCallback(el) {
-        try {
-            this.messageInputRef = el;
-
-            el.onkeyup = function (event) {
-                if (event.key !== "Enter") return;
-
-                const value = el.value;
-                if (!value) return;
-
-                EmitEvent("NewMessage", { room: data.page, message: value });
-                el.value = "";
-            };
-        } catch {}
-    }
-
-    /** @param {HTMLElement} el */
-    buttonCallback(el) {
-        try {
-            el.onclick = () => {
-                const value = this.messageInputRef.value;
-                if (!value) return;
-
-                EmitEvent("NewMessage", { room: data.page, message: value });
-                this.messageInputRef.value = "";
-            };
-        } catch {}
-    }
-
-    render() {
-        return html`
-            <ul ${ref(this.messagesRef)}>
-                ${this.data.map((message) => {
-                    return html` <p>${message}</p> `;
-                })}
-            </ul>
-            <input
-                ${ref(this.inputCallback)}
-                type="text"
-                placeholder="Digite algo..."
-            />
-            <button ${ref(this.buttonCallback)}>Enviar</button>
-        `;
-    }
-
-    connectedCallback() {
-        super.connectedCallback();
-
-        this.registerEvents();
-    }
-
     disconnectedCallback() {
         super.disconnectedCallback();
 
         RemoveEvent("NewMessage");
     }
 
-    constructor() {
-        super();
-
-        this.data = [];
-        this.messagesRef = createRef();
+    render() {
+        return html`
+            <ul ${ref(this.messagesRef)}>
+                ${repeat(this.data, (message) => {
+                    return html` <p>${message}</p> `;
+                })}
+            </ul>
+            <input
+                ${ref(this.messageInputRef)}
+                @keyup=${this.sendMessageCallback}
+                type="text"
+                placeholder="Digite algo..."
+            />
+            <button @click="${this.sendMessageCallback}">Enviar</button>
+        `;
     }
 }
 
