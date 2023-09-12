@@ -2,14 +2,16 @@ import fs from "fs";
 import { jsmin } from "jsmin";
 import mustache from "mustache";
 
-async function evalPageData(name) {
+import { DEBUG } from "./Debug.js";
+
+async function loadPageData(name) {
     try {
-        const javascript = fs.readFileSync(`pages/${name}.js`, "utf8");
-        const content = eval(javascript + "load()");
+        const content = (await import(`../pages/${name}.js`)).load();
+
+        DEBUG(content);
+
         return content;
-    } catch {
-        return {};
-    }
+    } catch {}
 }
 
 /** @param {string} html  */
@@ -29,7 +31,7 @@ function minifyJavascript(html) {
 export async function loadPage(name, data) {
     try {
         let html = fs.readFileSync(`pages/${name}.html`, "utf8");
-        const content = await evalPageData(name);
+        const content = await loadPageData(name);
 
         html = mustache.render(html, {
             ...content,
