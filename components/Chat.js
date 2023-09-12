@@ -12,6 +12,9 @@ export class ExChat extends LitElement {
         ul {
             height: 300px;
             overflow-y: scroll;
+
+            padding: 0;
+            margin: 0;
         }
     `;
 
@@ -30,34 +33,46 @@ export class ExChat extends LitElement {
         });
     }
 
-    messageInputCallback(el) {
-        el.onclick = () => {
-            const value = this.messageInputRef.value.value;
+    /** @param {HTMLElement} el */
+    inputCallback(el) {
+        this.messageInputRef = el;
+
+        el.onkeyup = function (event) {
+            if (event.key !== "Enter") return;
+
+            const value = el.value;
             if (!value) return;
 
             EmitEvent("NewMessage", { room: data.page, message: value });
-            this.messageInputRef.value.value = "";
+            el.value = "";
+        };
+    }
+
+    /** @param {HTMLElement} el */
+    buttonCallback(el) {
+        console.log(el);
+        el.onclick = () => {
+            const value = this.messageInputRef.value;
+            if (!value) return;
+
+            EmitEvent("NewMessage", { room: data.page, message: value });
+            this.messageInputRef.value = "";
         };
     }
 
     render() {
         return html`
-            <hr />
             <ul ${ref(this.messagesRef)}>
-                ${this.data.map((item) => {
-                    return html`
-                        <ex-chat-message message=${item}> </ex-chat-message>
-                    `;
+                ${this.data.map((message) => {
+                    return html` <p>${message}</p> `;
                 })}
             </ul>
-            <hr />
             <input
-                ${ref(this.messageInputRef)}
+                ${ref(this.inputCallback)}
                 type="text"
                 placeholder="Digite algo..."
             />
-            <button ${ref(this.messageInputCallback)}>Enviar</button>
-            <hr />
+            <button ${ref(this.buttonCallback)}>Enviar</button>
         `;
     }
 
@@ -66,7 +81,6 @@ export class ExChat extends LitElement {
 
         this.data = [];
         this.messagesRef = createRef();
-        this.messageInputRef = createRef();
 
         this.registerEvents();
     }

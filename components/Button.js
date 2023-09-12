@@ -13,7 +13,9 @@ export class ExButton extends LitElement {
     }
 
     render() {
-        return html`<button ${ref(this.callback)}>${this.clickCount}</button>`;
+        return html`<button ${ref(this.callback)}>
+            Clique em mim para aumentar o valor: <span>${this.clickCount}</span>
+        </button>`;
     }
 
     constructor() {
