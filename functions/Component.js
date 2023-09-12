@@ -1,5 +1,4 @@
 import fs from "fs";
-import { jsmin } from "jsmin";
 
 function searchComponents() {
     const components = fs.readdirSync("./components");
@@ -40,26 +39,23 @@ function bundler(components) {
             final_imports.add(element.trim());
         });
 
-        final_code += `${jsmin(content, 3)}\n`;
+        final_code += `\n${content.trim()}\n`;
     });
+
+    final_imports = Array.from(final_imports).join(", ");
 
     // save component-bundle.js
     fs.writeFileSync(
         "./public/component-bundle.js",
-        `
-import { ${Array.from(final_imports).join(
-            ","
-        )} } from "https://cdn.jsdelivr.net/gh/lit/dist@2/all/lit-all.min.js";
-${final_code}`
+        "import { " +
+            final_imports +
+            " } from 'https://cdn.jsdelivr.net/gh/lit/dist@2/all/lit-all.min.js';\n" +
+            final_code
     );
 }
 
-function deleteOldBundle() {
-    fs.unlinkSync("./public/component-bundle.js");
-}
-
 export function compileComponents() {
-    deleteOldBundle();
+    fs.unlinkSync("./public/component-bundle.js");
 
     const components_files = searchComponents();
 
