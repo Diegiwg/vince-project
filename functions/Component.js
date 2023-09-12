@@ -1,61 +1,73 @@
 import fs from "fs";
-import mustache from "mustache";
+import { jsmin } from "jsmin";
 
-/** @param {string} name */
-function loadComponent(name) {
-    try {
-        const html = fs.readFileSync(`components/${name}.html`, "utf8");
-        return html;
-    } catch {
-        return;
-    }
+function searchComponents() {
+    const components = fs.readdirSync("./components");
+    return components || [];
 }
 
-/** @param {string} html */
-function findComponents(html, page_content) {
-    const components = html.match(/<{1}!{1}(.)*>{1}/gim);
-    if (!components) {
-        return;
-    }
-
-    let loaded_components = {};
-    for (let component of components) {
-        const name = component.replace("<!", "").split(/[>|\s]/)[0];
-        let content = loadComponent(name);
-        if (!content) continue;
-
-        // Try to find props
-        const props = component.match(/(\w+)={([^}|{]+)}/gim);
-        if (!props) {
-            loaded_components[component] = content.trim();
-            continue;
-        }
-
-        for (let prop of props) {
-            const prop_name = `[[${prop.split("=")[0]}]]`;
-            const prop_value = eval(prop.split("={")[1].split("}")[0]);
-
-            content = content.replaceAll(prop_name, prop_value);
-        }
-
-        const content_html = mustache.render(content, page_content);
-
-        loaded_components[component] = content_html.trim();
-    }
-
-    return loaded_components;
+function loadComponent(component) {
+    let content = fs.readFileSync(`./components/${component}`, "utf-8");
+    return content;
 }
 
-/** @param {string} html */
-export function renderComponents(html, page_content) {
-    const components = findComponents(html, page_content);
-    if (!components) {
-        return html;
+/** @param {string} content */
+function parseLitImports(content) {
+    const data = content.match(/import {([\w\s,]+)} from "lit[\w\/.]*";/gim);
+    const imports = new Set();
+
+    for (let element of data) {
+        const el = element.match(/import {([\w\s,]+)}/);
+
+        el[1].split(",").forEach((imp) => {
+            imports.add(imp.trim());
+        });
+
+        content = content.replace(element, "").trim();
     }
 
-    for (let component in components) {
-        html = html.replace(component, components[component]);
-    }
+    return { content, imports };
+}
 
-    return renderComponents(html, page_content);
+function bundler(components) {
+    let final_imports = new Set();
+    let final_code = "";
+
+    components.forEach((component) => {
+        const { content, imports } = parseLitImports(component);
+
+        imports.forEach((element) => {
+            final_imports.add(element.trim());
+        });
+
+        final_code += `${jsmin(content, 3)}\n`;
+    });
+
+    // save component-bundle.js
+    fs.writeFileSync(
+        "./public/component-bundle.js",
+        `
+import { ${Array.from(final_imports).join(
+            ","
+        )} } from "https://cdn.jsdelivr.net/gh/lit/dist@2/all/lit-all.min.js";
+${final_code}`
+    );
+}
+
+function deleteOldBundle() {
+    fs.unlinkSync("./public/component-bundle.js");
+}
+
+export function compileComponents() {
+    deleteOldBundle();
+
+    const components_files = searchComponents();
+
+    const components_contents = [];
+    components_files.forEach((component) => {
+        const content = loadComponent(component);
+        if (content) components_contents.push(content);
+    });
+
+    bundler(components_contents);
 }

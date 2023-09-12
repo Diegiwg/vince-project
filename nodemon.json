@@ -1,8 +1,10 @@
 {
     "ignore": [
-        "*.json"
+        "*.json",
+        "public/"
     ],
     "watch": [
-        "*.html"
+        "*.html",
+        "*.js"
     ]
 }

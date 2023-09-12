@@ -2,8 +2,6 @@ import fs from "fs";
 import { jsmin } from "jsmin";
 import mustache from "mustache";
 
-import { renderComponents } from "./Component.js";
-
 async function evalPageData(name) {
     try {
         const javascript = fs.readFileSync(`pages/${name}.js`, "utf8");
@@ -33,13 +31,11 @@ export async function loadPage(name, data) {
         let html = fs.readFileSync(`pages/${name}.html`, "utf8");
         const content = await evalPageData(name);
 
-        const page = {
+        html = mustache.render(html, {
             ...content,
             ...data,
-        };
+        });
 
-        html = renderComponents(html, page); // Really need pass to Component a custom data?
-        html = mustache.render(html, page);
         html = minifyJavascript(html);
 
         return html;

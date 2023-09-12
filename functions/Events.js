@@ -8,6 +8,7 @@ import { DEBUG } from "./Debug.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+let event_registered = false;
 async function dynamicRegisterEvents(io) {
     const events = fs.readdirSync(path.join(__dirname, "../events"));
     if (!events) return;
@@ -16,10 +17,14 @@ async function dynamicRegisterEvents(io) {
         const module = await import(`../events/${event}`);
 
         for (let internal_event of Object.keys(module)) {
-            DEBUG(`Registering ${internal_event} event...`);
+            if (!event_registered)
+                DEBUG(`Registering ${internal_event} event...`);
+
             module[internal_event](io);
         }
     }
+
+    event_registered = true;
 }
 
 /** @param {Server} server  */
