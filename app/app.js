@@ -1,12 +1,10 @@
-const socket = io();
-const app = document.querySelector("app");
-
+window.socket = io();
 window.components = {};
 
 // Utils Functions
 
 window.ListenEvent = (event_name, callback) => {
-    socket.on(event_name, callback);
+    socket.on("Event::" + event_name, callback);
     socket._callbacks["$" + "Event::" + event_name] = [callback];
 };
 
@@ -18,6 +16,12 @@ window.EmitEvent = (event_name, custom_data) => {
     };
 
     socket.emit("Event::" + event_name, payload);
+};
+
+window.RemoveEvent = (event_name) => {
+    if (socket._callbacks["$" + "Event::" + event_name]) {
+        delete socket._callbacks["$" + "Event::" + event_name];
+    }
 };
 
 window.Component = function (key, node) {

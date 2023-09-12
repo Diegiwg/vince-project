@@ -1,3 +1,11 @@
 <ex-chat></ex-chat>
 <br />
 <ex-button></ex-button>
+<br />
+<button id="logout">Sair da Conta</button>
+
+<script>
+    components.page.querySelector("#logout").onclick = () => {
+        EmitEvent("Logout");
+    };
+</script>

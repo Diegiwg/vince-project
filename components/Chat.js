@@ -35,29 +35,32 @@ export class ExChat extends LitElement {
 
     /** @param {HTMLElement} el */
     inputCallback(el) {
-        this.messageInputRef = el;
+        try {
+            this.messageInputRef = el;
 
-        el.onkeyup = function (event) {
-            if (event.key !== "Enter") return;
+            el.onkeyup = function (event) {
+                if (event.key !== "Enter") return;
 
-            const value = el.value;
-            if (!value) return;
+                const value = el.value;
+                if (!value) return;
 
-            EmitEvent("NewMessage", { room: data.page, message: value });
-            el.value = "";
-        };
+                EmitEvent("NewMessage", { room: data.page, message: value });
+                el.value = "";
+            };
+        } catch {}
     }
 
     /** @param {HTMLElement} el */
     buttonCallback(el) {
-        console.log(el);
-        el.onclick = () => {
-            const value = this.messageInputRef.value;
-            if (!value) return;
+        try {
+            el.onclick = () => {
+                const value = this.messageInputRef.value;
+                if (!value) return;
 
-            EmitEvent("NewMessage", { room: data.page, message: value });
-            this.messageInputRef.value = "";
-        };
+                EmitEvent("NewMessage", { room: data.page, message: value });
+                this.messageInputRef.value = "";
+            };
+        } catch {}
     }
 
     render() {
@@ -76,13 +79,23 @@ export class ExChat extends LitElement {
         `;
     }
 
+    connectedCallback() {
+        super.connectedCallback();
+
+        this.registerEvents();
+    }
+
+    disconnectedCallback() {
+        super.disconnectedCallback();
+
+        RemoveEvent("NewMessage");
+    }
+
     constructor() {
         super();
 
         this.data = [];
         this.messagesRef = createRef();
-
-        this.registerEvents();
     }
 }
 

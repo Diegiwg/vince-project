@@ -7,9 +7,11 @@ export class ExButton extends LitElement {
     };
 
     callback(el) {
-        el.onclick = () => {
-            this.clickCount++;
-        };
+        try {
+            el.onclick = () => {
+                this.clickCount++;
+            };
+        } catch {}
     }
 
     render() {

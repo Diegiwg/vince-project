@@ -4,8 +4,13 @@ import {
     findUserByEmail,
     generateNewSessionToken,
     validateUserPassword,
+    validateUserSession,
 } from "../functions/FakeDB.js";
-import { LoginSchema, ParseSchema } from "../functions/Models.js";
+import {
+    LoginSchema,
+    ParseSchema,
+    SessionSchema,
+} from "../functions/Models.js";
 import { emitRenderPageEvent } from "../functions/Page.js";
 
 /** @param {import("../functions/Models.js").io} io */
@@ -65,6 +70,24 @@ export function registerAccount(io) {
                 id: user.id,
                 token: user.token,
             });
+        }
+    );
+}
+
+/** @param {import("../functions/Models.js").io} io */
+export function logout(io) {
+    const { client } = io;
+
+    client.on(
+        "Event::Logout",
+        /** @param {import("../functions/Models.js").Session} data */
+        (data) => {
+            DEBUG("Event::Logout");
+
+            if (!ParseSchema(SessionSchema, data)) return;
+            if (!validateUserSession(data)) return;
+
+            emitRenderPageEvent(client, "Login");
         }
     );
 }
