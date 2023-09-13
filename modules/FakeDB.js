@@ -4,6 +4,7 @@ import fs from "fs";
 
 import { DEBUG, ERROR } from "./Debug.js";
 import { SessionSchema } from "./Models.js";
+import { emitRenderPageEvent } from "./Page.js";
 
 export let DB = {
     load: () => {
@@ -44,15 +45,25 @@ export function findUserBySession(token) {
 }
 
 /** @param {import("./Models").Session data} */
-export function validateUserSession(data) {
+export function validateUserSession(client, data) {
     const valid = SessionSchema.safeParse(data).success;
     DEBUG("validateUserSession", data, "is valid:", valid);
 
-    if (!valid) return false;
+    // Go to login page
+    if (!valid) {
+        emitRenderPageEvent(client, "Login", {});
+        return false;
+    }
 
     const { id, token } = data;
     const user = DB.users.find((user) => user.id === id);
-    return user && user.token === token;
+
+    if (!user || user.token !== token) {
+        emitRenderPageEvent(client, "Login", {});
+        return false;
+    }
+
+    return true;
 }
 
 export function generateNewSessionToken(id) {

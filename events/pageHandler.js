@@ -16,13 +16,12 @@ export function requestPage(io) {
 
             if (!RequestPageSchema.safeParse(data).success) return;
 
-            const { id, token, page } = data;
+            const { page } = data;
 
             if (UNPROTECTED_ROUTES.includes(page))
                 return emitRenderPageEvent(client, page, data);
 
-            if (!id || !token || !validateUserSession(data))
-                return emitRenderPageEvent(client, "Login");
+            if (!validateUserSession(client, data)) return;
 
             return emitRenderPageEvent(client, page, data);
         }

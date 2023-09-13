@@ -12,10 +12,7 @@ export function inicialConnection(io) {
         (data) => {
             DEBUG("Event::Init");
 
-            const { id, token } = data;
-
-            if (!id || !token || !validateUserSession(data))
-                return emitRenderPageEvent(client, "Login");
+            if (!validateUserSession(client, data)) return;
 
             return emitRenderPageEvent(client, "Home", data);
         }

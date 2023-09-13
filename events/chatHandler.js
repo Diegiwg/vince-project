@@ -12,7 +12,7 @@ export function newMessage(io) {
         (data) => {
             DEBUG("Event::NewMessage");
 
-            if (!validateUserSession(data)) return;
+            if (!validateUserSession(client, data)) return;
             if (!NewMessageSchema.safeParse(data).success) return;
 
             const { room, message } = data;

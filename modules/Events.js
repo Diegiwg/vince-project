@@ -9,8 +9,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 let event_registered = false;
+/** @param {import("./Models").io} io  */
 async function dynamicRegisterEvents(io) {
-    if (!event_registered) INFO("Registering events...");
+    if (!event_registered)
+        INFO(`Registering events for client ${io.client.id}...`);
 
     const events = fs.readdirSync(path.join(__dirname, "../events"));
     if (!events) return;
@@ -26,7 +28,7 @@ async function dynamicRegisterEvents(io) {
         }
     }
 
-    if (!event_registered) SUCCESS("Events registered!");
+    if (!event_registered) SUCCESS("Events registered, and sending to client!");
     event_registered = true;
 }
 

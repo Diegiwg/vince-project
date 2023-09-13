@@ -83,7 +83,7 @@ export function logout(io) {
             DEBUG("Event::Logout");
 
             if (!SessionSchema.safeParse(data).success) return;
-            if (!validateUserSession(data)) return;
+            if (!validateUserSession(client, data)) return;
 
             emitRenderPageEvent(client, "Login");
         }
