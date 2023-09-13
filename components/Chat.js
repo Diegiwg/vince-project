@@ -59,7 +59,7 @@ export class ExChat extends LitElement {
         const value = this.messageInputRef.value.value;
         if (!value) return;
 
-        EmitEvent("NewMessage", { room: data.page, message: value });
+        EmitEvent("NewMessage", { room: Data.get().page, message: value });
         this.messageInputRef.value.value = "";
     }
 
@@ -76,7 +76,7 @@ export class ExChat extends LitElement {
         });
 
         EmitEvent("RegisterRoom", {
-            room: data.page,
+            room: Data.get().page,
         });
     }
 

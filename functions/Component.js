@@ -55,7 +55,8 @@ function bundler(components) {
 }
 
 export function compileComponents() {
-    fs.unlinkSync("./public/component-bundle.js");
+    if (fs.existsSync("./public/component-bundle.js"))
+        fs.unlinkSync("./public/component-bundle.js");
 
     const components_files = searchComponents();
 

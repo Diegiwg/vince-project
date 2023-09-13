@@ -17,23 +17,18 @@ export class ExPage extends LitElement {
 
             setTimeout(() => {
                 window.location.reload();
-            }, 100);
+            });
         });
 
         ListenEvent("RenderPage", (payload) => {
             const { content } = payload;
             delete payload.content;
 
-            data = payload;
+            Data.set(payload);
 
             this.content = document
                 .createRange()
                 .createContextualFragment(content);
-
-            if (first_page) {
-                clearInterval(first_page);
-                first_page = null;
-            }
         });
     }
 
@@ -44,7 +39,9 @@ export class ExPage extends LitElement {
 
         // Enable search elements in page by components.page
         setTimeout(() => {
-            window.Component("page", this.shadowRoot);
+            window.Component("Page", () => {
+                return this.shadowRoot;
+            });
         });
     }
 

@@ -1,5 +1,51 @@
 import { LitElement, html, css, createRef, ref, repeat } from 'https://cdn.jsdelivr.net/gh/lit/dist@2/all/lit-all.min.js';
 
+export class LocalData extends LitElement {
+    static properties = {
+        data: { state: true },
+    };
+
+    _initLoop = null;
+
+    constructor() {
+        super();
+        this.data = {};
+    }
+
+    set(value) {
+        this.data = value;
+        localStorage.setItem("data", JSON.stringify(this.data));
+
+        // Delete the loop if it exists
+        if (this._initLoop) clearInterval(this._initLoop);
+    }
+
+    get() {
+        return this.data;
+    }
+
+    connectedCallback() {
+        super.connectedCallback();
+
+        window.Component("Data", this);
+
+        // Search for saved data in local storage
+        const saved = localStorage.getItem("data");
+        if (saved) this.data = JSON.parse(saved);
+
+        // Init the Communication with the server
+        this._initLoop = setInterval(() => {
+            EmitEvent("Init", this.data);
+        }, 1_000);
+    }
+
+    render() {
+        return html` <p>${JSON.stringify(this.data)}</p> `;
+    }
+}
+
+customElements.define("ex-local-data", LocalData);
+
 export class ExPage extends LitElement {
     static properties = {
         content: { type: String },
@@ -17,23 +63,18 @@ export class ExPage extends LitElement {
 
             setTimeout(() => {
                 window.location.reload();
-            }, 100);
+            });
         });
 
         ListenEvent("RenderPage", (payload) => {
             const { content } = payload;
             delete payload.content;
 
-            data = payload;
+            Data.set(payload);
 
             this.content = document
                 .createRange()
                 .createContextualFragment(content);
-
-            if (first_page) {
-                clearInterval(first_page);
-                first_page = null;
-            }
         });
     }
 
@@ -44,7 +85,9 @@ export class ExPage extends LitElement {
 
         // Enable search elements in page by components.page
         setTimeout(() => {
-            window.Component("page", this.shadowRoot);
+            window.Component("Page", () => {
+                return this.shadowRoot;
+            });
         });
     }
 
@@ -119,7 +162,7 @@ export class ExChat extends LitElement {
         const value = this.messageInputRef.value.value;
         if (!value) return;
 
-        EmitEvent("NewMessage", { room: data.page, message: value });
+        EmitEvent("NewMessage", { room: Data.get().page, message: value });
         this.messageInputRef.value.value = "";
     }
 
@@ -136,7 +179,7 @@ export class ExChat extends LitElement {
         });
 
         EmitEvent("RegisterRoom", {
-            room: data.page,
+            room: Data.get().page,
         });
     }
 

@@ -19,13 +19,13 @@
 </div>
 
 <script>
-    components.page
+    Page()
         .querySelector("form")
         .addEventListener("submit", (event) => {
             event.preventDefault();
 
-            const email = components.page.querySelector("[name=email]");
-            const password = components.page.querySelector("[name=password]");
+            const email = Page().querySelector("[name=email]");
+            const password = Page().querySelector("[name=password]");
 
             if (!email.value || !password.value) return;
 
