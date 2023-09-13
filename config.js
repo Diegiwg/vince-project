@@ -1,5 +1,5 @@
 export const CONFIG = {
     /** @type {"DEV"|"PROD"} */
-    mode: "DEV",
+    mode: "PROD",
     port: 9999,
 };

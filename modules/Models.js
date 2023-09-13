@@ -3,6 +3,8 @@ import { z } from "zod";
 
 /** @typedef {{client: Socket, server: Server}} io */
 
+/** @typedef {{ type: "SUCCESS" | "ERROR" | "INFO" | "WARN"; message: string; time: number }} Toast */
+
 /** @typedef {z.infer<typeof UserSchema>} User */
 export let UserSchema = z.object({
     id: z.number(),

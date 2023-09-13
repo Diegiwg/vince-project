@@ -53,7 +53,7 @@ export class LocalData extends LitElement {
 
     render() {
         return this._debug
-            ? html` <span>LOCAL DATA:</span>
+            ? html` <span>LOCAL DATA</span>
                   <pre>
 ${JSON.stringify(this.data, undefined, 2)}
 </pre>

@@ -2,7 +2,7 @@
 import bcrypt from "bcrypt";
 import fs from "fs";
 
-import { DEBUG, ERROR } from "./Debug.js";
+import { ERROR } from "./Debug.js";
 import { SessionSchema } from "./Models.js";
 import { emitRenderPageEvent } from "./Page.js";
 

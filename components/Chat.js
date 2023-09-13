@@ -18,7 +18,7 @@ export class ExChat extends LitElement {
             width: 600px;
         }
 
-        ul {
+        #history {
             height: 250px;
             overflow-y: scroll;
             padding: 1rem;
@@ -31,7 +31,7 @@ export class ExChat extends LitElement {
             }
         }
 
-        div {
+        #controls {
             display: flex;
 
             > input {
@@ -88,19 +88,21 @@ export class ExChat extends LitElement {
 
     render() {
         return html`
-            <ul ${ref(this.messagesRef)}>
-                ${repeat(this.data, (message) => {
-                    return html`<p>${message}</p>`;
-                })}
-            </ul>
-            <div>
-                <input
-                    ${ref(this.messageInputRef)}
-                    @keyup=${this.sendMessageCallback}
-                    type="text"
-                    placeholder="Digite algo..."
-                />
-                <button @click="${this.sendMessageCallback}">Enviar</button>
+            <div role="log" aria-labelledby="Chat">
+                <ul ${ref(this.messagesRef)} id="history">
+                    ${repeat(this.data, (message) => {
+                        return html`<p>${message}</p>`;
+                    })}
+                </ul>
+                <div id="controls">
+                    <input
+                        ${ref(this.messageInputRef)}
+                        @keyup=${this.sendMessageCallback}
+                        type="text"
+                        placeholder="Digite algo..."
+                    />
+                    <button @click="${this.sendMessageCallback}">Enviar</button>
+                </div>
             </div>
         `;
     }

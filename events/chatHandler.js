@@ -1,6 +1,7 @@
 import { DEBUG } from "../modules/Debug.js";
 import { findUserBySession, validateUserSession } from "../modules/FakeDB.js";
 import { NewMessageSchema } from "../modules/Models.js";
+import { TOAST } from "../modules/Toast.js";
 
 /** @param {import("../Models").io} io */
 export function newMessage(io) {
@@ -12,8 +13,15 @@ export function newMessage(io) {
         (data) => {
             DEBUG("Event::NewMessage");
 
-            if (!validateUserSession(client, data)) return;
-            if (!NewMessageSchema.safeParse(data).success) return;
+            if (!validateUserSession(client, data))
+                return TOAST.INFO(client, null, "Sessão inválida.");
+
+            if (!NewMessageSchema.safeParse(data).success)
+                return TOAST.WARN(
+                    client,
+                    null,
+                    "Os dados fornecidos estão inválidos."
+                );
 
             const { room, message } = data;
             const user_name = findUserBySession(data.token).name;
@@ -21,6 +29,7 @@ export function newMessage(io) {
             server.to(room).emit("Event::NewMessage", {
                 message: `${user_name}: ${message}`,
             });
+            TOAST.SUCCESS(client, 1_000, "Mensagem enviada.");
         }
     );
 }

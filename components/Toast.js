@@ -1,4 +1,4 @@
-import { LitElement, html, css } from "lit";
+import { LitElement, css, html } from "lit";
 
 export class ExToast extends LitElement {
     static properties = {
@@ -7,18 +7,18 @@ export class ExToast extends LitElement {
     };
 
     static styles = css`
-        section {
+        #container {
             width: 100vw;
             display: flex;
             justify-content: center;
         }
 
-        div {
+        #toast {
             position: fixed;
             z-index: 2;
             max-width: 300px;
 
-            top: 1rem;
+            bottom: 1rem;
             margin: 0 auto;
 
             padding: 10px 20px;
@@ -27,20 +27,20 @@ export class ExToast extends LitElement {
 
             color: white;
         }
-        .success {
+        .SUCCESS {
             background-color: #00cc44;
         }
 
-        .danger {
+        .ERROR {
             background-color: #ff3300;
         }
 
-        .warning {
+        .WARN {
             background-color: #ffcc00;
-            color: black;
+            color: #2a2626;
         }
 
-        .info {
+        .INFO {
             background-color: #17a2b8;
         }
     `;
@@ -48,10 +48,14 @@ export class ExToast extends LitElement {
     constructor() {
         super();
 
+        /** @type {import('../modules/Models.js').Toast[]} */
         this._queue = [];
+
+        /** @type {import('../modules/Models.js').Toast} */
         this._current = null;
     }
 
+    /** @param {import('../modules/Models.js').Toast} data */
     add(data) {
         this._queue = [...this._queue, data];
         this._showHandler();
@@ -66,24 +70,37 @@ export class ExToast extends LitElement {
                 this._current = null;
                 this._showHandler();
             },
-            this._current.time ? this._current.time : 2_000
+            this._current.time ? this._current.time : 3_000
         );
     }
 
     render() {
         return html`
-            <section>
+            <div role="status" id="container">
                 ${this._current
-                    ? html` <div tabindex="0" class="${this._current.type}">
+                    ? html` <div
+                          id="toast"
+                          tabindex="0"
+                          class="${this._current.type}"
+                      >
                           ${this._current.message}
                       </div>`
                     : ""}
-            </section>
+            </div>
         `;
     }
 
     connectedCallback() {
         super.connectedCallback();
+
+        ListenEvent("Toast", (payload) => {
+            this.add({
+                type: payload.type,
+                message: payload.message,
+                time: payload.time,
+            });
+        });
+
         setTimeout(() => {
             window.Component("Toast", this);
         });
@@ -91,6 +108,8 @@ export class ExToast extends LitElement {
 
     disconnectedCallback() {
         super.disconnectedCallback();
+
+        RemoveEvent("Toast");
         delete window.components["Toast"];
     }
 }

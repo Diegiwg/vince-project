@@ -12,6 +12,7 @@ import {
     SessionSchema,
 } from "../modules/Models.js";
 import { emitRenderPageEvent } from "../modules/Page.js";
+import { TOAST } from "../modules/Toast.js";
 
 /** @param {import("../modules/Models.js").io} io */
 export function login(io) {
@@ -23,16 +24,27 @@ export function login(io) {
         async (data) => {
             DEBUG("Event::Login");
 
-            if (!LoginSchema.safeParse(data).success) return;
+            if (!LoginSchema.safeParse(data).success)
+                return TOAST.WARN(
+                    client,
+                    null,
+                    "Os dados fornecidos estão inválidos."
+                );
 
             // Try find user on DB
             const user = findUserByEmail(data.email);
-            if (!user) return;
+            if (!user)
+                return TOAST.ERROR(
+                    client,
+                    null,
+                    "Não foi encontrado usuário com esse e-mail."
+                );
 
             let { id, token } = user;
 
             // Check password
-            if (!validateUserPassword(id, data.password)) return;
+            if (!validateUserPassword(id, data.password))
+                return TOAST.ERROR(client, null, "Senha incorreta.");
 
             // Update the token
             token = generateNewSessionToken(id);
@@ -41,6 +53,7 @@ export function login(io) {
                 id,
                 token,
             });
+            TOAST.SUCCESS(client, null, "Logado com sucesso.");
         }
     );
 }
