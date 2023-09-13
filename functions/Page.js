@@ -2,16 +2,14 @@ import fs from "fs";
 import { jsmin } from "jsmin";
 import mustache from "mustache";
 
-import { DEBUG } from "./Debug.js";
-
 async function loadPageData(name) {
-    try {
-        const content = (await import(`../pages/${name}.js`)).load();
+    if (!fs.existsSync(`pages/${name}.js`)) return;
 
-        DEBUG(content);
+    const module = await import(`../pages/${name}.js`);
 
-        return content;
-    } catch {}
+    if (!Object.keys(module).includes("load")) return;
+
+    return module.load();
 }
 
 /** @param {string} html  */
