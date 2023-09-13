@@ -8,7 +8,7 @@ import { CONFIG } from "./config.js";
 import { compileApp } from "./modules/App.js";
 import { compileComponents } from "./modules/Component.js";
 import { WARN } from "./modules/Debug.js";
-import { loadEventHandler } from "./modules/Events.js";
+import { loadEventHandler, compileEvents } from "./modules/Events.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,13 +19,16 @@ const io = new Server(server);
 
 WARN(`Server is listening on http://localhost:${CONFIG.port}`);
 
+// Compile Events Bundle
+compileEvents();
+
 // Load all events for Websocket
 loadEventHandler(io);
 
 // Compile app JS
 compileApp();
 
-// Compile all components
+// Compile Components Bundle
 compileComponents();
 
 app.get("/", (_, res) => {

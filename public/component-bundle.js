@@ -1,141 +1,75 @@
 import { LitElement, css, html, createRef, ref, repeat } from 'https://cdn.jsdelivr.net/gh/lit/dist@2/all/lit-all.min.js';
 
-export class LocalData extends LitElement {
+export class ExButton extends LitElement {
     static properties = {
-        data: { state: true },
+        componentId: { type: String },
+        asTitle: { type: Boolean },
+
+        innerButton: { state: true },
     };
 
     static styles = css`
-        :host,
-        pre {
-            height: 10rem;
-            overflow-y: scroll;
+        :host {
+            display: flex;
+        }
+
+        /* Reset H1 */
+        h1 {
+            font-size: 1rem;
+            margin: 0;
+            padding: 0;
+        }
+
+        button {
+            width: 10rem;
         }
     `;
 
-    _initLoop = null;
-    _debug = null;
-
     constructor() {
         super();
-        this.data = {};
 
-        this._debug = window.DEBUG_MODE;
-        delete window["DEBUG_MODE"];
-    }
+        this.componentId = null;
+        this.asTitle = false;
 
-    set(value) {
-        this.data = value;
-        localStorage.setItem("data", JSON.stringify(this.data));
-
-        // Delete the loop if it exists
-        if (this._initLoop) clearInterval(this._initLoop);
+        this.innerButton = createRef();
     }
 
     get() {
-        return this.data;
+        return this.innerButton.value;
     }
 
-    connectedCallback() {
-        super.connectedCallback();
+    _htmlNormal() {
+        return html`<button ${ref(this.innerButton)}><slot></slot></button>`;
+    }
 
-        window.Component("Data", this);
-
-        // Search for saved data in local storage
-        const saved = localStorage.getItem("data");
-        if (saved) this.data = JSON.parse(saved);
-
-        // Init the Communication with the server
-        this._initLoop = setInterval(() => {
-            EmitEvent("Init", this.data);
-        }, 5_000);
+    _htmlTitle() {
+        return html`<h1>
+            <button ${ref(this.innerButton)}><slot></slot></button>
+        </h1>`;
     }
 
     render() {
-        return this._debug
-            ? html` <span>LOCAL DATA:</span>
-                  <pre>
-${JSON.stringify(this.data, undefined, 2)}
-</pre>
-                  <hr />`
-            : html``;
-    }
-}
-
-customElements.define("ex-local-data", LocalData);
-
-export class ExPage extends LitElement {
-    static properties = {
-        content: {
-            converter: (value) => {
-                if (!value) return "";
-
-                console.log("Converting page...");
-
-                return document.createRange().createContextualFragment(value);
-            },
-        },
-    };
-
-    constructor() {
-        super();
-    }
-
-    registerEventListener() {
-        console.log("Registering events...");
-
-        socket.on("disconnect", () => {
-            console.log("Reloading...");
-
-            setTimeout(() => {
-                window.location.reload();
-            });
-        });
-
-        ListenEvent("RenderPage", (payload) => {
-            console.log("Rendering page...");
-
-            const { content } = payload;
-            delete payload.content;
-
-            // Save all values in Data Manager
-            Data.set(payload);
-
-            // Change the title of the page to the current page
-            document.title = `${Data.get().page} Page`;
-
-            this.content = document
-                .createRange()
-                .createContextualFragment(content);
-        });
+        return this.asTitle ? this._htmlTitle() : this._htmlNormal();
     }
 
     connectedCallback() {
         super.connectedCallback();
 
-        this.registerEventListener();
-
-        // Enable search elements in page by components.page
-        setTimeout(() => {
-            window.Component("Page", () => {
-                return this.shadowRoot;
-            });
-        });
+        if (this.componentId) {
+            window.Component(this.componentId, this);
+        }
     }
 
     disconnectedCallback() {
         super.disconnectedCallback();
 
-        RemoveEvent("RenderPage");
-        delete window.components["page"];
-    }
-
-    render() {
-        return html`${this.content}`;
+        if (this.componentId) {
+            window.RemoveComponent(this.componentId);
+        }
     }
 }
 
-customElements.define("ex-page", ExPage);
+customElements.define("ex-button", ExButton);
 
 export class ExChat extends LitElement {
     static properties = {
@@ -243,77 +177,6 @@ export class ExChat extends LitElement {
 
 customElements.define("ex-chat", ExChat);
 
-export class ExButton extends LitElement {
-    static properties = {
-        componentId: { type: String },
-        asTitle: { type: Boolean },
-
-        innerButton: { state: true },
-    };
-
-    static styles = css`
-        :host {
-            display: flex;
-        }
-
-        /* Reset H1 */
-        h1 {
-            font-size: 1rem;
-            margin: 0;
-            padding: 0;
-        }
-
-        button {
-            width: 10rem;
-        }
-    `;
-
-    constructor() {
-        super();
-
-        this.componentId = null;
-        this.asTitle = false;
-
-        this.innerButton = createRef();
-    }
-
-    get() {
-        return this.innerButton.value;
-    }
-
-    _htmlNormal() {
-        return html`<button ${ref(this.innerButton)}><slot></slot></button>`;
-    }
-
-    _htmlTitle() {
-        return html`<h1>
-            <button ${ref(this.innerButton)}><slot></slot></button>
-        </h1>`;
-    }
-
-    render() {
-        return this.asTitle ? this._htmlTitle() : this._htmlNormal();
-    }
-
-    connectedCallback() {
-        super.connectedCallback();
-
-        if (this.componentId) {
-            window.Component(this.componentId, this);
-        }
-    }
-
-    disconnectedCallback() {
-        super.disconnectedCallback();
-
-        if (this.componentId) {
-            window.RemoveComponent(this.componentId);
-        }
-    }
-}
-
-customElements.define("ex-button", ExButton);
-
 export class ExInput extends LitElement {
     static properties = {
         name: { type: String },
@@ -337,3 +200,140 @@ export class ExInput extends LitElement {
     }
 }
 customElements.define("ex-input", ExInput);
+
+export class LocalData extends LitElement {
+    static properties = {
+        data: { state: true },
+    };
+
+    static styles = css`
+        :host,
+        pre {
+            height: 10rem;
+            overflow-y: scroll;
+        }
+    `;
+
+    _initLoop = null;
+    _debug = null;
+
+    constructor() {
+        super();
+        this.data = {};
+
+        this._debug = window.DEBUG_MODE;
+        delete window["DEBUG_MODE"];
+    }
+
+    set(value) {
+        this.data = value;
+        localStorage.setItem("data", JSON.stringify(this.data));
+
+        // Delete the loop if it exists
+        if (this._initLoop) clearInterval(this._initLoop);
+    }
+
+    get() {
+        return this.data;
+    }
+
+    connectedCallback() {
+        super.connectedCallback();
+
+        window.Component("Data", this);
+
+        // Search for saved data in local storage
+        const saved = localStorage.getItem("data");
+        if (saved) this.data = JSON.parse(saved);
+
+        // Init the Communication with the server
+        this._initLoop = setInterval(() => {
+            EmitEvent("Init", this.data);
+        });
+    }
+
+    render() {
+        return this._debug
+            ? html` <span>LOCAL DATA:</span>
+                  <pre>
+${JSON.stringify(this.data, undefined, 2)}
+</pre>
+                  <hr />`
+            : html``;
+    }
+}
+
+customElements.define("ex-local-data", LocalData);
+
+export class ExPage extends LitElement {
+    static properties = {
+        content: {
+            converter: (value) => {
+                if (!value) return "";
+
+                console.log("Converting page...");
+
+                return document.createRange().createContextualFragment(value);
+            },
+        },
+    };
+
+    constructor() {
+        super();
+    }
+
+    registerEventListener() {
+        console.log("Registering events...");
+
+        socket.on("disconnect", () => {
+            console.log("Reloading...");
+
+            setTimeout(() => {
+                window.location.reload();
+            });
+        });
+
+        ListenEvent("RenderPage", (payload) => {
+            console.log("Rendering page...");
+
+            const { content } = payload;
+            delete payload.content;
+
+            // Save all values in Data Manager
+            Data.set(payload);
+
+            // Change the title of the page to the current page
+            document.title = `${Data.get().page} Page`;
+
+            this.content = document
+                .createRange()
+                .createContextualFragment(content);
+        });
+    }
+
+    connectedCallback() {
+        super.connectedCallback();
+
+        this.registerEventListener();
+
+        // Enable search elements in page by components.page
+        setTimeout(() => {
+            window.Component("Page", () => {
+                return this.shadowRoot;
+            });
+        });
+    }
+
+    disconnectedCallback() {
+        super.disconnectedCallback();
+
+        RemoveEvent("RenderPage");
+        delete window.components["page"];
+    }
+
+    render() {
+        return html`${this.content}`;
+    }
+}
+
+customElements.define("ex-page", ExPage);

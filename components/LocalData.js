@@ -48,7 +48,7 @@ export class LocalData extends LitElement {
         // Init the Communication with the server
         this._initLoop = setInterval(() => {
             EmitEvent("Init", this.data);
-        }, 5_000);
+        });
     }
 
     render() {

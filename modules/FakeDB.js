@@ -47,7 +47,6 @@ export function findUserBySession(token) {
 /** @param {import("./Models").Session data} */
 export function validateUserSession(client, data) {
     const valid = SessionSchema.safeParse(data).success;
-    DEBUG("validateUserSession", data, "is valid:", valid);
 
     // Go to login page
     if (!valid) {
