@@ -1,14 +1,14 @@
-import { DEBUG } from "../functions/Debug.js";
-import { validateUserSession } from "../functions/FakeDB.js";
-import { emitRenderPageEvent } from "../functions/Page.js";
+import { DEBUG } from "../modules/Debug.js";
+import { validateUserSession } from "../modules/FakeDB.js";
+import { emitRenderPageEvent } from "../modules/Page.js";
 
-/** @param {import("../functions/Models.js").io} io  */
+/** @param {import("../modules/Models.js").io} io  */
 export function inicialConnection(io) {
     const { client } = io;
 
     client.on(
         "Event::Init",
-        /** @param {import("../functions/Models.js").Session} data */
+        /** @param {import("../modules/Models.js").Session} data */
         (data) => {
             DEBUG("Event::Init");
 

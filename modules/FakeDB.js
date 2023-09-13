@@ -7,12 +7,12 @@ import { SessionSchema } from "./Models.js";
 
 export let DB = {
     load: () => {
-        const file = fs.readFileSync("./functions/FakeDB.json", "utf8");
+        const file = fs.readFileSync("./modules/FakeDB.json", "utf8");
         const content = JSON.parse(file);
         DB = { ...DB, ...content };
     },
     save: () => {
-        fs.writeFileSync("./functions/FakeDB.json", JSON.stringify(DB));
+        fs.writeFileSync("./modules/FakeDB.json", JSON.stringify(DB));
     },
 
     /** @type {import("./Models").User[]} */

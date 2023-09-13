@@ -1,4 +1,4 @@
-import { DB } from "../functions/FakeDB.js";
+import { DB } from "../modules/FakeDB.js";
 
 export function load() {
     return {

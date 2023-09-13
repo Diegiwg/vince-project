@@ -1,25 +1,25 @@
-import { DEBUG } from "../functions/Debug.js";
+import { DEBUG } from "../modules/Debug.js";
 import {
     createAccount,
     findUserByEmail,
     generateNewSessionToken,
     validateUserPassword,
     validateUserSession,
-} from "../functions/FakeDB.js";
+} from "../modules/FakeDB.js";
 import {
     CreateAccountSchema,
     LoginSchema,
     SessionSchema,
-} from "../functions/Models.js";
-import { emitRenderPageEvent } from "../functions/Page.js";
+} from "../modules/Models.js";
+import { emitRenderPageEvent } from "../modules/Page.js";
 
-/** @param {import("../functions/Models.js").io} io */
+/** @param {import("../modules/Models.js").io} io */
 export function login(io) {
     const { client } = io;
 
     client.on(
         "Event::Login",
-        /** @param {import("../functions/Models.js").Login} data  */
+        /** @param {import("../modules/Models.js").Login} data  */
         async (data) => {
             DEBUG("Event::Login");
 
@@ -45,13 +45,13 @@ export function login(io) {
     );
 }
 
-/** @param {import("../functions/Models.js").io} io */
+/** @param {import("../modules/Models.js").io} io */
 export function registerAccount(io) {
     const { client } = io;
 
     client.on(
         "Event::RegisterAccount",
-        /** @param {import("../functions/Models.js").CreateAccount} data */
+        /** @param {import("../modules/Models.js").CreateAccount} data */
         async (data) => {
             DEBUG("Event::RegisterAccount");
 
@@ -72,13 +72,13 @@ export function registerAccount(io) {
     );
 }
 
-/** @param {import("../functions/Models.js").io} io */
+/** @param {import("../modules/Models.js").io} io */
 export function logout(io) {
     const { client } = io;
 
     client.on(
         "Event::Logout",
-        /** @param {import("../functions/Models.js").Session} data */
+        /** @param {import("../modules/Models.js").Session} data */
         (data) => {
             DEBUG("Event::Logout");
 

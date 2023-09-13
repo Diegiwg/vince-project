@@ -1,6 +1,6 @@
-import { DEBUG } from "../functions/Debug.js";
-import { findUserBySession, validateUserSession } from "../functions/FakeDB.js";
-import { NewMessageSchema } from "../functions/Models.js";
+import { DEBUG } from "../modules/Debug.js";
+import { findUserBySession, validateUserSession } from "../modules/FakeDB.js";
+import { NewMessageSchema } from "../modules/Models.js";
 
 /** @param {import("../Models").io} io */
 export function newMessage(io) {

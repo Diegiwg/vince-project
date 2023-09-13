@@ -5,9 +5,9 @@ import { Server } from "socket.io";
 import { fileURLToPath } from "url";
 
 import { CONFIG } from "./config.js";
-import { compileApp } from "./functions/App.js";
-import { compileComponents } from "./functions/Component.js";
-import { loadEventHandler } from "./functions/Events.js";
+import { compileApp } from "./modules/App.js";
+import { compileComponents } from "./modules/Component.js";
+import { loadEventHandler } from "./modules/Events.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
