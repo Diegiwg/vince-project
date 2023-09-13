@@ -6,7 +6,7 @@
     "license": "MIT",
     "scripts": {
         "dev": "nodemon ./index.js",
-        "tunel": " cls && echo Senha: && curl api.ipify.org -s && echo. && lt --port 9999"
+        "tunnel": " cls && echo Senha: && curl api.ipify.org -s && echo. && lt --port 9999"
     },
     "dependencies": {
         "@prisma/client": "^5.2.0",
