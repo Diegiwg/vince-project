@@ -27,21 +27,19 @@ function minifyJavascript(html) {
 }
 
 export async function loadPage(name, data) {
-    try {
-        let html = fs.readFileSync(`pages/${name}.html`, "utf8");
-        const page_data = await loadPageData(name);
+    if (!fs.existsSync(`pages/${name}.js`)) return;
 
-        html = mustache.render(html, {
-            ...page_data,
-            ...data,
-        });
+    let html = fs.readFileSync(`pages/${name}.html`, "utf8");
+    const page_data = await loadPageData(name);
 
-        html = minifyJavascript(html);
+    html = mustache.render(html, {
+        ...page_data,
+        ...data,
+    });
 
-        return { html, page_data };
-    } catch {
-        return;
-    }
+    html = minifyJavascript(html);
+
+    return { html, page_data };
 }
 
 export async function emitRenderPageEvent(client, name, data) {
