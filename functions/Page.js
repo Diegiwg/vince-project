@@ -31,25 +31,28 @@ function minifyJavascript(html) {
 export async function loadPage(name, data) {
     try {
         let html = fs.readFileSync(`pages/${name}.html`, "utf8");
-        const content = await loadPageData(name);
+        const page_data = await loadPageData(name);
 
         html = mustache.render(html, {
-            ...content,
+            ...page_data,
             ...data,
         });
 
         html = minifyJavascript(html);
 
-        return html;
+        return { html, page_data };
     } catch {
         return;
     }
 }
 
 export async function emitRenderPageEvent(client, name, data) {
+    const { html, page_data } = await loadPage(name, data);
+
     client.emit("Event::RenderPage", {
         page: name,
-        content: await loadPage(name),
+        page_data,
+        content: html,
 
         ...data,
     });
