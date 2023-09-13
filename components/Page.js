@@ -24,7 +24,11 @@ export class ExPage extends LitElement {
             const { content } = payload;
             delete payload.content;
 
+            // Save all values in Data Manager
             Data.set(payload);
+
+            // Change the title of the page to the current page
+            document.title = `${Data.get().page} Page`;
 
             this.content = document
                 .createRange()
@@ -53,7 +57,7 @@ export class ExPage extends LitElement {
     }
 
     render() {
-        return html`<div>${this.content}</div>`;
+        return html`${this.content}`;
     }
 }
 

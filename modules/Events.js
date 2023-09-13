@@ -3,13 +3,15 @@ import path from "path";
 import { Server, Socket } from "socket.io";
 import { fileURLToPath } from "url";
 
-import { DEBUG } from "./Debug.js";
+import { DEBUG, INFO, SUCCESS } from "./Debug.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 let event_registered = false;
 async function dynamicRegisterEvents(io) {
+    if (!event_registered) INFO("Registering events...");
+
     const events = fs.readdirSync(path.join(__dirname, "../events"));
     if (!events) return;
 
@@ -24,6 +26,7 @@ async function dynamicRegisterEvents(io) {
         }
     }
 
+    if (!event_registered) SUCCESS("Events registered!");
     event_registered = true;
 }
 

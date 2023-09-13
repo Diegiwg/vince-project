@@ -1,0 +1,46 @@
+<h1>Criar Conta</h1>
+
+<form>
+    <label for="email">E-mail:</label>
+    <input type="email" name="email" />
+    <label for="password">Senha:</label>
+    <input type="password" name="password" />
+</form>
+
+<br />
+
+<div class="buttons">
+    <ex-button componentId="CreateAccountSubmit" asTitle="true"
+        >Criar</ex-button
+    >
+    <ex-button componentId="LoginPage" asTitle="true"
+        >Voltar para o Login</ex-button
+    >
+</div>
+
+<script>
+    setTimeout(() => {
+        CreateAccountSubmit.addEventListener("click", (event) => {
+            const email = Page().querySelector("[name=email]");
+            const password = Page().querySelector("[name=password]");
+
+            console.log(Page().querySelectorAll("[name]"));
+        });
+
+        LoginPage.addEventListener("click", (event) => {
+            EmitEvent("RequestPage", { page: "Login" });
+        });
+    });
+</script>
+
+<style>
+    form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .buttons {
+        display: flex;
+        gap: 1rem;
+    }
+</style>

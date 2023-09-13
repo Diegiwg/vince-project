@@ -1,5 +1,7 @@
 import fs from "fs";
 
+import { DEBUG, INFO, SUCCESS } from "./Debug.js";
+
 function searchComponents() {
     const components = fs.readdirSync("./components");
     return components || [];
@@ -52,9 +54,13 @@ function bundler(components) {
             " } from 'https://cdn.jsdelivr.net/gh/lit/dist@2/all/lit-all.min.js';\n" +
             final_code
     );
+
+    SUCCESS("Components bundled!");
 }
 
 export function compileComponents() {
+    INFO("Compiling components...");
+
     if (fs.existsSync("./public/component-bundle.js"))
         fs.unlinkSync("./public/component-bundle.js");
 
@@ -63,7 +69,10 @@ export function compileComponents() {
     const components_contents = [];
     components_files.forEach((component) => {
         const content = loadComponent(component);
-        if (content) components_contents.push(content);
+        if (!content) return;
+
+        components_contents.push(content);
+        DEBUG(`Compiling ${component} component...`);
     });
 
     bundler(components_contents);

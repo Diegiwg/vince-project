@@ -1,28 +1,72 @@
-import { LitElement } from "lit";
-import { ref } from "lit/directives/ref.js";
+import { LitElement, css, html } from "lit";
+import { createRef, ref } from "lit/directives/ref.js";
 
 export class ExButton extends LitElement {
     static properties = {
-        clickCount: { type: Number },
+        componentId: { type: String },
+        asTitle: { type: Boolean },
+
+        innerButton: { state: true },
     };
 
-    callback(el) {
-        try {
-            el.onclick = () => {
-                this.clickCount++;
-            };
-        } catch {}
-    }
+    static styles = css`
+        :host {
+            display: flex;
+        }
 
-    render() {
-        return html`<button ${ref(this.callback)}>
-            Clique em mim para aumentar o valor: <span>${this.clickCount}</span>
-        </button>`;
-    }
+        /* Reset H1 */
+        h1 {
+            font-size: 1rem;
+            margin: 0;
+            padding: 0;
+        }
+
+        button {
+            width: 10rem;
+        }
+    `;
 
     constructor() {
         super();
-        this.clickCount = 0;
+
+        this.componentId = null;
+        this.asTitle = false;
+
+        this.innerButton = createRef();
+    }
+
+    get() {
+        return this.innerButton.value;
+    }
+
+    _htmlNormal() {
+        return html`<button ${ref(this.innerButton)}><slot></slot></button>`;
+    }
+
+    _htmlTitle() {
+        return html`<h1>
+            <button ${ref(this.innerButton)}><slot></slot></button>
+        </h1>`;
+    }
+
+    render() {
+        return this.asTitle ? this._htmlTitle() : this._htmlNormal();
+    }
+
+    connectedCallback() {
+        super.connectedCallback();
+
+        if (this.componentId) {
+            window.Component(this.componentId, this);
+        }
+    }
+
+    disconnectedCallback() {
+        super.disconnectedCallback();
+
+        if (this.componentId) {
+            window.RemoveComponent(this.componentId);
+        }
     }
 }
 

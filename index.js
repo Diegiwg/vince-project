@@ -7,6 +7,7 @@ import { fileURLToPath } from "url";
 import { CONFIG } from "./config.js";
 import { compileApp } from "./modules/App.js";
 import { compileComponents } from "./modules/Component.js";
+import { WARN } from "./modules/Debug.js";
 import { loadEventHandler } from "./modules/Events.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -14,8 +15,9 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const server = createServer(app);
-
 const io = new Server(server);
+
+WARN(`Server is listening on http://localhost:${CONFIG.port}`);
 
 // Load all events for Websocket
 loadEventHandler(io);
@@ -32,6 +34,4 @@ app.get("/", (_, res) => {
 
 app.use("/static", express.static("public"));
 
-server.listen(CONFIG.port, () => {
-    console.log(`Server is listening on http://localhost:${CONFIG.port}`);
-});
+server.listen(CONFIG.port);

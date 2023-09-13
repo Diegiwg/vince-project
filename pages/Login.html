@@ -1,10 +1,20 @@
 <h1>Login</h1>
 
 <form>
-    <label>Email: <input type="email" name="email" /></label>
-    <label>Password: <input type="password" name="password" /></label>
-    <input type="submit" value="Login" />
+    <label for="email">E-mail:</label>
+    <input type="email" name="email" />
+    <label for="password">Senha:</label>
+    <input type="password" name="password" />
 </form>
+
+<br />
+
+<div class="buttons">
+    <ex-button componentId="LoginSubmit" asTitle="true">Logar</ex-button>
+    <ex-button componentId="CreateAccount" asTitle="true"
+        >Criar Conta</ex-button
+    >
+</div>
 
 <hr />
 
@@ -19,11 +29,8 @@
 </div>
 
 <script>
-    Page()
-        .querySelector("form")
-        .addEventListener("submit", (event) => {
-            event.preventDefault();
-
+    setTimeout(() => {
+        LoginSubmit.addEventListener("click", (event) => {
             const email = Page().querySelector("[name=email]");
             const password = Page().querySelector("[name=password]");
 
@@ -34,4 +41,21 @@
                 password: password.value,
             });
         });
+
+        CreateAccount.addEventListener("click", (event) => {
+            EmitEvent("RequestPage", { page: "CreateAccount" });
+        });
+    });
 </script>
+
+<style>
+    form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .buttons {
+        display: flex;
+        gap: 1rem;
+    }
+</style>

@@ -1,5 +1,7 @@
 window.socket = io();
 
+window.litDisableBundleWarning = true;
+
 // Utils Functions
 
 window.ListenEvent = (event_name, callback) => {
@@ -27,4 +29,8 @@ window.RemoveEvent = (event_name) => {
 
 window.Component = function (key, node) {
     window[key] = node;
+};
+
+window.RemoveComponent = function (key) {
+    delete window[key];
 };

@@ -2,13 +2,23 @@
 import bcrypt from "bcrypt";
 import fs from "fs";
 
-import { DEBUG } from "./Debug.js";
+import { DEBUG, ERROR } from "./Debug.js";
 import { SessionSchema } from "./Models.js";
 
 export let DB = {
     load: () => {
+        if (!fs.existsSync("./modules/FakeDB.json"))
+            ERROR("FakeDB.json not found!");
+
         const file = fs.readFileSync("./modules/FakeDB.json", "utf8");
-        const content = JSON.parse(file);
+
+        let content;
+        try {
+            content = JSON.parse(file);
+        } catch {
+            ERROR("Invalid data in FakeDB.json");
+        }
+
         DB = { ...DB, ...content };
     },
     save: () => {

@@ -27,7 +27,7 @@ function minifyJavascript(html) {
 }
 
 export async function loadPage(name, data) {
-    if (!fs.existsSync(`pages/${name}.js`)) return;
+    if (!fs.existsSync(`pages/${name}.html`)) return;
 
     let html = fs.readFileSync(`pages/${name}.html`, "utf8");
     const page_data = await loadPageData(name);
@@ -43,12 +43,13 @@ export async function loadPage(name, data) {
 }
 
 export async function emitRenderPageEvent(client, name, data) {
-    const { html, page_data } = await loadPage(name, data);
+    const loaded = await loadPage(name, data);
+    if (!loaded) return;
 
     client.emit("Event::RenderPage", {
         page: name,
-        page_data,
-        content: html,
+        page_data: loaded.page_data,
+        content: loaded.html,
 
         ...data,
     });

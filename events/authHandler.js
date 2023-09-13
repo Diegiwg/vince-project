@@ -46,14 +46,14 @@ export function login(io) {
 }
 
 /** @param {import("../modules/Models.js").io} io */
-export function registerAccount(io) {
+export function creatingAccount(io) {
     const { client } = io;
 
     client.on(
-        "Event::RegisterAccount",
+        "Event::CreatingAccount",
         /** @param {import("../modules/Models.js").CreateAccount} data */
         async (data) => {
-            DEBUG("Event::RegisterAccount");
+            DEBUG("Event::CreatingAccount");
 
             if (!CreateAccountSchema.safeParse(data).success) return;
 

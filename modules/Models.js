@@ -36,3 +36,8 @@ export let NewMessageSchema = z.object({
     room: z.string(),
     message: z.string(),
 });
+
+/** @typedef {z.infer<typeof RequestPageSchema>} RequestPage */
+export let RequestPageSchema = z.object({
+    page: z.string(),
+});
