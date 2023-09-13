@@ -1,15 +1,27 @@
-import { LitElement, html, css, createRef, ref, repeat } from 'https://cdn.jsdelivr.net/gh/lit/dist@2/all/lit-all.min.js';
+import { LitElement, css, html, createRef, ref, repeat } from 'https://cdn.jsdelivr.net/gh/lit/dist@2/all/lit-all.min.js';
 
 export class LocalData extends LitElement {
     static properties = {
         data: { state: true },
     };
 
+    static styles = css`
+        :host,
+        pre {
+            height: 10rem;
+            overflow-y: scroll;
+        }
+    `;
+
     _initLoop = null;
+    _debug = null;
 
     constructor() {
         super();
         this.data = {};
+
+        this._debug = window.DEBUG_MODE;
+        delete window["DEBUG_MODE"];
     }
 
     set(value) {
@@ -40,8 +52,11 @@ export class LocalData extends LitElement {
     }
 
     render() {
-        return window.DEBUG_MODE
-            ? html` <p>${JSON.stringify(this.data)}</p>
+        return this._debug
+            ? html` <span>LOCAL DATA:</span>
+                  <pre>
+${JSON.stringify(this.data, undefined, 2)}
+</pre>
                   <hr />`
             : html``;
     }
