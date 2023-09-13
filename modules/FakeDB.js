@@ -45,12 +45,12 @@ export function findUserBySession(token) {
 
 /** @param {import("./Models").Session data} */
 export function validateUserSession(data) {
+    const valid = SessionSchema.safeParse(data).success;
+    DEBUG("validateUserSession", data, "is valid:", valid);
+
+    if (!valid) return false;
+
     const { id, token } = data;
-
-    DEBUG("validateUserSession", data);
-
-    if (!SessionSchema.safeParse(data).success) return false;
-
     const user = DB.users.find((user) => user.id === id);
     return user && user.token === token;
 }

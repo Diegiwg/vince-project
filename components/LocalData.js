@@ -36,11 +36,14 @@ export class LocalData extends LitElement {
         // Init the Communication with the server
         this._initLoop = setInterval(() => {
             EmitEvent("Init", this.data);
-        }, 1_000);
+        }, 5_000);
     }
 
     render() {
-        return html` <p>${JSON.stringify(this.data)}</p> `;
+        return window.DEBUG_MODE
+            ? html` <p>${JSON.stringify(this.data)}</p>
+                  <hr />`
+            : html``;
     }
 }
 

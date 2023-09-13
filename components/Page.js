@@ -2,7 +2,15 @@ import { LitElement, html } from "lit";
 
 export class ExPage extends LitElement {
     static properties = {
-        content: { type: String },
+        content: {
+            converter: (value) => {
+                if (!value) return "";
+
+                console.log("Converting page...");
+
+                return document.createRange().createContextualFragment(value);
+            },
+        },
     };
 
     constructor() {
@@ -21,6 +29,8 @@ export class ExPage extends LitElement {
         });
 
         ListenEvent("RenderPage", (payload) => {
+            console.log("Rendering page...");
+
             const { content } = payload;
             delete payload.content;
 

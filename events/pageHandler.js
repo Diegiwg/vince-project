@@ -12,7 +12,7 @@ export function requestPage(io) {
         "Event::RequestPage",
         /** @param {import("../modules/Models.js").RequestPage} data */
         (data) => {
-            DEBUG("Event::Init");
+            DEBUG("Event::RequestPage");
 
             if (!RequestPageSchema.safeParse(data).success) return;
 

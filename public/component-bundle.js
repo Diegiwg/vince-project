@@ -36,11 +36,14 @@ export class LocalData extends LitElement {
         // Init the Communication with the server
         this._initLoop = setInterval(() => {
             EmitEvent("Init", this.data);
-        }, 1_000);
+        }, 5_000);
     }
 
     render() {
-        return html` <p>${JSON.stringify(this.data)}</p> `;
+        return window.DEBUG_MODE
+            ? html` <p>${JSON.stringify(this.data)}</p>
+                  <hr />`
+            : html``;
     }
 }
 
@@ -48,7 +51,15 @@ customElements.define("ex-local-data", LocalData);
 
 export class ExPage extends LitElement {
     static properties = {
-        content: { type: String },
+        content: {
+            converter: (value) => {
+                if (!value) return "";
+
+                console.log("Converting page...");
+
+                return document.createRange().createContextualFragment(value);
+            },
+        },
     };
 
     constructor() {
@@ -67,6 +78,8 @@ export class ExPage extends LitElement {
         });
 
         ListenEvent("RenderPage", (payload) => {
+            console.log("Rendering page...");
+
             const { content } = payload;
             delete payload.content;
 
