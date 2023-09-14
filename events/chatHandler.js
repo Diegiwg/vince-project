@@ -1,6 +1,7 @@
 import { DEBUG } from "../modules/Debug.js";
-import { findUserBySession, validateUserSession } from "../modules/FakeDB.js";
-import { NewMessageSchema } from "../modules/Models.js";
+import { NewMessageSchema, SessionSchema } from "../modules/Models.js";
+import { emitRenderPageEvent } from "../modules/Page.js";
+import { $User } from "../modules/Prisma.js";
 import { TOAST } from "../modules/Toast.js";
 
 /** @param {import("../Models").io} io */
@@ -10,11 +11,20 @@ export function newMessage(io) {
     client.on(
         "Event::NewMessage",
         /** @param {import("../Models").NewMessage} data */
-        (data) => {
+        async (data) => {
             DEBUG("Event::NewMessage");
 
-            if (!validateUserSession(client, data))
-                return TOAST.INFO(client, null, "Sessão inválida.");
+            if (!SessionSchema.safeParse(data).success) {
+                TOAST.INFO(client, null, "Sessão inválida.");
+                return emitRenderPageEvent(client, "Login");
+            }
+
+            const { id, token } = data;
+
+            if (!(await $User.validateSession(id, token))) {
+                TOAST.INFO(client, null, "Sessão inválida.");
+                return emitRenderPageEvent(client, "Login");
+            }
 
             if (!NewMessageSchema.safeParse(data).success)
                 return TOAST.WARN(
@@ -24,11 +34,13 @@ export function newMessage(io) {
                 );
 
             const { room, message } = data;
-            const user_name = findUserBySession(data.token).name;
+
+            const user_name = (await $User.findBySession(id, token)).name;
 
             server.to(room).emit("Event::NewMessage", {
                 message: `${user_name}: ${message}`,
             });
+
             TOAST.SUCCESS(client, 1_000, "Mensagem enviada.");
         }
     );

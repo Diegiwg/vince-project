@@ -1,17 +1,8 @@
 import { DEBUG } from "../modules/Debug.js";
-import {
-    createAccount,
-    findUserByEmail,
-    generateNewSessionToken,
-    validateUserPassword,
-    validateUserSession,
-} from "../modules/FakeDB.js";
-import {
-    CreateAccountSchema,
-    LoginSchema,
-    SessionSchema,
-} from "../modules/Models.js";
+import { createAccount, findUserByEmail } from "../modules/FakeDB.js";
+import { CreateAccountSchema, LoginSchema } from "../modules/Models.js";
 import { emitRenderPageEvent } from "../modules/Page.js";
+import { $User } from "../modules/Prisma.js";
 import { TOAST } from "../modules/Toast.js";
 
 /** @param {import("../modules/Models.js").io} io */
@@ -32,7 +23,7 @@ export function login(io) {
                 );
 
             // Try find user on DB
-            const user = findUserByEmail(data.email);
+            const user = await $User.findByEmail(data.email);
             if (!user)
                 return TOAST.ERROR(
                     client,
@@ -40,19 +31,18 @@ export function login(io) {
                     "Não foi encontrado usuário com esse e-mail."
                 );
 
-            let { id, token } = user;
+            const { id } = user;
 
             // Check password
-            if (!validateUserPassword(id, data.password))
+            if (!(await $User.validatePassword(id, data.password)))
                 return TOAST.ERROR(client, null, "Senha incorreta.");
 
-            // Update the token
-            token = generateNewSessionToken(id);
-
+            // Generate New Session Token and Go to Home
             emitRenderPageEvent(client, "Home", {
                 id,
-                token,
+                token: await $User._generateNewSessionToken(id),
             });
+
             TOAST.SUCCESS(client, null, "Logado com sucesso.");
         }
     );
@@ -89,16 +79,8 @@ export function creatingAccount(io) {
 export function logout(io) {
     const { client } = io;
 
-    client.on(
-        "Event::Logout",
-        /** @param {import("../modules/Models.js").Session} data */
-        (data) => {
-            DEBUG("Event::Logout");
-
-            if (!SessionSchema.safeParse(data).success) return;
-            if (!validateUserSession(client, data)) return;
-
-            emitRenderPageEvent(client, "Login");
-        }
-    );
+    client.on("Event::Logout", () => {
+        DEBUG("Event::Logout");
+        emitRenderPageEvent(client, "Login");
+    });
 }

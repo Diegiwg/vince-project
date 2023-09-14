@@ -1,7 +1,10 @@
-import { DB } from "../modules/FakeDB.js";
+import { $User } from "../modules/Prisma.js";
 
-export function load() {
+export async function load() {
     return {
-        users: DB.users.map((user) => ({ name: user.name, email: user.email })),
+        users: (await $User.findAll())?.map((user) => ({
+            name: user.name,
+            email: user.email,
+        })),
     };
 }

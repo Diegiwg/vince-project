@@ -1,6 +1,6 @@
 import { DEBUG } from "../modules/Debug.js";
-import { validateUserSession } from "../modules/FakeDB.js";
 import { emitRenderPageEvent } from "../modules/Page.js";
+import { $User } from "../modules/Prisma.js";
 
 const initialized_clients = [];
 
@@ -11,13 +11,16 @@ export function inicialConnection(io) {
     client.on(
         "Event::Init",
         /** @param {import("../modules/Models.js").Session} data */
-        (data) => {
+        async (data) => {
             if (initialized_clients.includes(client.id)) return;
 
             DEBUG("Event::Init");
             initialized_clients.push(client.id);
 
-            if (!validateUserSession(client, data)) return;
+            const { id, token } = data;
+
+            if (!id || !token || !(await $User.validateSession(id, token)))
+                return emitRenderPageEvent(client, "Login");
 
             return emitRenderPageEvent(client, "Home", data);
         }

@@ -1,8 +1,9 @@
 import { DEBUG } from "../modules/Debug.js";
-import { RequestPageSchema, NewMessageSchema, CreateAccountSchema, LoginSchema, SessionSchema } from "../modules/Models.js";
+import { RequestPageSchema, NewMessageSchema, SessionSchema, CreateAccountSchema, LoginSchema } from "../modules/Models.js";
 import { emitRenderPageEvent } from "../modules/Page.js";
-import { findUserBySession, validateUserSession, createAccount, findUserByEmail, generateNewSessionToken, validateUserPassword } from "../modules/FakeDB.js";
+import { $User } from "../modules/Prisma.js";
 import { TOAST } from "../modules/Toast.js";
+import { createAccount, findUserByEmail } from "../modules/FakeDB.js";
 
 const UNPROTECTED_ROUTES = ["Login", "CreateAccount"];
 
@@ -13,7 +14,7 @@ export function requestPage(io) {
     client.on(
         "Event::RequestPage",
         /** @param {import("../modules/Models.js").RequestPage} data */
-        (data) => {
+        async (data) => {
             DEBUG("Event::RequestPage");
 
             if (!RequestPageSchema.safeParse(data).success) return;
@@ -23,12 +24,16 @@ export function requestPage(io) {
             if (UNPROTECTED_ROUTES.includes(page))
                 return emitRenderPageEvent(client, page, data);
 
-            if (!validateUserSession(client, data)) return;
+            const { id, token } = data;
+
+            if (!id || !token || !(await $User.validateSession(id, token)))
+                return emitRenderPageEvent(client, "Login");
 
             return emitRenderPageEvent(client, page, data);
         }
     );
 }
+
 
 
 
@@ -41,11 +46,20 @@ export function newMessage(io) {
     client.on(
         "Event::NewMessage",
         /** @param {import("../Models").NewMessage} data */
-        (data) => {
+        async (data) => {
             DEBUG("Event::NewMessage");
 
-            if (!validateUserSession(client, data))
-                return TOAST.INFO(client, null, "Sessão inválida.");
+            if (!SessionSchema.safeParse(data).success) {
+                TOAST.INFO(client, null, "Sessão inválida.");
+                return emitRenderPageEvent(client, "Login");
+            }
+
+            const { id, token } = data;
+
+            if (!(await $User.validateSession(id, token))) {
+                TOAST.INFO(client, null, "Sessão inválida.");
+                return emitRenderPageEvent(client, "Login");
+            }
 
             if (!NewMessageSchema.safeParse(data).success)
                 return TOAST.WARN(
@@ -55,11 +69,13 @@ export function newMessage(io) {
                 );
 
             const { room, message } = data;
-            const user_name = findUserBySession(data.token).name;
+
+            const user_name = (await $User.findBySession(id, token)).name;
 
             server.to(room).emit("Event::NewMessage", {
                 message: `${user_name}: ${message}`,
             });
+
             TOAST.SUCCESS(client, 1_000, "Mensagem enviada.");
         }
     );
@@ -84,6 +100,7 @@ export function registerRoom(io) {
 
 
 
+
 /** @param {import("../modules/Models.js").io} io */
 export function login(io) {
     const { client } = io;
@@ -102,7 +119,7 @@ export function login(io) {
                 );
 
             // Try find user on DB
-            const user = findUserByEmail(data.email);
+            const user = await $User.findByEmail(data.email);
             if (!user)
                 return TOAST.ERROR(
                     client,
@@ -110,19 +127,18 @@ export function login(io) {
                     "Não foi encontrado usuário com esse e-mail."
                 );
 
-            let { id, token } = user;
+            const { id } = user;
 
             // Check password
-            if (!validateUserPassword(id, data.password))
+            if (!(await $User.validatePassword(id, data.password)))
                 return TOAST.ERROR(client, null, "Senha incorreta.");
 
-            // Update the token
-            token = generateNewSessionToken(id);
-
+            // Generate New Session Token and Go to Home
             emitRenderPageEvent(client, "Home", {
                 id,
-                token,
+                token: await $User._generateNewSessionToken(id),
             });
+
             TOAST.SUCCESS(client, null, "Logado com sucesso.");
         }
     );
@@ -159,18 +175,10 @@ export function creatingAccount(io) {
 export function logout(io) {
     const { client } = io;
 
-    client.on(
-        "Event::Logout",
-        /** @param {import("../modules/Models.js").Session} data */
-        (data) => {
-            DEBUG("Event::Logout");
-
-            if (!SessionSchema.safeParse(data).success) return;
-            if (!validateUserSession(client, data)) return;
-
-            emitRenderPageEvent(client, "Login");
-        }
-    );
+    client.on("Event::Logout", () => {
+        DEBUG("Event::Logout");
+        emitRenderPageEvent(client, "Login");
+    });
 }
 
 
@@ -185,13 +193,16 @@ export function inicialConnection(io) {
     client.on(
         "Event::Init",
         /** @param {import("../modules/Models.js").Session} data */
-        (data) => {
+        async (data) => {
             if (initialized_clients.includes(client.id)) return;
 
             DEBUG("Event::Init");
             initialized_clients.push(client.id);
 
-            if (!validateUserSession(client, data)) return;
+            const { id, token } = data;
+
+            if (!id || !token || !(await $User.validateSession(id, token)))
+                return emitRenderPageEvent(client, "Login");
 
             return emitRenderPageEvent(client, "Home", data);
         }

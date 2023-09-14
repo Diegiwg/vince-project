@@ -1,6 +1,7 @@
 import { DEBUG } from "../modules/Debug.js";
 import { RequestPageSchema } from "../modules/Models.js";
 import { emitRenderPageEvent } from "../modules/Page.js";
+import { $User } from "../modules/Prisma.js";
 
 const UNPROTECTED_ROUTES = ["Login", "CreateAccount"];
 
@@ -11,7 +12,7 @@ export function requestPage(io) {
     client.on(
         "Event::RequestPage",
         /** @param {import("../modules/Models.js").RequestPage} data */
-        (data) => {
+        async (data) => {
             DEBUG("Event::RequestPage");
 
             if (!RequestPageSchema.safeParse(data).success) return;
@@ -21,7 +22,10 @@ export function requestPage(io) {
             if (UNPROTECTED_ROUTES.includes(page))
                 return emitRenderPageEvent(client, page, data);
 
-            if (!validateUserSession(client, data)) return;
+            const { id, token } = data;
+
+            if (!id || !token || !(await $User.validateSession(id, token)))
+                return emitRenderPageEvent(client, "Login");
 
             return emitRenderPageEvent(client, page, data);
         }
