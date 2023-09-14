@@ -45,8 +45,6 @@ export const $User = {
         const _user = await $User.findByEmail(email);
         if (_user) return false;
 
-        console.log(name, email, password, _user);
-
         return await prisma.user.create({
             data: {
                 name,
