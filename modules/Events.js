@@ -3,7 +3,7 @@ import path from "path";
 import { Server, Socket } from "socket.io";
 import { fileURLToPath } from "url";
 
-import { INFO, SUCCESS, DEBUG, WARN } from "./Debug.js";
+import { DEBUG, INFO, SUCCESS } from "./Debug.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -85,7 +85,7 @@ export async function compileEvents() {
         compiled_imports + contents.trim()
     );
 
-    SUCCESS("Events blundled!");
+    SUCCESS("Events bundled!");
 }
 
 /** @param {import("../modules/Models.js").io} io  */
