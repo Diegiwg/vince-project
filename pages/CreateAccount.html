@@ -1,46 +1,72 @@
 <h1>Criar Conta</h1>
 
-<form>
+<form id="CreateAccountForm">
+    <label for="name">Nome:</label>
+    <input required type="text" name="name" />
+
     <label for="email">E-mail:</label>
-    <input type="email" name="email" />
+    <input required type="email" name="email" />
+
     <label for="password">Senha:</label>
-    <input type="password" name="password" />
+    <input required type="password" name="password" />
+
+    <div class="buttons">
+        <button id="LoginPage">Voltar</button>
+        <button id="Submit">Criar</button>
+    </div>
 </form>
 
-<br />
-
-<div class="buttons">
-    <ex-button componentId="CreateAccountSubmit" asTitle="true"
-        >Criar</ex-button
-    >
-    <ex-button componentId="LoginPage" asTitle="true"
-        >Voltar para o Login</ex-button
-    >
-</div>
-
 <script>
-    setTimeout(() => {
-        CreateAccountSubmit.addEventListener("click", (event) => {
+    (function () {
+        /** @param {PointerEvent | SubmitEvent} event */
+        const _submitHandler = (event) => {
+            if (event.type === "submit") event.preventDefault();
+
+            const name = Page().querySelector("[name=name]");
             const email = Page().querySelector("[name=email]");
             const password = Page().querySelector("[name=password]");
 
-            console.log(Page().querySelectorAll("[name]"));
-        });
+            if (!name.value || !email.value || !password.value) return;
 
-        LoginPage.addEventListener("click", (event) => {
-            EmitEvent("RequestPage", { page: "Login" });
+            EmitEvent("CreateAccount", {
+                name: name.value,
+                email: email.value,
+                password: password.value,
+            });
+        };
+
+        setTimeout(() => {
+            Page()
+                .querySelector("#CreateAccountForm")
+                .addEventListener("submit", _submitHandler);
+
+            Page()
+                .querySelector("#Submit")
+                .addEventListener("click", _submitHandler);
+
+            Page()
+                .querySelector("#LoginPage")
+                .addEventListener("click", () =>
+                    EmitEvent("RequestPage", { page: "Login" })
+                );
         });
-    });
+    })();
 </script>
 
 <style>
     form {
         display: flex;
         flex-direction: column;
+        width: 29rem;
     }
 
     .buttons {
         display: flex;
         gap: 1rem;
+        margin-top: 5px;
+
+        > button {
+            width: 14rem;
+        }
     }
 </style>

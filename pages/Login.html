@@ -1,20 +1,28 @@
 <h1>Login</h1>
 
-<form>
+<form id="LoginForm">
     <label for="email">E-mail:</label>
-    <input type="email" name="email" />
+    <input
+        required
+        type="email"
+        name="email"
+        autocomplete="email"
+        autofocus="true"
+    />
+
     <label for="password">Senha:</label>
-    <input type="password" name="password" />
+    <input
+        required
+        type="password"
+        name="password"
+        autocomplete="current-password"
+    />
+
+    <div class="buttons">
+        <button id="Submit">Logar</button>
+        <button id="CreateAccountPage">Criar Conta</button>
+    </div>
 </form>
-
-<br />
-
-<div class="buttons">
-    <ex-button componentId="LoginSubmit" asTitle="true">Logar</ex-button>
-    <ex-button componentId="CreateAccount" asTitle="true"
-        >Criar Conta</ex-button
-    >
-</div>
 
 <hr />
 
@@ -29,8 +37,11 @@
 </div>
 
 <script>
-    setTimeout(() => {
-        LoginSubmit.addEventListener("click", (event) => {
+    (function () {
+        /** @param {PointerEvent | SubmitEvent} event */
+        const _submitHandler = (event) => {
+            if (event.type === "submit") event.preventDefault();
+
             const email = Page().querySelector("[name=email]");
             const password = Page().querySelector("[name=password]");
 
@@ -40,22 +51,40 @@
                 email: email.value,
                 password: password.value,
             });
-        });
+        };
 
-        CreateAccount.addEventListener("click", (event) => {
-            EmitEvent("RequestPage", { page: "CreateAccount" });
+        setTimeout(() => {
+            Page()
+                .querySelector("#LoginForm")
+                .addEventListener("submit", _submitHandler);
+
+            Page()
+                .querySelector("#Submit")
+                .addEventListener("click", _submitHandler);
+
+            Page()
+                .querySelector("#CreateAccountPage")
+                .addEventListener("click", (event) =>
+                    EmitEvent("RequestPage", { page: "CreateAccount" })
+                );
         });
-    });
+    })();
 </script>
 
 <style>
     form {
         display: flex;
         flex-direction: column;
+        width: 29rem;
     }
 
     .buttons {
         display: flex;
         gap: 1rem;
+        margin-top: 5px;
+
+        > button {
+            width: 14rem;
+        }
     }
 </style>

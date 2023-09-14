@@ -1,5 +1,4 @@
 import { DEBUG } from "../modules/Debug.js";
-import { createAccount, findUserByEmail } from "../modules/FakeDB.js";
 import { CreateAccountSchema, LoginSchema } from "../modules/Models.js";
 import { emitRenderPageEvent } from "../modules/Page.js";
 import { $User } from "../modules/Prisma.js";
@@ -49,28 +48,33 @@ export function login(io) {
 }
 
 /** @param {import("../modules/Models.js").io} io */
-export function creatingAccount(io) {
+export function createAccount(io) {
     const { client } = io;
 
     client.on(
-        "Event::CreatingAccount",
+        "Event::CreateAccount",
         /** @param {import("../modules/Models.js").CreateAccount} data */
         async (data) => {
-            DEBUG("Event::CreatingAccount");
+            DEBUG("Event::CreateAccount");
 
-            if (!CreateAccountSchema.safeParse(data).success) return;
+            if (!CreateAccountSchema.safeParse(data).success)
+                return TOAST.WARN(
+                    client,
+                    null,
+                    "Os dados fornecidos estão inválidos."
+                );
 
-            // Try find user on DB
-            const emailInUse = findUserByEmail(data.email);
-            if (emailInUse) return;
+            const { name, email, password } = data;
 
             // Try create user on DB
-            const user = createAccount(data);
+            const user = await $User.create(name, email, password);
+            if (!user) return TOAST.ERROR(client, null, "Erro ao criar conta.");
 
             emitRenderPageEvent(client, "Home", {
                 id: user.id,
                 token: user.token,
             });
+            TOAST.SUCCESS(client, null, "Conta criada com sucesso.");
         }
     );
 }

@@ -41,7 +41,20 @@ export const $User = {
         return bcrypt.compareSync(password, _user.password);
     },
 
-    create: async () => {},
+    create: async (name, email, password) => {
+        const _user = await $User.findByEmail(email);
+        if (_user) return false;
+
+        console.log(name, email, password, _user);
+
+        return await prisma.user.create({
+            data: {
+                name,
+                email,
+                password: bcrypt.hashSync(password, 10),
+            },
+        });
+    },
 
     _generateNewSessionToken: async (id) => {
         const _user = await $User.findById(id);

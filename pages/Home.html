@@ -1,10 +1,12 @@
 <ex-chat></ex-chat>
 
 <br />
-<button is="ex-button" id="logout">Sair da Conta</button>
+<button id="Logout">Sair da Conta</button>
 
 <script>
-    Page().querySelector("#logout").onclick = () => {
-        EmitEvent("Logout");
-    };
+    (function () {
+        Page().querySelector("#Logout").onclick = () => {
+            EmitEvent("Logout");
+        };
+    })();
 </script>
