@@ -8,7 +8,7 @@ import { CONFIG } from "./config.js";
 import { compileApp } from "./modules/App.js";
 import { compileComponents } from "./modules/Component.js";
 import { WARN } from "./modules/Debug.js";
-import { loadEventHandler, compileEvents } from "./modules/Events.js";
+import { compileEvents, loadEventHandler } from "./modules/Events.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -16,8 +16,6 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const server = createServer(app);
 const io = new Server(server);
-
-WARN(`Server is listening on http://localhost:${CONFIG.port}`);
 
 // Compile Events Bundle
 compileEvents();
@@ -38,3 +36,5 @@ app.get("/", (_, res) => {
 app.use("/static", express.static("public"));
 
 server.listen(CONFIG.port);
+
+WARN(`Server is listening on http://localhost:${CONFIG.port}`);
