@@ -1,59 +1,4 @@
 import fs from "fs";
-import { jsmin } from "jsmin";
-import mustache from "mustache";
-
-async function loadPageData(name) {
-    if (!fs.existsSync(`pages/${name}.js`)) return;
-
-    const module = await import(`../pages/${name}.js`);
-
-    if (!Object.keys(module).includes("load")) return;
-
-    return module.load();
-}
-
-/** @param {String} html  */
-function minifyJavascript(html) {
-    const scripts = html.match(/<script\b[^>]*>([\s\S]*?)<\/script>/gim);
-
-    if (!scripts) return html;
-
-    for (let script of scripts) {
-        const minified = jsmin(script, 3);
-        html = html.replace(script, minified);
-    }
-
-    return html;
-}
-
-export async function loadPage(name, data) {
-    if (!fs.existsSync(`pages/${name}.html`)) return;
-
-    let html = fs.readFileSync(`pages/${name}.html`, "utf8");
-    const page_data = await loadPageData(name);
-
-    html = mustache.render(html, {
-        ...page_data,
-        ...data,
-    });
-
-    html = minifyJavascript(html);
-
-    return { html, page_data };
-}
-
-export async function emitRenderPageEvent(client, name, data) {
-    const loaded = await loadPage(name, data);
-    if (!loaded) return;
-
-    client.emit("Event::RenderPage", {
-        page: name,
-        page_data: loaded.page_data,
-        content: loaded.html,
-
-        ...data,
-    });
-}
 
 // Version: 2.0.0
 
@@ -134,18 +79,36 @@ async function _js(file_name) {
     if (Object.keys(module).includes("mount")) {
         let temp = module.mount
             .toString()
-            .replace("mount()", "()")
             .replace("export", "")
             .replace("async", "")
+            .replace("mount()", "()")
             .trim();
-        f_mount = `(
+
+        f_mount = `<script type="module"> (
             ${temp}
-        )();`;
+        )(); </script>`;
     }
 
     return {
         f_load,
         f_mount,
+    };
+}
+
+/** @param {String} name */
+async function _load(name) {
+    if (!$DATA.pages.has(name)) return; // Retornar erro de pagina não existe
+
+    const page = $DATA.files.get(name);
+
+    let data = {};
+    if (page.load) {
+        data = await page.load();
+    }
+
+    return {
+        html: page.content,
+        page_data: data,
     };
 }
 
@@ -155,7 +118,7 @@ const $DATA = {
     files: new Map(),
 };
 
-async function bundler() {
+export async function PageBundler() {
     if (!fs.existsSync("pages")) return;
 
     const files = fs.readdirSync("pages");
@@ -167,26 +130,35 @@ async function bundler() {
     for (const [name, data] of filtered_files) {
         let html = _html(name);
 
+        let css = "";
         if (data.css) {
-            const temp = _css(name);
-            html += temp;
+            css = _css(name);
         }
 
+        let js = "";
+        let f_load = null;
         if (data.js) {
-            console.log("a", name);
             const temp = await _js(name);
-            console.log(temp.f_mount);
+            f_load = temp.f_load;
+            js = temp.f_mount;
         }
+
+        html = html + css + js;
+
+        $DATA.pages.add(name);
+        $DATA.files.set(name, { content: html, load: f_load });
     }
 }
 
-/** @param {String} name */
-function load(name) {
-    if (!$DATA.pages.has(name)) return; // Retornar erro de pagina não existe
-}
+export async function emitRenderPageEvent(client, name, data) {
+    const loaded = await _load(name);
+    if (!loaded) return;
 
-export default {
-    bundler,
-    load,
-    _memory: $DATA,
-};
+    client.emit("Event::RenderPage", {
+        page: name,
+        page_data: loaded.page_data,
+        content: loaded.html,
+
+        ...data,
+    });
+}
