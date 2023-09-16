@@ -1,0 +1,34 @@
+export function mount() {
+    /** @param {PointerEvent | SubmitEvent} event */
+    const _submitHandler = (event) => {
+        if (event.type === "submit") event.preventDefault();
+
+        const name = Page().querySelector("[name=name]");
+        const email = Page().querySelector("[name=email]");
+        const password = Page().querySelector("[name=password]");
+
+        if (!name.value || !email.value || !password.value) return;
+
+        EmitEvent("CreateAccount", {
+            name: name.value,
+            email: email.value,
+            password: password.value,
+        });
+    };
+
+    setTimeout(() => {
+        Page()
+            .querySelector("#CreateAccountForm")
+            .addEventListener("submit", _submitHandler);
+
+        Page()
+            .querySelector("#Submit")
+            .addEventListener("click", _submitHandler);
+
+        Page()
+            .querySelector("#LoginPage")
+            .addEventListener("click", () =>
+                EmitEvent("RequestPage", { page: "Login" })
+            );
+    });
+}

@@ -23,35 +23,3 @@
     <button id="Submit">Logar</button>
     <button id="CreateAccountPage">Criar Conta</button>
 </div>
-
-<hr />
-
-<div id="users">
-    <p>Usuários Disponíveis para Teste:</p>
-    {{#users}}
-    <p>
-        <strong>Nome:</strong> {{name}} - <strong>Email:</strong> {{email}} -
-        <strong>Senha:</strong> test
-    </p>
-    {{/users}}
-</div>
-
-<script></script>
-
-<style>
-    form {
-        display: flex;
-        flex-direction: column;
-        width: 29rem;
-    }
-
-    .buttons {
-        display: flex;
-        gap: 1rem;
-        margin-top: 5px;
-
-        > button {
-            width: 14rem;
-        }
-    }
-</style>
