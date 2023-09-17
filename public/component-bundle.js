@@ -68,7 +68,7 @@ export class ExPage extends LitElement {
     static properties = {
         content: {
             converter: (value) => {
-                if (!value) return "";
+                if (!value) return;
 
                 console.log("Converting page...");
 
@@ -76,10 +76,6 @@ export class ExPage extends LitElement {
             },
         },
     };
-
-    constructor() {
-        super();
-    }
 
     registerEventListener() {
         console.log("Registering events...");
@@ -117,9 +113,7 @@ export class ExPage extends LitElement {
 
         // Enable search elements in page by components.page
         setTimeout(() => {
-            window.Component("Page", () => {
-                return this.shadowRoot;
-            });
+            window.Component("Page", this.shadowRoot);
         });
     }
 

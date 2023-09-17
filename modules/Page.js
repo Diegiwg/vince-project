@@ -150,6 +150,13 @@ export async function PageBundler() {
     }
 }
 
+/**
+ *
+ * @param {import("socket.io").Socket} client
+ * @param {import("./Functions.js").Pages} name
+ * @param {Object} data
+ * @returns
+ */
 export async function emitRenderPageEvent(client, name, data) {
     const loaded = await _load(name);
     if (!loaded) return;

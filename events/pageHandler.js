@@ -1,11 +1,10 @@
 import { safeParse } from "valibot";
 
+import { CONFIG } from "../config.js";
 import { DEBUG } from "../modules/Debug.js";
 import { RequestPageSchema } from "../modules/Models.js";
 import { emitRenderPageEvent } from "../modules/Page.js";
 import { $User } from "../modules/Prisma.js";
-
-const UNPROTECTED_ROUTES = ["Login", "CreateAccount"];
 
 /** @param {import("../modules/Models.js").io} io  */
 export function requestPage(io) {
@@ -21,7 +20,7 @@ export function requestPage(io) {
 
             const { page } = data;
 
-            if (UNPROTECTED_ROUTES.includes(page))
+            if (CONFIG.unprotectedRoutes.includes(page))
                 return emitRenderPageEvent(client, page, data);
 
             const { id, token } = data;

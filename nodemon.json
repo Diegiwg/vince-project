@@ -1,4 +1,12 @@
 {
-    "ignore": ["*.json", "public/", "*-bundle.js"],
-    "watch": ["*.*"]
+    "ignore": [
+        "*.json",
+        "public/",
+        "*-bundle.js",
+        "Functions.js"
+    ],
+    "watch": [
+        "*.*",
+        "/pages/*.*"
+    ]
 }

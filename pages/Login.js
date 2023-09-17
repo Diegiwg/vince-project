@@ -1,3 +1,4 @@
+import { Page, EmitEvent } from "../modules/Functions.js";
 import { $User } from "../modules/Prisma.js";
 
 export async function load() {
@@ -14,8 +15,8 @@ export async function mount() {
     const _submitHandler = (event) => {
         if (event.type === "submit") event.preventDefault();
 
-        const email = Page().querySelector("[name=email]");
-        const password = Page().querySelector("[name=password]");
+        const email = Page.querySelector("[name=email]");
+        const password = Page.querySelector("[name=password]");
 
         if (!email.value || !password.value) return;
 
@@ -26,18 +27,15 @@ export async function mount() {
     };
 
     setTimeout(() => {
-        Page()
-            .querySelector("#LoginForm")
-            .addEventListener("submit", _submitHandler);
+        Page.querySelector("#LoginForm").addEventListener(
+            "submit",
+            _submitHandler
+        );
 
-        Page()
-            .querySelector("#Submit")
-            .addEventListener("click", _submitHandler);
+        Page.querySelector("#Submit").addEventListener("click", _submitHandler);
 
-        Page()
-            .querySelector("#CreateAccountPage")
-            .addEventListener("click", (event) =>
-                EmitEvent("RequestPage", { page: "CreateAccount" })
-            );
+        Page.querySelector("#CreateAccountPage").addEventListener("click", () =>
+            EmitEvent("RequestPage", { page: "CreateAccount" })
+        );
     });
 }

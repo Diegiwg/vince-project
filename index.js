@@ -17,6 +17,9 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server);
 
+// Compile Devtools Infos
+import("./modules/Develop.js");
+
 // Compile Pages Bundle
 PageBundler();
 

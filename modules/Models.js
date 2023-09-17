@@ -1,9 +1,4 @@
-import { Server, Socket } from "socket.io";
 import { email, minValue, number, object, string } from "valibot";
-
-/** @typedef {{client: Socket, server: Server}} io */
-
-/** @typedef {{ type: "SUCCESS" | "ERROR" | "INFO" | "WARN"; message: string; time: number }} Toast */
 
 /** @typedef {import('valibot').Output<typeof UserSchema>} User */
 export let UserSchema = object({

@@ -1,11 +1,13 @@
+import { EmitEvent, Page } from "../modules/Functions.js";
+
 export function mount() {
     /** @param {PointerEvent | SubmitEvent} event */
     const _submitHandler = (event) => {
         if (event.type === "submit") event.preventDefault();
 
-        const name = Page().querySelector("[name=name]");
-        const email = Page().querySelector("[name=email]");
-        const password = Page().querySelector("[name=password]");
+        const name = Page.querySelector("[name=name]");
+        const email = Page.querySelector("[name=email]");
+        const password = Page.querySelector("[name=password]");
 
         if (!name.value || !email.value || !password.value) return;
 
@@ -17,18 +19,15 @@ export function mount() {
     };
 
     setTimeout(() => {
-        Page()
-            .querySelector("#CreateAccountForm")
-            .addEventListener("submit", _submitHandler);
+        Page.querySelector("#CreateAccountForm").addEventListener(
+            "submit",
+            _submitHandler
+        );
 
-        Page()
-            .querySelector("#Submit")
-            .addEventListener("click", _submitHandler);
+        Page.querySelector("#Submit").addEventListener("click", _submitHandler);
 
-        Page()
-            .querySelector("#LoginPage")
-            .addEventListener("click", () =>
-                EmitEvent("RequestPage", { page: "Login" })
-            );
+        Page.querySelector("#LoginPage").addEventListener("click", () =>
+            EmitEvent("RequestPage", { page: "Login" })
+        );
     });
 }
