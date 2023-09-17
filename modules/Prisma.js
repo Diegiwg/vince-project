@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
+import { safeParse } from "valibot";
 
 import { SessionSchema } from "./Models.js";
 
@@ -28,7 +29,7 @@ export const $User = {
     },
 
     validateSession: async (id, token) => {
-        const isValid = SessionSchema.safeParse({ id, token }).success;
+        const isValid = safeParse(SessionSchema, { id, token }).success;
         if (!isValid) return false;
 
         return await $User.findBySession(id, token);

@@ -1,3 +1,5 @@
+import { safeParse } from "valibot";
+
 import { DEBUG } from "../modules/Debug.js";
 import { CreateAccountSchema, LoginSchema } from "../modules/Models.js";
 import { emitRenderPageEvent } from "../modules/Page.js";
@@ -14,7 +16,7 @@ export function login(io) {
         async (data) => {
             DEBUG("Event::Login");
 
-            if (!LoginSchema.safeParse(data).success)
+            if (!safeParse(LoginSchema, data).success)
                 return TOAST.WARN(
                     client,
                     null,
@@ -57,7 +59,7 @@ export function createAccount(io) {
         async (data) => {
             DEBUG("Event::CreateAccount");
 
-            if (!CreateAccountSchema.safeParse(data).success)
+            if (!safeParse(CreateAccountSchema, data).success)
                 return TOAST.WARN(
                     client,
                     null,

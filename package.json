@@ -18,7 +18,7 @@
         "lit": "^2.8.0",
         "mustache": "^4.2.0",
         "socket.io": "^4.7.2",
-        "zod": "^3.22.2"
+        "valibot": "^0.16.0"
     },
     "devDependencies": {
         "localtunnel": "^2.0.2",

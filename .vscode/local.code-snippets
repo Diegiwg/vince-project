@@ -1,0 +1,10 @@
+{
+    "new-type": {
+        "prefix": "!new-type",
+        "description": "Creates a new Type using Valibot API",
+        "body": [
+            "/** @typedef {import('valibot').Output<typeof $1Schema>} $1 */",
+            "export let $1Schema"
+        ]
+    }
+}

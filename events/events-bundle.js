@@ -3,6 +3,7 @@ import { RequestPageSchema, NewMessageSchema, SessionSchema, CreateAccountSchema
 import { emitRenderPageEvent } from "../modules/Page.js";
 import { $User } from "../modules/Prisma.js";
 import { TOAST } from "../modules/Toast.js";
+import { safeParse } from "valibot";
 
 const UNPROTECTED_ROUTES = ["Login", "CreateAccount"];
 
@@ -99,6 +100,8 @@ export function registerRoom(io) {
 
 
 
+
+
 /** @param {import("../modules/Models.js").io} io */
 export function login(io) {
     const { client } = io;
@@ -109,7 +112,7 @@ export function login(io) {
         async (data) => {
             DEBUG("Event::Login");
 
-            if (!LoginSchema.safeParse(data).success)
+            if (!safeParse(LoginSchema, data).success)
                 return TOAST.WARN(
                     client,
                     null,
@@ -152,7 +155,7 @@ export function createAccount(io) {
         async (data) => {
             DEBUG("Event::CreateAccount");
 
-            if (!CreateAccountSchema.safeParse(data).success)
+            if (!safeParse(CreateAccountSchema, data).success)
                 return TOAST.WARN(
                     client,
                     null,
