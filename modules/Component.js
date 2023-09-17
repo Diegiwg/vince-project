@@ -1,6 +1,6 @@
 import fs from "fs";
 
-import { DEBUG, INFO, SUCCESS } from "./Debug.js";
+import { DEBUG, INFO, SUCCESS } from "./Logger.js";
 
 function searchComponents() {
     const components = fs.readdirSync("./components");

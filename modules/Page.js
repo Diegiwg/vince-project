@@ -118,7 +118,7 @@ const $DATA = {
     files: new Map(),
 };
 
-export async function PageBundler() {
+export async function PagesBundler() {
     if (!fs.existsSync("pages")) return;
 
     const files = fs.readdirSync("pages");
@@ -157,7 +157,7 @@ export async function PageBundler() {
  * @param {Object} data
  * @returns
  */
-export async function emitRenderPageEvent(client, name, data) {
+export async function RenderPage(client, name, data) {
     const loaded = await _load(name);
     if (!loaded) return;
 

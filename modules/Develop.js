@@ -1,5 +1,7 @@
 import fs from "fs";
 
+import { INFO, SUCCESS } from "./Logger.js";
+
 function _updateFunctionsFile(new_data, target) {
     if (!target) return;
 
@@ -10,10 +12,10 @@ function _updateFunctionsFile(new_data, target) {
     fs.writeFileSync("./modules/Functions.js", content);
 }
 
-function _pages() {
-    if (!fs.existsSync("./pages")) return;
+async function _pages() {
+    if (!fs.existsSync("pages")) return;
 
-    const files = fs.readdirSync("./pages");
+    const files = fs.readdirSync("pages");
     if (!files) return;
 
     const l_pages = [];
@@ -28,8 +30,31 @@ function _pages() {
     );
 }
 
-function devtools() {
-    _pages();
+async function _events() {
+    if (!fs.existsSync("events")) return;
+
+    const files = fs.readdirSync("events");
+    if (!files) return;
+
+    const l_events = [];
+    for (const file of files) {
+        if (!file.endsWith(".js")) continue;
+
+        const l_module = await import(`../events/${file}`);
+        l_events.push(...Object.keys(l_module));
+    }
+
+    _updateFunctionsFile(
+        `/** @typedef {${l_events.map((p) => `"${p}"`).join("|")}} Events */`,
+        /\/\*\* @typedef {([\w|"']+?)} Events \*\//gm
+    );
 }
 
-devtools();
+(async function () {
+    INFO("Updating Development information!...");
+
+    await _pages();
+    await _events();
+
+    SUCCESS("Updated Development Information!...");
+})();

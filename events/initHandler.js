@@ -1,28 +1,22 @@
-import { DEBUG } from "../modules/Debug.js";
-import { emitRenderPageEvent } from "../modules/Page.js";
+import { DEBUG } from "../modules/Logger.js";
+import { RenderPage } from "../modules/Page.js";
 import { $User } from "../modules/Prisma.js";
 
-const initialized_clients = [];
+const initialized_clients = new Set();
 
-/** @param {import("../modules/Models.js").io} io  */
-export function inicialConnection(io) {
-    const { client } = io;
+/** @param {import("../modules/Functions.js").EventPayload} payload  */
+export async function Init(payload) {
+    const { client, data } = payload;
 
-    client.on(
-        "Event::Init",
-        /** @param {import("../modules/Models.js").Session} data */
-        async (data) => {
-            if (initialized_clients.includes(client.id)) return;
+    if (initialized_clients.has(client.id)) return;
 
-            DEBUG("Event::Init");
-            initialized_clients.push(client.id);
+    DEBUG("Event::Init");
+    initialized_clients.add(client.id);
 
-            const { id, token } = data;
+    const { id, token } = data;
 
-            if (!id || !token || !(await $User.validateSession(id, token)))
-                return emitRenderPageEvent(client, "Login");
+    if (!id || !token || !(await $User.validateSession(id, token)))
+        return RenderPage(client, "Login");
 
-            return emitRenderPageEvent(client, "Home", data);
-        }
-    );
+    return RenderPage(client, "Home", data);
 }

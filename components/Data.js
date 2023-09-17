@@ -1,6 +1,6 @@
 import { LitElement, css, html } from "lit";
 
-export class LocalData extends LitElement {
+export class ExData extends LitElement {
     static properties = {
         data: { state: true },
     };
@@ -53,7 +53,7 @@ export class LocalData extends LitElement {
 
     render() {
         return this._debug
-            ? html` <span>LOCAL DATA</span>
+            ? html` <span>DATA</span>
                   <pre>
 ${JSON.stringify(this.data, undefined, 2)}
 </pre>
@@ -62,4 +62,4 @@ ${JSON.stringify(this.data, undefined, 2)}
     }
 }
 
-customElements.define("ex-local-data", LocalData);
+customElements.define("ex-data", ExData);

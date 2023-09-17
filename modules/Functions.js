@@ -2,6 +2,8 @@ import { Server, Socket } from "socket.io";
 
 /** @typedef {{client: Socket, server: Server}} io */
 
+/** @typedef {{server: Server, client: Socket, data: Object}} EventPayload */
+
 /** @typedef {{ type: "SUCCESS" | "ERROR" | "INFO" | "WARN"; message: string; time: number }} Toast */
 
 /**
@@ -13,7 +15,9 @@ import { Server, Socket } from "socket.io";
  */
 export let Page;
 
-/** @typedef {"Ola"|"Mundo"|"Test"} Events */
+/** @typedef {"Home"|"Login"|"CreateAccount"} Pages */
+
+/** @typedef {"RequestPage"|"NewMessage"|"RegisterRoom"|"CreateAccount"|"Login"|"Logout"|"Init"} Events */
 
 /**
  * @description
@@ -24,5 +28,3 @@ export let Page;
  * EmitEvent("Test", { message: "Hello World" });
  */
 export function EmitEvent(target, payload) {}
-
-/** @typedef {"Home"|"Login"|"CreateAccount"} Pages */
