@@ -5,7 +5,6 @@ import { Server } from "socket.io";
 import { fileURLToPath } from "url";
 
 import { CONFIG } from "./config.js";
-import { compileApp } from "./modules/App.js";
 import { compileComponents } from "./modules/Component.js";
 import { WARN } from "./modules/Debug.js";
 import { compileEvents, loadEventHandler } from "./modules/Events.js";
@@ -24,9 +23,6 @@ PageBundler();
 // Compile Events Bundle
 compileEvents();
 
-// Compile app JS
-compileApp();
-
 // Compile Components Bundle
 compileComponents();
 
@@ -34,7 +30,7 @@ compileComponents();
 loadEventHandler(io);
 
 app.get("/", (_, res) => {
-    res.sendFile(__dirname + "/app/app.html");
+    res.sendFile(__dirname + "/public/app.html");
 });
 
 app.use("/static", express.static("public"));
