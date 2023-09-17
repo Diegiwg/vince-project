@@ -1,5 +1,7 @@
 import { LitElement, css, html, createRef, ref, repeat } from 'https://cdn.jsdelivr.net/gh/lit/dist@2/all/lit-all.min.js';
 
+
+
 export class ExData extends LitElement {
     static properties = {
         data: { state: true },
@@ -39,7 +41,7 @@ export class ExData extends LitElement {
     connectedCallback() {
         super.connectedCallback();
 
-        window.Component("Data", this);
+        Component("Data", this);
 
         // Search for saved data in local storage
         const saved = localStorage.getItem("data");
@@ -63,6 +65,8 @@ ${JSON.stringify(this.data, undefined, 2)}
 }
 
 customElements.define("ex-data", ExData);
+
+
 
 export class ExPage extends LitElement {
     static properties = {
@@ -113,7 +117,7 @@ export class ExPage extends LitElement {
 
         // Enable search elements in page by components.page
         setTimeout(() => {
-            window.Component("Page", this.shadowRoot);
+            Component("Page", this.shadowRoot);
         });
     }
 
@@ -130,6 +134,8 @@ export class ExPage extends LitElement {
 }
 
 customElements.define("ex-page", ExPage);
+
+
 
 export class ExChat extends LitElement {
     static properties = {
@@ -239,6 +245,8 @@ export class ExChat extends LitElement {
 
 customElements.define("ex-chat", ExChat);
 
+
+
 export class ExToast extends LitElement {
     static properties = {
         _queue: { state: true },
@@ -287,14 +295,14 @@ export class ExToast extends LitElement {
     constructor() {
         super();
 
-        /** @type {import('../modules/Models.js').Toast[]} */
+        /** @type {import('../modules/Functions.js').Toast[]} */
         this._queue = [];
 
-        /** @type {import('../modules/Models.js').Toast} */
+        /** @type {import('../modules/Functions.js').Toast} */
         this._current = null;
     }
 
-    /** @param {import('../modules/Models.js').Toast} data */
+    /** @param {import('../modules/Functions.js').Toast} data */
     add(data) {
         this._queue = [...this._queue, data];
         this._showHandler();
@@ -341,7 +349,7 @@ export class ExToast extends LitElement {
         });
 
         setTimeout(() => {
-            window.Component("Toast", this);
+            Component("Toast", this);
         });
     }
 

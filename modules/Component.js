@@ -46,6 +46,13 @@ function bundler(components) {
 
     final_imports = Array.from(final_imports).join(", ");
 
+    // TODO: Rewrite this Module
+    // INFO: Simple way for now to handle 'fake' imports
+    final_code = final_code.replaceAll(
+        /import {([\w,\s]+?)} from "\.\.\/modules\/Functions\.js";/gm,
+        ""
+    );
+
     // save component-bundle.js
     fs.writeFileSync(
         "./public/component-bundle.js",

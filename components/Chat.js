@@ -2,6 +2,13 @@ import { LitElement, css, html } from "lit";
 import { createRef, ref } from "lit/directives/ref";
 import { repeat } from "lit/directives/repeat";
 
+import {
+    Data,
+    EmitEvent,
+    ListenEvent,
+    RemoveEvent,
+} from "../modules/Functions.js";
+
 export class ExChat extends LitElement {
     static properties = {
         data: { type: [String] },

@@ -1,5 +1,7 @@
 import { LitElement, css, html } from "lit";
 
+import { ListenEvent, RemoveEvent } from "../modules/Functions.js";
+
 export class ExToast extends LitElement {
     static properties = {
         _queue: { state: true },
@@ -48,14 +50,14 @@ export class ExToast extends LitElement {
     constructor() {
         super();
 
-        /** @type {import('../modules/Models.js').Toast[]} */
+        /** @type {import('../modules/Functions.js').Toast[]} */
         this._queue = [];
 
-        /** @type {import('../modules/Models.js').Toast} */
+        /** @type {import('../modules/Functions.js').Toast} */
         this._current = null;
     }
 
-    /** @param {import('../modules/Models.js').Toast} data */
+    /** @param {import('../modules/Functions.js').Toast} data */
     add(data) {
         this._queue = [...this._queue, data];
         this._showHandler();
@@ -102,7 +104,7 @@ export class ExToast extends LitElement {
         });
 
         setTimeout(() => {
-            window.Component("Toast", this);
+            Component("Toast", this);
         });
     }
 

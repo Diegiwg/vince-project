@@ -1,5 +1,7 @@
 import { LitElement, html } from "lit";
 
+import { ListenEvent, RemoveEvent } from "../modules/Functions.js";
+
 export class ExPage extends LitElement {
     static properties = {
         content: {
@@ -49,7 +51,7 @@ export class ExPage extends LitElement {
 
         // Enable search elements in page by components.page
         setTimeout(() => {
-            window.Component("Page", this.shadowRoot);
+            Component("Page", this.shadowRoot);
         });
     }
 

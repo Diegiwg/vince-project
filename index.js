@@ -27,10 +27,10 @@ const io = new Server(server);
     // Compile Events Bundle
     await EventsBundler();
 
-    // Compile Components Bundle
+    // TODO: Rewrite this Module
     compileComponents();
 
-    // Load all events for Websocket
+    // Initialize the Event's Manager
     await HandlerEvents(io);
 
     // Final Log

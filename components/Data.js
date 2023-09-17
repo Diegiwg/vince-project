@@ -1,5 +1,7 @@
 import { LitElement, css, html } from "lit";
 
+import { EmitEvent } from "../modules/Functions.js";
+
 export class ExData extends LitElement {
     static properties = {
         data: { state: true },
@@ -39,7 +41,7 @@ export class ExData extends LitElement {
     connectedCallback() {
         super.connectedCallback();
 
-        window.Component("Data", this);
+        Component("Data", this);
 
         // Search for saved data in local storage
         const saved = localStorage.getItem("data");
