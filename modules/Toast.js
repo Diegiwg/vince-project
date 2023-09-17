@@ -1,9 +1,11 @@
+import { EmitServerEvent } from "./Events.js";
+
 /**
  * @param {import('socket.io').Socket} client
  * @param {import('./Models.js').Toast} data
  */
 function _sendToast(client, data) {
-    client.emit("Event::Toast", data);
+    EmitServerEvent(client, "Toast", data);
 }
 
 /**

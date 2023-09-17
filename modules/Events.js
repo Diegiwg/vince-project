@@ -51,3 +51,17 @@ export async function HandlerEvents(server) {
         }
     );
 }
+
+/**
+ * @param {import('socket.io').Socket|import('socket.io').Server} target
+ * @param {string} name
+ * @param {Object} data
+ */
+export function EmitServerEvent(target, name, data) {
+    if (!target) return;
+
+    target.emit("response", {
+        target: name,
+        data,
+    });
+}

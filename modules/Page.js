@@ -1,4 +1,5 @@
 import fs from "fs";
+import { EmitServerEvent } from "./Events.js";
 
 // Version: 2.0.0
 
@@ -161,11 +162,11 @@ export async function RenderPage(client, name, data) {
     const loaded = await _load(name);
     if (!loaded) return;
 
-    client.emit("Event::RenderPage", {
+    EmitServerEvent(client, "RenderPage", {
+        ...data,
+
         page: name,
         page_data: loaded.page_data,
         content: loaded.html,
-
-        ...data,
     });
 }

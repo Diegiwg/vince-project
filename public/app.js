@@ -1,15 +1,41 @@
-window.socket = io();
+/** @type {import('socket.io').Socket} */
+var socket = io();
+window.socket = socket;
 
 window.litDisableBundleWarning = true;
 
 // Utils Functions
 
-window.ListenEvent = (event_name, callback) => {
-    socket.on("Event::" + event_name, callback);
-    socket._callbacks["$" + "Event::" + event_name] = [callback];
+/** @type {{events: Set<string>, functions: Map<string, Function>}} */
+var ListenedEvents = {
+    events: new Set(),
+    functions: new Map(),
+};
+window.ListenedEvents = ListenedEvents;
+
+var HandlerEvents = () => {
+    socket.on("response", (payload) => {
+        const { target, data } = payload;
+
+        if (!ListenedEvents.events.has(target)) return;
+
+        ListenedEvents.functions.get(target)(data);
+    });
 };
 
-window.EmitEvent = (event_name, custom_data) => {
+var ListenEvent = (event_name, callback) => {
+    ListenedEvents.events.add(event_name);
+    ListenedEvents.functions.set(event_name, callback);
+};
+window.ListenEvent = ListenEvent;
+
+var RemoveEvent = (event_name) => {
+    ListenedEvents.events.delete(event_name);
+    ListenedEvents.functions.delete(event_name);
+};
+window.RemoveEvent = RemoveEvent;
+
+var EmitEvent = (event_name, custom_data) => {
     const payload = {
         ...custom_data,
 
@@ -22,17 +48,16 @@ window.EmitEvent = (event_name, custom_data) => {
 
     socket.emit("request", payload);
 };
+window.EmitEvent = EmitEvent;
 
-window.RemoveEvent = (event_name) => {
-    if (socket._callbacks["$" + "Event::" + event_name]) {
-        delete socket._callbacks["$" + "Event::" + event_name];
-    }
-};
-
-window.Component = function (key, node) {
+var Component = function (key, node) {
     window[key] = node;
 };
+window.Component = Component;
 
-window.RemoveComponent = function (key) {
+var RemoveComponent = function (key) {
     delete window[key];
 };
+window.RemoveComponent = RemoveComponent;
+
+HandlerEvents();

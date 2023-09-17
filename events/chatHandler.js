@@ -1,5 +1,6 @@
 import { safeParse } from "valibot";
 
+import { EmitServerEvent } from "../modules/Events.js";
 import { DEBUG } from "../modules/Logger.js";
 import { NewMessageSchema, SessionSchema } from "../modules/Models.js";
 import { RenderPage } from "../modules/Page.js";
@@ -8,9 +9,9 @@ import { TOAST } from "../modules/Toast.js";
 
 /** @param {import("../modules/Functions.js").EventPayload} payload */
 export async function NewMessage(payload) {
-    const { client, server, data } = payload;
-
     DEBUG("Event::NewMessage");
+
+    const { client, server, data } = payload;
 
     if (!safeParse(SessionSchema, data).success) {
         TOAST.INFO(client, null, "Sessão inválida.");
@@ -31,7 +32,7 @@ export async function NewMessage(payload) {
 
     const user_name = (await $User.findBySession(id, token)).name;
 
-    server.to(room).emit("Event::NewMessage", {
+    EmitServerEvent(server.to(room), "NewMessage", {
         message: `${user_name}: ${message}`,
     });
 
@@ -40,9 +41,10 @@ export async function NewMessage(payload) {
 
 /** @param {import("../modules/Functions.js").EventPayload} io */
 export function RegisterRoom(payload) {
+    DEBUG("Event::RegisterRoom");
+
     const { client, data } = payload;
 
-    DEBUG("Event::RegisterRoom");
     const { room } = data;
     if (!room) return;
 
