@@ -1,3 +1,5 @@
+import { safeParse } from "valibot";
+
 import { DEBUG } from "../modules/Debug.js";
 import { NewMessageSchema, SessionSchema } from "../modules/Models.js";
 import { emitRenderPageEvent } from "../modules/Page.js";
@@ -14,7 +16,7 @@ export function newMessage(io) {
         async (data) => {
             DEBUG("Event::NewMessage");
 
-            if (!SessionSchema.safeParse(data).success) {
+            if (!safeParse(SessionSchema, data).success) {
                 TOAST.INFO(client, null, "Sessão inválida.");
                 return emitRenderPageEvent(client, "Login");
             }
@@ -26,7 +28,7 @@ export function newMessage(io) {
                 return emitRenderPageEvent(client, "Login");
             }
 
-            if (!NewMessageSchema.safeParse(data).success)
+            if (!safeParse(NewMessageSchema, data).success)
                 return TOAST.WARN(
                     client,
                     null,

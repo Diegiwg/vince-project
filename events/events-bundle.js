@@ -1,9 +1,9 @@
+import { safeParse } from "valibot";
 import { DEBUG } from "../modules/Debug.js";
 import { RequestPageSchema, NewMessageSchema, SessionSchema, CreateAccountSchema, LoginSchema } from "../modules/Models.js";
 import { emitRenderPageEvent } from "../modules/Page.js";
 import { $User } from "../modules/Prisma.js";
 import { TOAST } from "../modules/Toast.js";
-import { safeParse } from "valibot";
 
 const UNPROTECTED_ROUTES = ["Login", "CreateAccount"];
 
@@ -17,7 +17,7 @@ export function requestPage(io) {
         async (data) => {
             DEBUG("Event::RequestPage");
 
-            if (!RequestPageSchema.safeParse(data).success) return;
+            if (!safeParse(RequestPageSchema, data).success) return;
 
             const { page } = data;
 
@@ -39,6 +39,8 @@ export function requestPage(io) {
 
 
 
+
+
 /** @param {import("../Models").io} io */
 export function newMessage(io) {
     const { client, server } = io;
@@ -49,7 +51,7 @@ export function newMessage(io) {
         async (data) => {
             DEBUG("Event::NewMessage");
 
-            if (!SessionSchema.safeParse(data).success) {
+            if (!safeParse(SessionSchema, data).success) {
                 TOAST.INFO(client, null, "Sessão inválida.");
                 return emitRenderPageEvent(client, "Login");
             }
@@ -61,7 +63,7 @@ export function newMessage(io) {
                 return emitRenderPageEvent(client, "Login");
             }
 
-            if (!NewMessageSchema.safeParse(data).success)
+            if (!safeParse(NewMessageSchema, data).success)
                 return TOAST.WARN(
                     client,
                     null,

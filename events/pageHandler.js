@@ -1,3 +1,5 @@
+import { safeParse } from "valibot";
+
 import { DEBUG } from "../modules/Debug.js";
 import { RequestPageSchema } from "../modules/Models.js";
 import { emitRenderPageEvent } from "../modules/Page.js";
@@ -15,7 +17,7 @@ export function requestPage(io) {
         async (data) => {
             DEBUG("Event::RequestPage");
 
-            if (!RequestPageSchema.safeParse(data).success) return;
+            if (!safeParse(RequestPageSchema, data).success) return;
 
             const { page } = data;
 
