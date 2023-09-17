@@ -96,9 +96,9 @@ async function _js(file_name) {
     };
 }
 
-/** @param {String} name */
+/** @param {import("./Functions.js").Pages} name */
 async function _load(name) {
-    if (!$DATA.pages.has(name)) return; // Retornar erro de pagina não existe
+    if (!$DATA.pages.has(name)) return await _load("Login");
 
     const page = $DATA.files.get(name);
 

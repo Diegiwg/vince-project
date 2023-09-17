@@ -1,6 +1,11 @@
 import { LitElement, html } from "lit";
 
-import { ListenEvent, RemoveEvent } from "../modules/Functions.js";
+import {
+    Data,
+    EmitEvent,
+    ListenEvent,
+    RemoveEvent,
+} from "../modules/Functions.js";
 
 export class ExPage extends LitElement {
     static properties = {
@@ -15,7 +20,18 @@ export class ExPage extends LitElement {
         },
     };
 
-    registerEventListener() {
+    _setRoute(name) {
+        // Change the title of the page to the current page
+        document.title = `${name}`;
+
+        // Change the url of the page to the current page
+        window.history.pushState({}, "", `#/${name}`);
+
+        // Save
+        Data.add("page", name);
+    }
+
+    _registerEventListener() {
         console.log("Registering events...");
 
         socket.on("disconnect", () => {
@@ -35,8 +51,7 @@ export class ExPage extends LitElement {
             // Save all values in Data Manager
             Data.set(payload);
 
-            // Change the title of the page to the current page
-            document.title = `${Data.get().page} Page`;
+            this._setRoute(payload.page);
 
             this.content = document
                 .createRange()
@@ -47,10 +62,14 @@ export class ExPage extends LitElement {
     connectedCallback() {
         super.connectedCallback();
 
-        this.registerEventListener();
+        this._registerEventListener();
 
-        // Enable search elements in page by components.page
         setTimeout(() => {
+            // The Initial Connection
+            EmitEvent("RequestPage", {
+                page: Data.get().page || "",
+            });
+
             Component("Page", this.shadowRoot);
         });
     }

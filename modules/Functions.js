@@ -4,11 +4,11 @@ import { Server, Socket } from "socket.io";
 
 /** @typedef {{server: Server, client: Socket, data: Object}} EventPayload */
 
-/** @typedef {{ type: "SUCCESS" | "ERROR" | "INFO" | "WARN"; message: string; time: number }} Toast */
+/** @typedef {{ type: "SUCCESS"|"ERROR"|"INFO"|"WARN"; message: string; time: number }} Toast */
 
 /**
  * @description Reference to the Data Manager.
- * @type {{get: () => Object<string, any>, set: ((value: Object<string, any>) => void)}}
+ * @type {{get: () => Object<string, any>, set: ((value: Object<string, any>) => void, add: ((key: string, value: any)))}}
  */
 export let Data;
 
@@ -23,7 +23,7 @@ export let Page;
 
 /** @typedef {"Home"|"Login"|"CreateAccount"} Pages */
 
-/** @typedef {"RequestPage"|"NewMessage"|"RegisterRoom"|"CreateAccount"|"Login"|"Logout"|"Init"} Events */
+/** @typedef {"RequestPage"|"NewMessage"|"RegisterRoom"|"CreateAccount"|"Login"|"Logout"} Events */
 
 /**
  * @description
@@ -37,7 +37,7 @@ export function EmitEvent(target, payload) {}
 
 /**
  * @description
- * @param {String} target
+ * @param {Events} target
  * @param {Object<string, any>} payload
  * @returns {null}
  * @example
@@ -49,7 +49,7 @@ export function ListenEvent(target, callback) {}
 
 /**
  * @description
- * @param {String} target
+ * @param {Events} target
  * @returns {null}
  * @example
  * RemoveEvent("Test");

@@ -1,6 +1,4 @@
-import { LitElement, css, html } from "lit";
-
-import { EmitEvent } from "../modules/Functions.js";
+import { LitElement, css } from "lit";
 
 export class ExData extends LitElement {
     static properties = {
@@ -15,23 +13,19 @@ export class ExData extends LitElement {
         }
     `;
 
-    _initLoop = null;
-    _debug = null;
-
     constructor() {
         super();
         this.data = {};
+    }
 
-        this._debug = window.DEBUG_MODE;
-        delete window["DEBUG_MODE"];
+    add(key, value) {
+        this.data[key] = value;
+        localStorage.setItem("data", JSON.stringify(this.data));
     }
 
     set(value) {
         this.data = value;
         localStorage.setItem("data", JSON.stringify(this.data));
-
-        // Delete the loop if it exists
-        if (this._initLoop) clearInterval(this._initLoop);
     }
 
     get() {
@@ -46,21 +40,6 @@ export class ExData extends LitElement {
         // Search for saved data in local storage
         const saved = localStorage.getItem("data");
         if (saved) this.data = JSON.parse(saved);
-
-        // Init the Communication with the server
-        this._initLoop = setInterval(() => {
-            EmitEvent("Init", this.data);
-        });
-    }
-
-    render() {
-        return this._debug
-            ? html` <span>DATA</span>
-                  <pre>
-${JSON.stringify(this.data, undefined, 2)}
-</pre>
-                  <hr />`
-            : html``;
     }
 }
 

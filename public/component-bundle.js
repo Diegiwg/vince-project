@@ -1,7 +1,5 @@
 import { LitElement, css, html, createRef, ref, repeat } from 'https://cdn.jsdelivr.net/gh/lit/dist@2/all/lit-all.min.js';
 
-
-
 export class ExData extends LitElement {
     static properties = {
         data: { state: true },
@@ -15,23 +13,19 @@ export class ExData extends LitElement {
         }
     `;
 
-    _initLoop = null;
-    _debug = null;
-
     constructor() {
         super();
         this.data = {};
+    }
 
-        this._debug = window.DEBUG_MODE;
-        delete window["DEBUG_MODE"];
+    add(key, value) {
+        this.data[key] = value;
+        localStorage.setItem("data", JSON.stringify(this.data));
     }
 
     set(value) {
         this.data = value;
         localStorage.setItem("data", JSON.stringify(this.data));
-
-        // Delete the loop if it exists
-        if (this._initLoop) clearInterval(this._initLoop);
     }
 
     get() {
@@ -46,21 +40,6 @@ export class ExData extends LitElement {
         // Search for saved data in local storage
         const saved = localStorage.getItem("data");
         if (saved) this.data = JSON.parse(saved);
-
-        // Init the Communication with the server
-        this._initLoop = setInterval(() => {
-            EmitEvent("Init", this.data);
-        });
-    }
-
-    render() {
-        return this._debug
-            ? html` <span>DATA</span>
-                  <pre>
-${JSON.stringify(this.data, undefined, 2)}
-</pre>
-                  <hr />`
-            : html``;
     }
 }
 
@@ -81,7 +60,18 @@ export class ExPage extends LitElement {
         },
     };
 
-    registerEventListener() {
+    _setRoute(name) {
+        // Change the title of the page to the current page
+        document.title = `${name}`;
+
+        // Change the url of the page to the current page
+        window.history.pushState({}, "", `#/${name}`);
+
+        // Save
+        Data.add("page", name);
+    }
+
+    _registerEventListener() {
         console.log("Registering events...");
 
         socket.on("disconnect", () => {
@@ -101,8 +91,7 @@ export class ExPage extends LitElement {
             // Save all values in Data Manager
             Data.set(payload);
 
-            // Change the title of the page to the current page
-            document.title = `${Data.get().page} Page`;
+            this._setRoute(payload.page);
 
             this.content = document
                 .createRange()
@@ -113,10 +102,14 @@ export class ExPage extends LitElement {
     connectedCallback() {
         super.connectedCallback();
 
-        this.registerEventListener();
+        this._registerEventListener();
 
-        // Enable search elements in page by components.page
         setTimeout(() => {
+            // The Initial Connection
+            EmitEvent("RequestPage", {
+                page: Data.get().page || "",
+            });
+
             Component("Page", this.shadowRoot);
         });
     }
