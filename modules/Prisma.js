@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { safeParse } from "valibot";
 
 import { SessionSchema } from "./Models.js";
