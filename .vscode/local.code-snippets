@@ -6,5 +6,30 @@
             "/** @typedef {import('valibot').Output<typeof $1Schema>} $1 */",
             "export let $1Schema"
         ]
+    },
+    "new-component": {
+        "prefix": "!new-component",
+        "description": "Creates a new Component using Lit",
+        "body": [
+            "import { LitElement, html, css } from 'lit';",
+            "\n",
+            "export class Ex$1 extends LitElement {",
+            "static properties = {}",
+            "static styles = css``",
+            "\n",
+            "constructor() {",
+            "super();",
+            "\n",
+            "}",
+            "\n",
+            "render() {",
+            "return html``;",
+            "}",
+            "\n",
+            "}",
+            "\n",
+            "customElements.define('ex-$2', Ex$1);",
+            "$3"
+        ]
     }
 }

@@ -65,9 +65,12 @@ export class ExPage extends LitElement {
         this._registerEventListener();
 
         setTimeout(() => {
+            let l_page = new URLPattern(document.URL).hash.replace("/", "");
+            if (l_page === "") l_page = Data.get().page;
+
             // The Initial Connection
             EmitEvent("RequestPage", {
-                page: Data.get().page || "",
+                page: l_page,
             });
 
             Component("Page", this.shadowRoot);

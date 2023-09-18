@@ -98,7 +98,7 @@ async function _js(file_name) {
 
 /** @param {import("./Functions.js").Pages} name */
 async function _load(name) {
-    if (!$DATA.pages.has(name)) return await _load("Login");
+    if (!$DATA.pages.has(name)) return;
 
     const page = $DATA.files.get(name);
 
@@ -134,17 +134,16 @@ export async function PagesBundler() {
         let css = "";
         if (data.css) {
             css = _css(name);
+            html += css;
         }
 
-        let js = "";
         let f_load = null;
         if (data.js) {
             const temp = await _js(name);
             f_load = temp.f_load;
-            js = temp.f_mount;
-        }
 
-        html = html + css + js;
+            html += temp.f_mount ? temp.f_mount : "";
+        }
 
         $DATA.pages.add(name);
         $DATA.files.set(name, { content: html, load: f_load });

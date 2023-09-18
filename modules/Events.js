@@ -43,6 +43,7 @@ export async function HandlerEvents(server) {
         (client) => {
             client.on("request", async (data) => {
                 const { target } = data;
+                delete data.target;
 
                 if (!$DATA.functions.has(target)) return;
 

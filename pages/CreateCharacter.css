@@ -1,0 +1,17 @@
+form {
+    display: flex;
+    flex-direction: column;
+
+    > #controls {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+
+h1,
+h2,
+p {
+    margin: 0 !important;
+    padding: 0 !important;
+}

@@ -17,7 +17,7 @@ export async function RequestPage(payload) {
     const { page } = data;
 
     if (CONFIG.unprotectedRoutes.includes(page))
-        return RenderPage(client, page, data);
+        return RenderPage(client, page, {});
 
     const { id, token } = data;
 
