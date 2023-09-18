@@ -7,6 +7,12 @@ import { Server, Socket } from "socket.io";
 /** @typedef {{ type: "SUCCESS"|"ERROR"|"INFO"|"WARN"; message: string; time: number }} Toast */
 
 /**
+ * Controlador dos Toasts.
+ * @type {{add: ((data: Toast) => void)}}
+ */
+export let Toast;
+
+/**
  * @description Reference to the Data Manager.
  * @type {{get: () => Object<string, any>, set: ((value: Object<string, any>) => void, add: ((key: string, value: any)))}}
  */

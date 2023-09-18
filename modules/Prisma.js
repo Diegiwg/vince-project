@@ -71,3 +71,34 @@ export const $User = {
         return _user.token;
     },
 };
+
+export const $Character = {
+    /**
+     * Função para criar um Personagem (vinculado a um Usuário)
+     * @param {{user: import("./Models.js").User, character: import("./Models.js").CharacterBase}} data
+     */
+    create: async (data) => {
+        const { user, character } = data;
+
+        const l_character = await prisma.characterBase.create({
+            data: {
+                name: character.name,
+                race: character.race,
+                classe: character.classe,
+                hp: character.hp,
+                sp: character.sp,
+                mp: character.mp,
+                experience: 0,
+                strength: character.strength,
+                agility: character.agility,
+                vitality: character.vitality,
+                intelligence: character.intelligence,
+                spirituality: character.spirituality,
+
+                user_id: user.id,
+            },
+        });
+
+        return l_character;
+    },
+};

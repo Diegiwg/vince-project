@@ -27,6 +27,15 @@ export class ExClasseSelector extends LitElement {
         this.classes = null;
     }
 
+    /**
+     * Retorna a Classe selecionada.
+     */
+    get() {
+        if (this._value === "") return null;
+
+        return this._value;
+    }
+
     _changeHandler() {
         this._value = this._node.value.value;
     }

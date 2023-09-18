@@ -1,4 +1,4 @@
-import { Data, Page } from "../modules/Functions.js";
+import { Data, Page, Toast } from "../modules/Functions.js";
 
 export async function load() {
     return {
@@ -92,6 +92,29 @@ export function mount() {
 
     function _submitHandler(event) {
         event.preventDefault();
+
+        const l_name = Page.querySelector("input[name='name']").value;
+        const l_race = Page.querySelector("ex-race-selector").get();
+        const l_classes = Page.querySelector("ex-classe-selector").get();
+        const l_attributes = Page.querySelector(
+            "ex-create-character-attributes"
+        ).get();
+
+        console.log(l_name, l_race, l_classes, l_attributes);
+
+        // Verificar se algum valor é vazio ou nulo
+        if (!l_name || l_name.length === 0 || !l_race || !l_classes)
+            return Toast.add({
+                type: "WARN",
+                message: "Preencha todos os campos.",
+            });
+
+        // Verificar se ainda tem pontos sobrando
+        if (!l_attributes)
+            return Toast.add({
+                type: "WARN",
+                message: "Você ainda tem pontos para distribuir.",
+            });
     }
 
     // MOUNT

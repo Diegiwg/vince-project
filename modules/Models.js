@@ -1,4 +1,12 @@
-import { email, minValue, number, object, string } from "valibot";
+import {
+    array,
+    email,
+    minValue,
+    number,
+    object,
+    optional,
+    string,
+} from "valibot";
 
 /** @typedef {import('valibot').Output<typeof UserSchema>} User */
 export let UserSchema = object({
@@ -7,6 +15,27 @@ export let UserSchema = object({
     email: string([email()]),
     password: string(),
     token: string(),
+
+    characters: optional(array(object())),
+});
+
+/** @typedef {import('valibot').Output<typeof CharacterBaseSchema>} CharacterBase */
+export let CharacterBaseSchema = object({
+    id: number([minValue(1)]),
+    name: string(),
+    race: string(),
+    classe: string(),
+    hp: number(),
+    sp: number(),
+    mp: number(),
+    experience: number(),
+    strength: number(),
+    agility: number(),
+    vitality: number(),
+    intelligence: number(),
+    spirituality: number(),
+
+    user: optional(UserSchema),
 });
 
 /** @typedef {import('valibot').Output<typeof SessionSchema>} Session */

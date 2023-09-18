@@ -39,6 +39,22 @@ export class ExCreateCharacterAttributes extends LitElement {
         this.inputs = data;
     }
 
+    /**
+     * Retorna os valores de cada atributo.
+     * @returns {{strength: number, agility: number, vitality: number, intelligence: number, spirituality: number}}
+     */
+    get() {
+        if (this.points > 0) return null;
+
+        return {
+            strength: Number(this.inputs_nodes.strength.value),
+            agility: Number(this.inputs_nodes.agility.value),
+            vitality: Number(this.inputs_nodes.vitality.value),
+            intelligence: Number(this.inputs_nodes.intelligence.value),
+            spirituality: Number(this.inputs_nodes.spirituality.value),
+        };
+    }
+
     /** @return {HTMLInputElement} */
     _getField(name) {
         return this.inputs_nodes[name];

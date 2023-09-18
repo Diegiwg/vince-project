@@ -31,7 +31,17 @@ export class ExRaceSelector extends LitElement {
         this.races = races;
     }
 
-    _changeHandler(event) {
+    /**
+     * Retorna a Raça selecionada.
+     * @returns {string}
+     */
+    get() {
+        if (this._value === "") return null;
+
+        return this._value;
+    }
+
+    _changeHandler() {
         this._value = this._node.value.value;
 
         Page.dispatchEvent(

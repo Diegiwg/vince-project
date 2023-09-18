@@ -278,6 +278,22 @@ export class ExCreateCharacterAttributes extends LitElement {
         this.inputs = data;
     }
 
+    /**
+     * Retorna os valores de cada atributo.
+     * @returns {{strength: number, agility: number, vitality: number, intelligence: number, spirituality: number}}
+     */
+    get() {
+        if (this.points > 0) return null;
+
+        return {
+            strength: Number(this.inputs_nodes.strength.value),
+            agility: Number(this.inputs_nodes.agility.value),
+            vitality: Number(this.inputs_nodes.vitality.value),
+            intelligence: Number(this.inputs_nodes.intelligence.value),
+            spirituality: Number(this.inputs_nodes.spirituality.value),
+        };
+    }
+
     /** @return {HTMLInputElement} */
     _getField(name) {
         return this.inputs_nodes[name];
@@ -504,7 +520,17 @@ export class ExRaceSelector extends LitElement {
         this.races = races;
     }
 
-    _changeHandler(event) {
+    /**
+     * Retorna a Raça selecionada.
+     * @returns {string}
+     */
+    get() {
+        if (this._value === "") return null;
+
+        return this._value;
+    }
+
+    _changeHandler() {
         this._value = this._node.value.value;
 
         Page.dispatchEvent(
@@ -574,6 +600,15 @@ export class ExClasseSelector extends LitElement {
         this._node = createRef();
         this._value = "";
         this.classes = null;
+    }
+
+    /**
+     * Retorna a Classe selecionada.
+     */
+    get() {
+        if (this._value === "") return null;
+
+        return this._value;
     }
 
     _changeHandler() {
