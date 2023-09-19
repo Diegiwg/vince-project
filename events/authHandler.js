@@ -15,7 +15,7 @@ export async function Login(payload) {
     if (!safeParse(LoginSchema, data).success)
         return TOAST.WARN(client, null, "Os dados fornecidos estão inválidos.");
 
-    // Try find user on DB
+    // Procura o usuário
     const user = await $User.findByEmail(data.email);
     if (!user)
         return TOAST.ERROR(
@@ -26,17 +26,16 @@ export async function Login(payload) {
 
     const { id } = user;
 
-    // Check password
+    // Verifica se a senha está correta
     if (!(await $User.validatePassword(id, data.password)))
         return TOAST.ERROR(client, null, "Senha incorreta.");
 
-    // Generate New Session Token and Go to Home
+    // Retorna a mensagem de sucesso e faz login
+    TOAST.SUCCESS(client, null, "Logado com sucesso.");
     RenderPage(client, "Home", {
         id,
         token: await $User._generateNewSessionToken(id),
     });
-
-    TOAST.SUCCESS(client, null, "Logado com sucesso.");
 }
 
 /** @param {import("../modules/Functions.js").EventPayload} payload */
@@ -50,15 +49,20 @@ export async function CreateAccount(payload) {
 
     const { name, email, password } = data;
 
-    // Try create user on DB
+    // Verifica se o email já está em uso
+    const isNotUnique = await $User.findByEmail(email);
+    if (isNotUnique) return TOAST.ERROR(client, null, "Email já em uso.");
+
+    // Tenta criar o usuário
     const user = await $User.create(name, email, password);
     if (!user) return TOAST.ERROR(client, null, "Erro ao criar conta.");
 
+    // Retorna a mensagem de sucesso e faz login
+    TOAST.SUCCESS(client, null, "Conta criada com sucesso.");
     RenderPage(client, "Home", {
         id: user.id,
-        token: user.token,
+        token: await $User._generateNewSessionToken(user.id),
     });
-    TOAST.SUCCESS(client, null, "Conta criada com sucesso.");
 }
 
 /** @param {import("../modules/Functions.js").EventPayload} payload */
@@ -66,5 +70,7 @@ export function Logout(payload) {
     const { client } = payload;
 
     DEBUG("Event::Logout");
+
+    TOAST.SUCCESS(client, null, "Deslogado com sucesso.");
     RenderPage(client, "Login");
 }
