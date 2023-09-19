@@ -75,26 +75,26 @@ export const $User = {
 export const $Character = {
     /**
      * Função para criar um Personagem (vinculado a um Usuário)
-     * @param {{user: import("./Models.js").User, character: import("./Models.js").CharacterBase}} data
+     * @param {{user: import("./Models.js").User, character: import("./Models.js").CreateCharacter}} data
      */
     create: async (data) => {
         const { user, character } = data;
 
-        const l_character = await prisma.characterBase.create({
+        const l_character = await prisma.character.create({
             data: {
                 name: character.name,
+
                 race: character.race,
-                classe: character.classe,
                 hp: character.hp,
                 sp: character.sp,
                 mp: character.mp,
-                experience: 0,
-                strength: character.strength,
-                agility: character.agility,
-                vitality: character.vitality,
-                intelligence: character.intelligence,
-                spirituality: character.spirituality,
 
+                classe: character.classe,
+
+                ...character.attributes,
+                ...data.race_data,
+
+                experience: 0,
                 user_id: user.id,
             },
         });
@@ -102,3 +102,15 @@ export const $Character = {
         return l_character;
     },
 };
+
+export const $Race = {
+    _: () => {
+        return {
+            hp: 1,
+            sp: 1,
+            mp: 1,
+        };
+    },
+};
+
+export const $Classe = {};

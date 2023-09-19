@@ -29,7 +29,7 @@ export let Page;
 
 /** @typedef {"Home"|"Login"|"CreateAccount"|"CreateCharacter"} Pages */
 
-/** @typedef {"RequestPage"|"NewMessage"|"RegisterRoom"|"CreateAccount"|"Login"|"Logout"} Events */
+/** @typedef {"RequestPage"|"NewMessage"|"RegisterRoom"|"CreateAccount"|"Login"|"Logout"|"CreateCharacter"} Events */
 
 /**
  * @description

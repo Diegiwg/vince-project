@@ -17,7 +17,7 @@ var HandlerEvents = () => {
     socket.on("response", (payload) => {
         const { target, data } = payload;
 
-        if (!ListenedEvents.events.has(target)) return;
+        if (!ListenedEvents.events.has(target)) return console.table(payload);
 
         ListenedEvents.functions.get(target)(data);
     });

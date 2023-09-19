@@ -31,5 +31,22 @@
             "customElements.define('ex-$2', Ex$1);",
             "$3"
         ]
+    },
+    "new-event": {
+        "prefix": "!new-event",
+        "description": "Criar um novo Evento!",
+        "body": [
+            "import { DEBUG } from '../modules/Logger.js';",
+            "\n",
+            "/** @param {import('../modules/Functions.js').EventPayload} io */",
+            "export function $1(payload) {",
+            "\n",
+            "DEBUG('Event::$1');",
+            "\n",
+            "const { server, client, data } = payload;",
+            "\n",
+            "$2",
+            "}"
+        ]
     }
 }

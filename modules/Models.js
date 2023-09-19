@@ -19,8 +19,8 @@ export let UserSchema = object({
     characters: optional(array(object())),
 });
 
-/** @typedef {import('valibot').Output<typeof CharacterBaseSchema>} CharacterBase */
-export let CharacterBaseSchema = object({
+/** @typedef {import('valibot').Output<typeof CharacterSchema>} Character */
+export let CharacterSchema = object({
     id: number([minValue(1)]),
     name: string(),
     race: string(),
@@ -66,4 +66,18 @@ export let NewMessageSchema = object({
 /** @typedef {import('valibot').Output<typeof RequestPageSchema>} RequestPage */
 export let RequestPageSchema = object({
     page: string(),
+});
+
+/** @typedef {import('valibot').Output<typeof CreateCharacterSchema>} CreateCharacter */
+export let CreateCharacterSchema = object({
+    name: string(),
+    race: string(),
+    classe: string(),
+    attributes: object({
+        strength: number(),
+        agility: number(),
+        vitality: number(),
+        intelligence: number(),
+        spirituality: number(),
+    }),
 });

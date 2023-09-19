@@ -106,7 +106,7 @@ export class ExPage extends LitElement {
 
         setTimeout(() => {
             let l_page = new URLPattern(document.URL).hash.replace("/", "");
-            if (l_page === "") l_page = Data.get().page;
+            if (l_page === "") l_page = "Home";
 
             // The Initial Connection
             EmitEvent("RequestPage", {
