@@ -20,6 +20,8 @@ export const $User = {
     },
 
     findBySession: async (id, token) => {
+        // TODO: Essa função é bastante utilizada, talvez seja interessante criar um local em memoria, para salvar o socket.id do cliente, junto com o ID e TOKEN, e assim, sempre que o mesmo cliente mandar uma solicitação, podemos buscar nessa memoria, e caso exista, verificar se ainda se mantem o mesmo token, e caso não, invalido o usuario, e segue com a verificação normal. Essa banco em memoria pode ser invalidado periodicamente, sem precisar que a aplicação reinicie, ou pode ter uma função que automaticamente remove clientes antigos?
+
         return await prisma.user.findUnique({
             where: {
                 id,
