@@ -15,18 +15,12 @@ function _updateFunctionsFile(new_data, target) {
 async function _pages() {
     if (!fs.existsSync("pages")) return;
 
-    const files = fs.readdirSync("pages");
-    if (!files) return;
-
-    const l_pages = [];
-    for (const file of files) {
-        if (!file.endsWith(".html")) continue;
-        l_pages.push(file.replace(".html", ""));
-    }
+    const l_pages = fs.readdirSync("pages");
+    if (!l_pages) return;
 
     _updateFunctionsFile(
         `/** @typedef {${l_pages.map((p) => `"${p}"`).join("|")}} Pages */`,
-        /\/\*\* @typedef {([\w|"']+?)} Pages \*\//gm
+        /\/\*\* @typedef {([\w|"']*?)} Pages \*\//gm
     );
 }
 
@@ -46,7 +40,7 @@ async function _events() {
 
     _updateFunctionsFile(
         `/** @typedef {${l_events.map((p) => `"${p}"`).join("|")}} Events */`,
-        /\/\*\* @typedef {([\w|"']+?)} Events \*\//gm
+        /\/\*\* @typedef {([\w|"']*?)} Events \*\//gm
     );
 }
 
