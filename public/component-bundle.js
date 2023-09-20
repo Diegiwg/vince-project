@@ -646,6 +646,16 @@ export class ExClasseSelector extends LitElement {
         return this._value;
     }
 
+    _raceChangeHandler(event) {
+        this.classes = null;
+        this._value = "";
+        this._node.value.value = "";
+
+        if (event.detail === "") return;
+
+        this.classes = Data.get().page_data.races[event.detail].classes;
+    }
+
     _changeHandler() {
         this._value = this._node.value.value;
     }
@@ -691,21 +701,20 @@ export class ExClasseSelector extends LitElement {
     connectedCallback() {
         super.connectedCallback();
 
-        Page.addEventListener("ex-race-selector:change", (event) => {
-            this.classes = null;
-            this._value = "";
-            this._node.value.value = "";
-
-            if (event.detail === "") return;
-
-            this.classes = Data.get().page_data.races[event.detail].classes;
-        });
+        Page.addEventListener(
+            "ex-race-selector:change",
+            this._raceChangeHandler
+        );
     }
 
     disconnectedCallback() {
         super.disconnectedCallback();
 
-        Page.removeEventListener("ex-race-selector:change");
+        Page.removeEventListener(
+            "ex-race-selector:change",
+            this._raceChangeHandler,
+            true
+        );
     }
 }
 

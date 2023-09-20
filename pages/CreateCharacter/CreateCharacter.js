@@ -128,6 +128,11 @@ export function mount() {
     _setAttributesFields();
 
     Page.querySelector("form").addEventListener("submit", _submitHandler);
+
+    Page.querySelector("#Cancel").addEventListener("click", () => {
+        EmitEvent("RequestPage", { page: "Home" });
+    });
+
     Page.querySelector("#Random").addEventListener("click", () => {
         Page.querySelector("ex-create-character-attributes")?.randomize();
     });
