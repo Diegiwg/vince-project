@@ -25,7 +25,7 @@ const io = new Server(server);
 // Executar as funções de configuração da inicialização do servidor.
 (async function () {
     // Executar a Compilação das funções auxiliares ao desenvolvimento.
-    if (CONFIG.mode === "PROD") await import("./modules/Develop.js");
+    if (CONFIG.mode === "DEV") await import("./modules/Develop.js");
 
     // Executar a Compilação das Paginas e salvar em memoria.
     await PagesBundler();
