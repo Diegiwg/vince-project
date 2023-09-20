@@ -7,7 +7,7 @@
     "scripts": {
         "prod": "node ./index.js",
         "dev": "npx nodemon ./index.js",
-        "tunnel": " cls && echo Senha: && curl api.ipify.org -s && echo. && npx lt --port 9999"
+        "tunnel": "cls && echo Senha: && curl api.ipify.org -s && echo. && npx lt --port 7001 --print-requests --open"
     },
     "dependencies": {
         "@prisma/client": "^5.3.0",

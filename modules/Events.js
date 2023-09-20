@@ -1,15 +1,25 @@
 import fs from "fs";
 import { Server, Socket } from "socket.io";
 
-import { INFO, SUCCESS } from "./Logger.js";
+import { ERROR, INFO, SUCCESS, WARN } from "./Logger.js";
 
-// Version: 2.0.0
+// Version: 2.0.1
 
-/** @type {{events: Set<string>, functions: Map<string, Function>}} */
+/** @type {{events: Set<string>, functions: Map<string, Function>, fila: [{server, client, data, target}]  }} */
 const $DATA = {
     events: new Set(),
     functions: new Map(),
+    fila: new Array(),
 };
+
+function executarPedido() {
+    if ($DATA.fila.length === 0) return;
+
+    const { server, client, data, target } = $DATA.fila.shift();
+
+    $DATA.functions.get(target)({ server, client, data });
+    executarPedido();
+}
 
 export async function EventsBundler() {
     if (!fs.existsSync("events")) return;
@@ -47,7 +57,8 @@ export async function HandlerEvents(server) {
 
                 if (!$DATA.functions.has(target)) return;
 
-                await $DATA.functions.get(target)({ server, client, data });
+                $DATA.fila.push({ server, client, data, target });
+                return executarPedido();
             });
         }
     );
