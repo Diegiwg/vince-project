@@ -3,7 +3,7 @@ import { Server, Socket } from "socket.io";
 
 import { INFO, SUCCESS } from "./Logger.js";
 
-// Version: 2.0.1
+// Version: 3.0.0
 
 /** @type {{events: Set<string>, functions: Map<string, Function>, queue: [{server, client, data, target}]  }} */
 const EventsService = {
@@ -15,7 +15,7 @@ const EventsService = {
 function executeRequest() {
     if (EventsService.queue.length === 0) return;
 
-    let batchSize = EventsService.queue.length * 0.4;
+    let batchSize = EventsService.queue.length * 0.45;
     let processedCount = 0;
 
     while (processedCount < batchSize && EventsService.queue.length > 0) {
@@ -83,7 +83,7 @@ export function EmitServerEvent(target, name, data) {
     });
 }
 
-// Worker que vai monitorar se existe um evento na queue a cada 1s
+// Worker que vai monitorar se existe um evento na queue
 setInterval(() => {
     executeRequest();
 }, 100);
