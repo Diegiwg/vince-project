@@ -1,7 +1,7 @@
 import { io } from "socket.io-client";
 
 const URL = process.env.URL || "http://localhost:7001";
-const MAX_CLIENTS = 1_000_000_000;
+const MAX_CLIENTS = 5_000;
 const POLLING_PERCENTAGE = 0.05;
 const CLIENT_CREATION_INTERVAL_IN_MS = 10;
 const EMIT_INTERVAL_IN_MS = 1000;
@@ -9,10 +9,8 @@ const EMIT_INTERVAL_IN_MS = 1000;
 let clientCount = 0;
 let lastReport = new Date().getTime();
 let packetsSinceLastReport = 0;
-let responses = 0;
 
 const createClient = () => {
-    // for demonstration purposes, some clients stay stuck in HTTP long-polling
     const transports =
         Math.random() < POLLING_PERCENTAGE
             ? ["polling"]

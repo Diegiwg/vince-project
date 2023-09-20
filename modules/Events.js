@@ -1,24 +1,28 @@
 import fs from "fs";
 import { Server, Socket } from "socket.io";
 
-import { ERROR, INFO, SUCCESS, WARN } from "./Logger.js";
+import { INFO, SUCCESS } from "./Logger.js";
 
 // Version: 2.0.1
 
-/** @type {{events: Set<string>, functions: Map<string, Function>, fila: [{server, client, data, target}]  }} */
-const $DATA = {
+/** @type {{events: Set<string>, functions: Map<string, Function>, queue: [{server, client, data, target}]  }} */
+const EventsService = {
     events: new Set(),
     functions: new Map(),
-    fila: new Array(),
+    queue: new Array(),
 };
 
-function executarPedido() {
-    if ($DATA.fila.length === 0) return;
+function executeRequest() {
+    if (EventsService.queue.length === 0) return;
 
-    const { server, client, data, target } = $DATA.fila.shift();
+    let batchSize = EventsService.queue.length * 0.4;
+    let processedCount = 0;
 
-    $DATA.functions.get(target)({ server, client, data });
-    executarPedido();
+    while (processedCount < batchSize && EventsService.queue.length > 0) {
+        const { server, client, data, target } = EventsService.queue.shift();
+        EventsService.functions.get(target)({ server, client, data });
+        processedCount++;
+    }
 }
 
 export async function EventsBundler() {
@@ -35,8 +39,8 @@ export async function EventsBundler() {
         const l_module = await import(`../events/${file}`);
 
         for (const event of Object.keys(l_module)) {
-            $DATA.events.add(event);
-            $DATA.functions.set(event, l_module[event]);
+            EventsService.events.add(event);
+            EventsService.functions.set(event, l_module[event]);
         }
     }
 
@@ -44,8 +48,8 @@ export async function EventsBundler() {
 }
 
 /** @param {Server} server  */
-export async function HandlerEvents(server) {
-    if ($DATA.events.size === 0) return;
+export async function HandlerEvents(server, requestsCounter) {
+    if (EventsService.events.size === 0) return;
 
     server.on(
         "connection",
@@ -55,10 +59,11 @@ export async function HandlerEvents(server) {
                 const { target } = data;
                 delete data.target;
 
-                if (!$DATA.functions.has(target)) return;
+                if (!EventsService.functions.has(target)) return;
 
-                $DATA.fila.push({ server, client, data, target });
-                return executarPedido();
+                requestsCounter.inc();
+
+                EventsService.queue.push({ server, client, data, target });
             });
         }
     );
@@ -77,3 +82,8 @@ export function EmitServerEvent(target, name, data) {
         data,
     });
 }
+
+// Worker que vai monitorar se existe um evento na queue a cada 1s
+setInterval(() => {
+    executeRequest();
+}, 100);
