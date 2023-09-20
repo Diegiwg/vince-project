@@ -27,7 +27,7 @@ export let Data;
  */
 export let Page;
 
-/** @typedef {"Home"|"Login"|"CreateAccount"|"CreateCharacter"} Pages */
+/** @typedef {} Pages */
 
 /** @typedef {"RequestPage"|"NewMessage"|"RegisterRoom"|"CreateAccount"|"Login"|"Logout"|"CreateCharacter"} Events */
 

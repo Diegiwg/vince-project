@@ -1,5 +1,5 @@
-import { EmitEvent, Page } from "../modules/Functions.js";
-import { $User } from "../modules/Prisma.js";
+import { EmitEvent, Page } from "../../modules/Functions.js";
+import { $User } from "../../modules/Prisma.js";
 
 export async function load() {
     return {

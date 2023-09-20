@@ -1,4 +1,4 @@
-import { Data, EmitEvent, Page, Toast } from "../modules/Functions.js";
+import { Data, EmitEvent, Page, Toast } from "../../modules/Functions.js";
 
 export async function load() {
     return {

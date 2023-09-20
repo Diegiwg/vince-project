@@ -1,75 +1,47 @@
 import fs from "fs";
+
 import { EmitServerEvent } from "./Events.js";
+import { DEBUG, INFO, SUCCESS } from "./Logger.js";
 
-// Version: 2.0.0
+// Modificado para dar suporte a sub-pastas
+// Version: 3.0.0
 
-/** @param {String} file */
-function _extractName(file) {
-    return file.split(".").shift();
-}
+/** @param {import("./Functions.js").Pages} name */
+async function _load(name) {
+    if (!$DATA.pages.has(name)) return;
 
-/**
- * @param {String[]} files
- * @returns {Map<String, {css: boolean, js: boolean}>}
- */
-function _filterFiles(files) {
-    const html = new Set();
-    const css = new Set();
-    const js = new Set();
+    const page = $DATA.files.get(name);
 
-    files.forEach((file) => {
-        switch (file.split(".").pop()) {
-            case "html":
-                html.add(file);
-                break;
-
-            case "css":
-                css.add(file);
-                break;
-
-            case "js":
-                js.add(file);
-                break;
-
-            default:
-                break;
-        }
-    });
-
-    // Construct the response
-    const response = new Map();
-
-    for (let page of html) {
-        const name = _extractName(page);
-
-        response.set(name, {
-            css: css.has(`${name}.css`),
-            js: js.has(`${name}.js`),
-        });
+    let data = {};
+    if (page.load) {
+        data = await page.load();
     }
 
-    return response;
+    return {
+        html: page.content,
+        page_data: data,
+    };
 }
 
-/** @param {String} file_name */
-function _html(file_name) {
-    const content = fs.readFileSync(`pages/${file_name}.html`, "utf-8");
+/** @param {String} name */
+function _html(name) {
+    const content = fs.readFileSync(`pages/${name}/${name}.html`, "utf-8");
     return content;
 }
 
 /**
- * @param {String} file_name
+ * @param {String} name
  * @param {String} html
  */
-function _css(file_name) {
-    const content = fs.readFileSync(`pages/${file_name}.css`, "utf-8");
-    return `\n\n <style>${content}</style>`;
+function _css(name) {
+    const content = fs.readFileSync(`pages/${name}/${name}.css`, "utf-8");
+    return content ? `\n\n <style>${content}</style>` : null;
 }
 
-/** @param {String} file_name */
-async function _js(file_name) {
+/** @param {String} name */
+async function _js(name) {
     /** @type {{load: Function, mount: Function}} */
-    const module = await import(`../pages/${file_name}.js`);
+    const module = await import(`../pages/${name}/${name}.js`);
 
     let f_load = null;
     if (Object.keys(module).includes("load")) {
@@ -96,58 +68,61 @@ async function _js(file_name) {
     };
 }
 
-/** @param {import("./Functions.js").Pages} name */
-async function _load(name) {
-    if (!$DATA.pages.has(name)) return;
+/**
+ * @param {String} folder_name
+ * @returns {{html: String, css: String|null, js: {f_load: Function|null, f_mount: String|null}}|null}
+ */
+async function _parseFolder(folder_name) {
+    DEBUG("Parsing folder: " + folder_name);
 
-    const page = $DATA.files.get(name);
+    const files = fs.readdirSync(`pages/${folder_name}`);
+    if (!files) return;
 
-    let data = {};
-    if (page.load) {
-        data = await page.load();
+    const l_files = {
+        html: null,
+        css: null,
+        js: null,
+    };
+
+    for (const file of files) {
+        if (file.endsWith(".html")) l_files.html = _html(folder_name);
+        if (file.endsWith(".css")) l_files.css = _css(folder_name);
+        if (file.endsWith(".js")) l_files.js = await _js(folder_name);
     }
 
-    return {
-        html: page.content,
-        page_data: data,
-    };
+    return l_files.html ? l_files : null;
 }
 
-/** @type {{pages: Set<String>, files: Map<String, {content: String, load: Function}>}} */
+/** @type {{pages: Set<String>, files: Map<String, {content: String, load: Function|null}>}} */
 const $DATA = {
     pages: new Set(),
     files: new Map(),
 };
 
 export async function PagesBundler() {
+    INFO("Bundling pages...");
+
     if (!fs.existsSync("pages")) return;
 
-    const files = fs.readdirSync("pages");
-    if (!files) return;
+    const folders = fs.readdirSync("pages");
+    if (!folders) return;
 
-    const filtered_files = _filterFiles(files);
-    if (filtered_files.size === 0) return;
+    // Analisar cada sub-pasta, buscando os arquivos html, css e js e injetando o resultado em $DATA
+    for (const folder of folders) {
+        const l_files = await _parseFolder(folder);
+        if (!l_files) continue;
 
-    for (const [name, data] of filtered_files) {
-        let html = _html(name);
+        if (l_files.css) l_files.html += l_files.css;
+        if (l_files?.js?.f_mount) l_files.html += l_files.js.f_mount;
 
-        let css = "";
-        if (data.css) {
-            css = _css(name);
-            html += css;
-        }
-
-        let f_load = null;
-        if (data.js) {
-            const temp = await _js(name);
-            f_load = temp.f_load;
-
-            html += temp.f_mount ? temp.f_mount : "";
-        }
-
-        $DATA.pages.add(name);
-        $DATA.files.set(name, { content: html, load: f_load });
+        $DATA.pages.add(folder);
+        $DATA.files.set(folder, {
+            content: l_files.html,
+            load: l_files.js?.f_load,
+        });
     }
+
+    SUCCESS("Pages bundled!");
 }
 
 /**

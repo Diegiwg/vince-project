@@ -1,4 +1,4 @@
-import { EmitEvent, Page } from "../modules/Functions.js";
+import { EmitEvent, Page } from "../../modules/Functions.js";
 
 export function mount() {
     /** @param {PointerEvent | SubmitEvent} event */
