@@ -21,7 +21,7 @@ async function _load(name) {
     const page = $DATA.files.get(name);
 
     // Caso exista a função de load para a pagina, a mesma é executada.
-    const data = page.load ? page.load() : null;
+    const data = page.load ? await page.load() : null;
 
     // Retorna o conteúdo no modelo esperado.
     return {
