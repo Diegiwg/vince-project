@@ -36,7 +36,8 @@ export class ExRaceSelector extends LitElement {
      * @returns {string}
      */
     get() {
-        if (this._value === "") return null;
+        if (this._value === "" || !this.races.includes(this._value))
+            return null;
 
         return this._value;
     }
@@ -56,7 +57,7 @@ export class ExRaceSelector extends LitElement {
     }
 
     _renderRaceInfo() {
-        if (this._value === "") return "";
+        if (this._value === "" || !this.races.includes(this._value)) return "";
 
         /** @type {{hp: number, sp: number, mp: number, description: string}} */
         const l_race = Data.get().page_data.races[this._value];

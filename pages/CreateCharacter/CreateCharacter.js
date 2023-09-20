@@ -1,6 +1,7 @@
 import { Data, EmitEvent, Page, Toast } from "../../modules/Functions.js";
 
 export async function load() {
+    // TODO: Pegar esses valores do Banco de Dados.
     return {
         points_limit: 30,
         races: {
@@ -73,8 +74,8 @@ export async function load() {
 }
 
 export function mount() {
+    /** @type {{points_limit: number, races: Array, classes: Array}} */
     const l_data = Data.get().page_data;
-    console.log(l_data);
 
     function _setRaces() {
         Page.querySelector("ex-race-selector").set(l_data.races.elements);
@@ -100,8 +101,6 @@ export function mount() {
             "ex-create-character-attributes"
         ).get();
 
-        console.log(l_name, l_race, l_classe, l_attributes);
-
         // Verificar se algum valor é vazio ou nulo
         if (!l_name || l_name.length === 0 || !l_race || !l_classe)
             return Toast.add({
@@ -116,6 +115,7 @@ export function mount() {
                 message: "Você ainda tem pontos para distribuir.",
             });
 
+        // TODO: Adicionar a verificação do Schema com o ValiBot.
         EmitEvent("CreateCharacter", {
             name: l_name,
             race: l_race,
@@ -124,9 +124,11 @@ export function mount() {
         });
     }
 
-    // MOUNT
     _setRaces();
     _setAttributesFields();
 
     Page.querySelector("form").addEventListener("submit", _submitHandler);
+    Page.querySelector("#Random").addEventListener("click", () => {
+        Page.querySelector("ex-create-character-attributes")?.randomize();
+    });
 }

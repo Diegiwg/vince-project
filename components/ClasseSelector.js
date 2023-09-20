@@ -31,7 +31,12 @@ export class ExClasseSelector extends LitElement {
      * Retorna a Classe selecionada.
      */
     get() {
-        if (this._value === "") return null;
+        if (
+            this._value === "" ||
+            !this.classes ||
+            !this.classes.includes(this._value)
+        )
+            return null;
 
         return this._value;
     }
@@ -45,7 +50,12 @@ export class ExClasseSelector extends LitElement {
     }
 
     _renderClasseInfo() {
-        if (this._value === "") return "";
+        if (
+            this._value === "" ||
+            !this.classes ||
+            !this.classes.includes(this._value)
+        )
+            return "";
 
         /** @type {{description: string}} */
         const l_classe = Data.get().page_data.classes[this._value];

@@ -243,6 +243,15 @@ customElements.define("ex-chat", ExChat);
 
 
 
+function _getRandomValue(max) {
+    return Math.floor(Math.random() * max);
+}
+function _getRandomValueFromArray(array) {
+    const randomIndex = Math.floor(Math.random() * array.length);
+    const randomValue = array.splice(randomIndex, 1)[0];
+    return randomValue;
+}
+
 export class ExCreateCharacterAttributes extends LitElement {
     static properties = {
         points_limit: { type: Number },
@@ -278,12 +287,31 @@ export class ExCreateCharacterAttributes extends LitElement {
         this.inputs = data;
     }
 
+    randomize() {
+        this.points = this.points_limit;
+
+        const _temp = Object.values(this.inputs_nodes);
+        const _temp_length = _temp.length;
+
+        _temp.forEach((el) => {
+            el.value = 0;
+        });
+
+        for (let index = 0; index < _temp_length; index++) {
+            const value = _getRandomValue(this.points);
+            const node = _getRandomValueFromArray(_temp);
+
+            node.value = index === _temp_length - 1 ? this.points : value;
+            this._changeHandler({ target: { id: node.id } });
+        }
+    }
+
     /**
      * Retorna os valores de cada atributo.
      * @returns {{strength: number, agility: number, vitality: number, intelligence: number, spirituality: number}}
      */
     get() {
-        if (this.points > 0) return null;
+        if (this.points > 0 || 0 < this.points) return null;
 
         return {
             strength: Number(this.inputs_nodes.strength.value),
@@ -306,7 +334,8 @@ export class ExCreateCharacterAttributes extends LitElement {
         // Verificar se o valor atual é maior que o limite
         if (
             Number(l_element.value) >
-            Number(l_element.getAttribute("history")) + this.points
+                Number(l_element.getAttribute("history")) + this.points ||
+            Number(l_element.value) < 0
         ) {
             l_element.value = l_element.getAttribute("history");
             return;
@@ -525,7 +554,8 @@ export class ExRaceSelector extends LitElement {
      * @returns {string}
      */
     get() {
-        if (this._value === "") return null;
+        if (this._value === "" || !this.races.includes(this._value))
+            return null;
 
         return this._value;
     }
@@ -545,7 +575,7 @@ export class ExRaceSelector extends LitElement {
     }
 
     _renderRaceInfo() {
-        if (this._value === "") return "";
+        if (this._value === "" || !this.races.includes(this._value)) return "";
 
         /** @type {{hp: number, sp: number, mp: number, description: string}} */
         const l_race = Data.get().page_data.races[this._value];
@@ -606,7 +636,12 @@ export class ExClasseSelector extends LitElement {
      * Retorna a Classe selecionada.
      */
     get() {
-        if (this._value === "") return null;
+        if (
+            this._value === "" ||
+            !this.classes ||
+            !this.classes.includes(this._value)
+        )
+            return null;
 
         return this._value;
     }
@@ -620,7 +655,12 @@ export class ExClasseSelector extends LitElement {
     }
 
     _renderClasseInfo() {
-        if (this._value === "") return "";
+        if (
+            this._value === "" ||
+            !this.classes ||
+            !this.classes.includes(this._value)
+        )
+            return "";
 
         /** @type {{description: string}} */
         const l_classe = Data.get().page_data.classes[this._value];
