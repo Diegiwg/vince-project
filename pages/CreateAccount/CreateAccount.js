@@ -1,4 +1,4 @@
-import { EmitEvent, Page } from "../../modules/Functions.js";
+import { EmitEvent, Page, Toast } from "../../modules/Functions.js";
 
 export function mount() {
     /** @param {PointerEvent | SubmitEvent} event */
@@ -9,8 +9,13 @@ export function mount() {
         const email = Page.querySelector("[name=email]");
         const password = Page.querySelector("[name=password]");
 
-        if (!name.value || !email.value || !password.value) return;
+        if (!name.value || !email.value || !password.value)
+            return Toast.add({
+                message: "Por favor, preencha todos os campos",
+                type: "WARN",
+            });
 
+        // TODO: Adicionar a verificação do Schema com o ValiBot.
         EmitEvent("CreateAccount", {
             name: name.value,
             email: email.value,
@@ -23,8 +28,6 @@ export function mount() {
             "submit",
             _submitHandler
         );
-
-        Page.querySelector("#Submit").addEventListener("click", _submitHandler);
 
         Page.querySelector("#LoginPage").addEventListener("click", () =>
             EmitEvent("RequestPage", { page: "Login" })
