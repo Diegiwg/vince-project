@@ -1,14 +1,4 @@
-import { EmitEvent, Page } from "../../modules/Functions.js";
-import { $User } from "../../modules/Prisma.js";
-
-export async function load() {
-    return {
-        users: (await $User.findAll())?.map((user) => ({
-            name: user.name,
-            email: user.email,
-        })),
-    };
-}
+import { EmitEvent, Page, Toast } from "../../modules/Functions.js";
 
 export async function mount() {
     /** @param {PointerEvent | SubmitEvent} event */
@@ -18,8 +8,13 @@ export async function mount() {
         const email = Page.querySelector("[name=email]");
         const password = Page.querySelector("[name=password]");
 
-        if (!email.value || !password.value) return;
+        if (!email.value || !password.value)
+            return Toast.add({
+                message: "Por favor, preencha todos os campos",
+                type: "WARN",
+            });
 
+        // TODO: Adicionar a verificação do Schema com o ValiBot.
         EmitEvent("Login", {
             email: email.value,
             password: password.value,
@@ -31,8 +26,6 @@ export async function mount() {
             "submit",
             _submitHandler
         );
-
-        Page.querySelector("#Submit").addEventListener("click", _submitHandler);
 
         Page.querySelector("#CreateAccountPage").addEventListener("click", () =>
             EmitEvent("RequestPage", { page: "CreateAccount" })
