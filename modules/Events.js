@@ -48,7 +48,7 @@ export async function EventsBundler() {
 }
 
 /** @param {Server} server  */
-export async function HandlerEvents(server, requestsCounter) {
+export async function HandlerEvents(server) {
     if (EventsService.events.size === 0) return;
 
     server.on(
@@ -60,8 +60,6 @@ export async function HandlerEvents(server, requestsCounter) {
                 delete data.target;
 
                 if (!EventsService.functions.has(target)) return;
-
-                requestsCounter.inc();
 
                 EventsService.queue.push({ server, client, data, target });
             });
