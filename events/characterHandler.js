@@ -1,3 +1,7 @@
+// Versão: 1.0.0
+// Data: 21.09.2023
+// Autor: Diegiwg (Diego Queiroz <diegiwg@gmail.com>)
+
 import { safeParse } from "valibot";
 
 import { EmitServerEvent } from "../modules/Events.js";
@@ -6,7 +10,11 @@ import { CreateCharacterSchema } from "../modules/Models.js";
 import { $Character, $Race, $User } from "../modules/Prisma.js";
 import { TOAST } from "../modules/Toast.js";
 
-/** @param {import('../modules/Functions.js').EventPayload} io */
+/**
+ * Evento para criar um novo personagem.
+ * @param {import("../modules/Functions.js").EventPayload} payload Objeto contendo os dados da solicitação.
+ * @returns {Promise<void>}
+ */
 export async function CreateCharacter(payload) {
     DEBUG("Event::CreateCharacter");
 
