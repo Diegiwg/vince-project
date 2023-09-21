@@ -1,5 +1,7 @@
 import { LitElement, css, html, createRef, ref, repeat } from 'https://cdn.jsdelivr.net/gh/lit/dist@2/all/lit-all.min.js';
 
+
+
 export class ExData extends LitElement {
     static properties = {
         data: { state: true },
@@ -61,13 +63,8 @@ export class ExPage extends LitElement {
     };
 
     _setRoute(name) {
-        // Change the title of the page to the current page
         document.title = `${name}`;
-
-        // Change the url of the page to the current page
         window.history.pushState({}, "", `#/${name}`);
-
-        // Save
         Data.add("page", name);
     }
 
@@ -88,7 +85,6 @@ export class ExPage extends LitElement {
             const { content } = payload;
             delete payload.content;
 
-            // Save all values in Data Manager
             Data.set(payload);
 
             this._setRoute(payload.page);
@@ -105,10 +101,10 @@ export class ExPage extends LitElement {
         this._registerEventListener();
 
         setTimeout(() => {
+            // eslint-disable-next-line no-undef
             let l_page = new URLPattern(document.URL).hash.replace("/", "");
             if (l_page === "") l_page = "Home";
 
-            // The Initial Connection
             EmitEvent("RequestPage", {
                 page: l_page,
             });
@@ -131,11 +127,27 @@ export class ExPage extends LitElement {
 
 customElements.define("ex-page", ExPage);
 
+/* eslint-disable indent */
 
 
+
+
+
+
+/**
+ * Retorna um valor aleatório.
+ * @param {number} max Valor máximo.
+ * @returns {number} Valor aleatório.
+ */
 function _getRandomValue(max) {
     return Math.floor(Math.random() * max);
 }
+
+/**
+ * Retorna um item aleatório de um array.
+ * @param {Array} array Array de itens.
+ * @returns {any} Item aleatório.
+ */
 function _getRandomValueFromArray(array) {
     const randomIndex = Math.floor(Math.random() * array.length);
     const randomValue = array.splice(randomIndex, 1)[0];
@@ -198,7 +210,7 @@ export class ExCreateCharacterAttributes extends LitElement {
 
     /**
      * Retorna os valores de cada atributo.
-     * @returns {{strength: number, agility: number, vitality: number, intelligence: number, spirituality: number}}
+     * @returns {{strength: number, agility: number, vitality: number, intelligence: number, spirituality: number}} Objeto com os valores dos atributos.
      */
     get() {
         if (this.points > 0 || 0 < this.points) return null;
@@ -212,7 +224,10 @@ export class ExCreateCharacterAttributes extends LitElement {
         };
     }
 
-    /** @return {HTMLInputElement} */
+    /**
+     * @param {string} name Nome do atributo.
+     * @returns {HTMLInputElement} Node do atributo.
+     */
     _getField(name) {
         return this.inputs_nodes[name];
     }
@@ -292,6 +307,11 @@ customElements.define(
     ExCreateCharacterAttributes
 );
 
+/* eslint-disable indent */
+
+
+
+
 
 
 export class ExChat extends LitElement {
@@ -344,7 +364,10 @@ export class ExChat extends LitElement {
         this.messageInputRef = createRef();
     }
 
-    /** @param {KeyboardEvent | MouseEvent} event  */
+    /**
+     * Envia uma mensagem para o servidor.
+     * @param {KeyboardEvent | MouseEvent} event Evento.
+     */
     sendMessageCallback(event) {
         if (event.type === "keyup" && event.key !== "Enter") return;
 
@@ -383,7 +406,7 @@ export class ExChat extends LitElement {
             <div role="log" aria-labelledby="Chat">
                 <ul ${ref(this.messagesRef)} id="history">
                     ${repeat(this.data, (message) => {
-                        return html`<p>${message}</p>`;
+                        return html` <p>${message}</p> `;
                     })}
                 </ul>
                 <div id="controls">
@@ -401,6 +424,13 @@ export class ExChat extends LitElement {
 }
 
 customElements.define("ex-chat", ExChat);
+
+/* eslint-disable indent */
+// Versão: 1.0.0
+// Data: 21.09.2023
+// Autor: Diegiwg (Diego Queiroz <diegiwg@gmail.com>)
+
+
 
 
 
@@ -459,7 +489,10 @@ export class ExToast extends LitElement {
         this._current = null;
     }
 
-    /** @param {import('../modules/Functions.js').Toast} data */
+    /**
+     * Função responsável por adicionar um Toast a fila.
+     * @param {import('../modules/Functions.js').Toast} data Dados de configuração do Toast.
+     */
     add(data) {
         this._queue = [...this._queue, data];
         this._showHandler();
@@ -482,13 +515,15 @@ export class ExToast extends LitElement {
         return html`
             <div role="status" id="container">
                 ${this._current
-                    ? html` <div
-                          id="toast"
-                          tabindex="0"
-                          class="${this._current.type}"
-                      >
-                          ${this._current.message}
-                      </div>`
+                    ? html`
+                          <div
+                              id="toast"
+                              tabindex="0"
+                              class="${this._current.type}"
+                          >
+                              ${this._current.message}
+                          </div>
+                      `
                     : ""}
             </div>
         `;
@@ -519,6 +554,11 @@ export class ExToast extends LitElement {
 }
 
 customElements.define("ex-toast", ExToast);
+
+/* eslint-disable indent */
+
+
+
 
 
 
@@ -551,7 +591,7 @@ export class ExRaceSelector extends LitElement {
 
     /**
      * Retorna a Raça selecionada.
-     * @returns {string}
+     * @returns {string} Nome da Raça.
      */
     get() {
         if (this._value === "" || !this.races.includes(this._value))
@@ -607,6 +647,11 @@ export class ExRaceSelector extends LitElement {
 
 customElements.define("ex-race-selector", ExRaceSelector);
 
+/* eslint-disable indent */
+
+
+
+
 
 
 export class ExClasseSelector extends LitElement {
@@ -634,6 +679,7 @@ export class ExClasseSelector extends LitElement {
 
     /**
      * Retorna a Classe selecionada.
+     * @returns {string} Nome da Classe.
      */
     get() {
         if (

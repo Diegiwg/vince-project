@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import { LitElement, css, html } from "lit";
 import { createRef, ref } from "lit/directives/ref";
 import { repeat } from "lit/directives/repeat";
@@ -59,7 +60,10 @@ export class ExChat extends LitElement {
         this.messageInputRef = createRef();
     }
 
-    /** @param {KeyboardEvent | MouseEvent} event  */
+    /**
+     * Envia uma mensagem para o servidor.
+     * @param {KeyboardEvent | MouseEvent} event Evento.
+     */
     sendMessageCallback(event) {
         if (event.type === "keyup" && event.key !== "Enter") return;
 
@@ -98,7 +102,7 @@ export class ExChat extends LitElement {
             <div role="log" aria-labelledby="Chat">
                 <ul ${ref(this.messagesRef)} id="history">
                     ${repeat(this.data, (message) => {
-                        return html`<p>${message}</p>`;
+                        return html` <p>${message}</p> `;
                     })}
                 </ul>
                 <div id="controls">

@@ -41,6 +41,6 @@
         "[javascript]": {
             "editor.defaultFormatter": "esbenp.prettier-vscode"
         },
-        "cSpell.words": ["Deslogado", "valibot"]
+        "cSpell.words": ["Deslogado", "labelledby", "valibot"]
     }
 }

@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import { LitElement, css, html } from "lit";
 import { createRef, ref } from "lit/directives/ref";
 import { repeat } from "lit/directives/repeat";
@@ -33,7 +34,7 @@ export class ExRaceSelector extends LitElement {
 
     /**
      * Retorna a Raça selecionada.
-     * @returns {string}
+     * @returns {string} Nome da Raça.
      */
     get() {
         if (this._value === "" || !this.races.includes(this._value))

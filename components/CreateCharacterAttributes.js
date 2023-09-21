@@ -1,12 +1,24 @@
+/* eslint-disable indent */
 import { LitElement, css, html } from "lit";
 import { createRef, ref } from "lit/directives/ref.js";
 import { repeat } from "lit/directives/repeat.js";
 
 import { Data } from "../modules/Functions.js";
 
+/**
+ * Retorna um valor aleatório.
+ * @param {number} max Valor máximo.
+ * @returns {number} Valor aleatório.
+ */
 function _getRandomValue(max) {
     return Math.floor(Math.random() * max);
 }
+
+/**
+ * Retorna um item aleatório de um array.
+ * @param {Array} array Array de itens.
+ * @returns {any} Item aleatório.
+ */
 function _getRandomValueFromArray(array) {
     const randomIndex = Math.floor(Math.random() * array.length);
     const randomValue = array.splice(randomIndex, 1)[0];
@@ -69,7 +81,7 @@ export class ExCreateCharacterAttributes extends LitElement {
 
     /**
      * Retorna os valores de cada atributo.
-     * @returns {{strength: number, agility: number, vitality: number, intelligence: number, spirituality: number}}
+     * @returns {{strength: number, agility: number, vitality: number, intelligence: number, spirituality: number}} Objeto com os valores dos atributos.
      */
     get() {
         if (this.points > 0 || 0 < this.points) return null;
@@ -83,7 +95,10 @@ export class ExCreateCharacterAttributes extends LitElement {
         };
     }
 
-    /** @return {HTMLInputElement} */
+    /**
+     * @param {string} name Nome do atributo.
+     * @returns {HTMLInputElement} Node do atributo.
+     */
     _getField(name) {
         return this.inputs_nodes[name];
     }

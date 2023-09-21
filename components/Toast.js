@@ -1,6 +1,11 @@
+/* eslint-disable indent */
+// Versão: 1.0.0
+// Data: 21.09.2023
+// Autor: Diegiwg (Diego Queiroz <diegiwg@gmail.com>)
+
 import { LitElement, css, html } from "lit";
 
-import { ListenEvent, RemoveEvent } from "../modules/Functions.js";
+import { Component, ListenEvent, RemoveEvent } from "../modules/Functions.js";
 
 export class ExToast extends LitElement {
     static properties = {
@@ -57,7 +62,10 @@ export class ExToast extends LitElement {
         this._current = null;
     }
 
-    /** @param {import('../modules/Functions.js').Toast} data */
+    /**
+     * Função responsável por adicionar um Toast a fila.
+     * @param {import('../modules/Functions.js').Toast} data Dados de configuração do Toast.
+     */
     add(data) {
         this._queue = [...this._queue, data];
         this._showHandler();
@@ -80,13 +88,15 @@ export class ExToast extends LitElement {
         return html`
             <div role="status" id="container">
                 ${this._current
-                    ? html` <div
-                          id="toast"
-                          tabindex="0"
-                          class="${this._current.type}"
-                      >
-                          ${this._current.message}
-                      </div>`
+                    ? html`
+                          <div
+                              id="toast"
+                              tabindex="0"
+                              class="${this._current.type}"
+                          >
+                              ${this._current.message}
+                          </div>
+                      `
                     : ""}
             </div>
         `;

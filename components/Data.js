@@ -1,5 +1,7 @@
 import { LitElement, css } from "lit";
 
+import { Component } from "../modules/Functions.js";
+
 export class ExData extends LitElement {
     static properties = {
         data: { state: true },

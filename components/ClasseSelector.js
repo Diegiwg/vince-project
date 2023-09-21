@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import { LitElement, css, html } from "lit";
 import { createRef, ref } from "lit/directives/ref";
 import { repeat } from "lit/directives/repeat";
@@ -29,6 +30,7 @@ export class ExClasseSelector extends LitElement {
 
     /**
      * Retorna a Classe selecionada.
+     * @returns {string} Nome da Classe.
      */
     get() {
         if (

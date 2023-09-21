@@ -53,3 +53,10 @@ export function ListenEvent(target, payload) {}
  * @param {string} target Nome do evento.
  */
 export function RemoveEvent(target) {}
+
+/**
+ * Função responsável por registrar um componente no espoco global do cliente.
+ * @param {string} key Nome do componente.
+ * @param {string} node Elemento/Objeto que representa o componente.
+ */
+export function Component(key, node) {}
