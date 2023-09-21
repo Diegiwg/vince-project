@@ -3,8 +3,23 @@ import bcrypt from "bcryptjs";
 import { safeParse } from "valibot";
 
 import { SessionSchema } from "./Models.js";
+import { createWorker } from "./Workers.js";
 
 const prisma = new PrismaClient();
+
+const MAX_WORK_OPERATIONS = 10;
+
+export const DatabaseService = {
+    /** @type {{clients: Set<number>, users: Map<number, import("./Models.js").User)>}} */
+    sessions_cache: {
+        clients: new Set(),
+        users: new Map(),
+    },
+
+    queue: createWorker(MAX_WORK_OPERATIONS),
+};
+
+DatabaseService.queue.start();
 
 export const $User = {
     findAll: async () => {
@@ -20,14 +35,28 @@ export const $User = {
     },
 
     findBySession: async (id, token) => {
-        // TODO: Essa função é bastante utilizada, talvez seja interessante criar um local em memoria, para salvar o socket.id do cliente, junto com o ID e TOKEN, e assim, sempre que o mesmo cliente mandar uma solicitação, podemos buscar nessa memoria, e caso exista, verificar se ainda se mantem o mesmo token, e caso não, invalido o usuario, e segue com a verificação normal. Essa banco em memoria pode ser invalidado periodicamente, sem precisar que a aplicação reinicie, ou pode ter uma função que automaticamente remove clientes antigos?
+        if (DatabaseService.sessions_cache.clients.has(id)) {
+            const user = DatabaseService.sessions_cache.users.get(id);
 
-        return await prisma.user.findUnique({
+            // Verifica se o token fornecido é igual ao token em cache.
+            if (user.token === token) {
+                return user;
+            }
+        }
+
+        const user = await prisma.user.findUnique({
             where: {
                 id,
                 token,
             },
         });
+
+        if (user) {
+            DatabaseService.sessions_cache.users.set(id, user);
+            DatabaseService.sessions_cache.clients.add(id);
+        }
+
+        return user;
     },
 
     validateSession: async (id, token) => {
@@ -45,8 +74,8 @@ export const $User = {
     },
 
     create: async (name, email, password) => {
-        const _user = await $User.findByEmail(email);
-        if (_user) return false;
+        // const _user = await $User.findByEmail(email);
+        // if (_user) return false;
 
         return await prisma.user.create({
             data: {

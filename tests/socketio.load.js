@@ -8,13 +8,21 @@ const EMIT_INTERVAL_IN_MS = 1000;
 
 let clientCount = 0;
 let lastReport = new Date().getTime();
-let packetsSinceLastReport = 0;
+let packetsReceivedSinceLastReport = 0;
+let packetsEmittedSinceLastReport = 0;
+let disconnectCount = 0;
+let pollingCount = 0;
+let websocketCount = 0;
 
 const createClient = () => {
     const transports =
-        Math.random() < POLLING_PERCENTAGE
-            ? ["polling"]
-            : ["polling", "websocket"];
+        Math.random() < POLLING_PERCENTAGE ? ["polling"] : ["websocket"];
+
+    if (transports.includes("polling")) {
+        pollingCount++;
+    } else {
+        websocketCount++;
+    }
 
     const socket = io(URL, {
         transports,
@@ -25,15 +33,19 @@ const createClient = () => {
             target: "RequestPage",
             page: "Login",
         });
+        packetsEmittedSinceLastReport++;
     }, EMIT_INTERVAL_IN_MS);
 
     socket.on("response", () => {
-        packetsSinceLastReport++;
+        packetsReceivedSinceLastReport++;
     });
 
     socket.on("disconnect", (reason) => {
-        console.log(`disconnect due to ${reason}`);
-        process.exit(1);
+        console.log(`Client disconnected due to ${reason}`);
+        disconnectCount++;
+        if (disconnectCount === MAX_CLIENTS) {
+            printFinalReport();
+        }
     });
 
     if (++clientCount < MAX_CLIENTS) {
@@ -46,16 +58,25 @@ createClient();
 const printReport = () => {
     const now = new Date().getTime();
     const durationSinceLastReport = (now - lastReport) / 1000;
-    const packetsPerSeconds = (
-        packetsSinceLastReport / durationSinceLastReport
+    const packetsReceivedPerSecond = (
+        packetsReceivedSinceLastReport / durationSinceLastReport
+    ).toFixed(2);
+    const packetsEmittedPerSecond = (
+        packetsEmittedSinceLastReport / durationSinceLastReport
     ).toFixed(2);
 
     console.log(
-        `client count: ${clientCount} ; average packets received per second: ${packetsPerSeconds}`
+        `Client count: ${clientCount} | Average packets received per second: ${packetsReceivedPerSecond} | Average packets emitted per second: ${packetsEmittedPerSecond} | Polling: ${pollingCount} | WebSocket: ${websocketCount}`
     );
 
-    packetsSinceLastReport = 0;
+    packetsReceivedSinceLastReport = 0;
+    packetsEmittedSinceLastReport = 0;
     lastReport = now;
+};
+
+const printFinalReport = () => {
+    console.log("All clients disconnected.");
+    printReport();
 };
 
 setInterval(printReport, 1000);

@@ -41,7 +41,7 @@ export let CharacterSchema = object({
 /** @typedef {import('valibot').Output<typeof SessionSchema>} Session */
 export let SessionSchema = object({
     id: number([minValue(1)]),
-    token: string(),
+    token: string([minValue(1)]),
 });
 
 /** @typedef {import('valibot').Output<typeof LoginSchema>} Login */

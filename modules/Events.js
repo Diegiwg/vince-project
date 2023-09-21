@@ -13,16 +13,14 @@ const EventsService = {
 };
 
 function executeRequest() {
-    if (EventsService.queue.length === 0) return;
+    const batchSize = Math.ceil(EventsService.queue.length * 0.45);
 
-    let batchSize = EventsService.queue.length * 0.45;
-    let processedCount = 0;
-
-    while (processedCount < batchSize && EventsService.queue.length > 0) {
-        const { server, client, data, target } = EventsService.queue.shift();
+    for (let i = 0; i < batchSize && i < EventsService.queue.length; i++) {
+        const { server, client, data, target } = EventsService.queue[i];
         EventsService.functions.get(target)({ server, client, data });
-        processedCount++;
     }
+
+    EventsService.queue.splice(0, batchSize);
 }
 
 export async function EventsBundler() {
@@ -49,8 +47,6 @@ export async function EventsBundler() {
 
 /** @param {Server} server  */
 export async function HandlerEvents(server) {
-    if (EventsService.events.size === 0) return;
-
     server.on(
         "connection",
         /** @param {Socket} client */
