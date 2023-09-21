@@ -4,7 +4,7 @@ import { CONFIG } from "../config.js";
 import { DEBUG } from "../modules/Logger.js";
 import { RequestPageSchema } from "../modules/Models.js";
 import { RenderPage } from "../modules/Page.js";
-import { $User } from "../modules/Prisma.js";
+import { $User, DatabaseService } from "../modules/Prisma.js";
 
 /** @param {import("../modules/Functions.js").EventPayload} payload  */
 export async function RequestPage(payload) {
@@ -21,8 +21,10 @@ export async function RequestPage(payload) {
 
     const { id, token } = data;
 
-    if (!id || !token || !(await $User.validateSession(id, token)))
-        return RenderPage(client, "Login");
+    DatabaseService.queue.add(async () => {
+        if (!id || !token || !(await $User.validateSession(id, token)))
+            return RenderPage(client, "Login");
 
-    return RenderPage(client, page, data);
+        RenderPage(client, page, data);
+    });
 }

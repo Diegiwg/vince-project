@@ -60,10 +60,7 @@ export const $User = {
     },
 
     validateSession: async (id, token) => {
-        const isValid = safeParse(SessionSchema, { id, token }).success;
-        if (!isValid) return false;
-
-        return await $User.findBySession(id, token);
+        return (await $User.findBySession(id, token)) ? true : false;
     },
 
     validatePassword: async (id, password) => {
@@ -82,24 +79,28 @@ export const $User = {
                 name,
                 email,
                 password: bcrypt.hashSync(password, 10),
+                token: $User._generateNewSessionToken(),
             },
         });
     },
 
-    _generateNewSessionToken: async (id) => {
-        const _user = await $User.findById(id);
-        _user.token = bcrypt.genSaltSync(10);
+    updateSessionToken: async (id, invalidate = false) => {
+        const token = invalidate ? "" : $User._generateNewSessionToken();
 
         await prisma.user.update({
             where: {
                 id,
             },
             data: {
-                token: _user.token,
+                token,
             },
         });
 
-        return _user.token;
+        return token;
+    },
+
+    _generateNewSessionToken: () => {
+        return bcrypt.genSaltSync(10);
     },
 };
 
