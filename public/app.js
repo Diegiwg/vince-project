@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+
 /** @type {import('socket.io').Socket} */
 var socket = io();
 window.socket = socket;

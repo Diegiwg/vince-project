@@ -30,11 +30,11 @@ module.exports = {
         "jsdoc/check-access": 1, // Recommended
         "jsdoc/check-alignment": 1, // Recommended
         // "jsdoc/check-examples": 1,
-        // "jsdoc/check-indentation": 1,
-        // "jsdoc/check-line-alignment": 1,
+        "jsdoc/check-indentation": 1,
+        "jsdoc/check-line-alignment": 1,
         "jsdoc/check-param-names": 1, // Recommended
         "jsdoc/check-property-names": 1, // Recommended
-        // "jsdoc/check-syntax": 1,
+        "jsdoc/check-syntax": 1,
         "jsdoc/check-tag-names": 1, // Recommended
         "jsdoc/check-types": 1, // Recommended
         "jsdoc/check-values": 1, // Recommended
@@ -73,7 +73,7 @@ module.exports = {
         // "jsdoc/require-throws": 1,
         "jsdoc/require-yields": 1, // Recommended
         "jsdoc/require-yields-check": 1, // Recommended
-        // "jsdoc/sort-tags": 1,
+        "jsdoc/sort-tags": 1,
         "jsdoc/tag-lines": 1, // Recommended
         "jsdoc/valid-types": 1 // Recommended
     },

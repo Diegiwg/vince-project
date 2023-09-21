@@ -1,19 +1,38 @@
+// Versão: 1.0.0
+// Data: 21.09.2023
+// Autor: Diegiwg (Diego Queiroz <diegiwg@gmail.com>)
+// TODO: Reescrever esse módulo para adicionar a capacidade de carregar componentes que estejam dentro de sub-pastas. Ex: /components/buttons/cool.js
+
 import fs from "fs";
 
 import { DEBUG, INFO, SUCCESS } from "./Logger.js";
 
+/**
+ * Função responsável por procurar os componentes.
+ * @returns {string[]} Array com os nomes dos arquivos.
+ */
 function searchComponents() {
     const components = fs.readdirSync("./components");
     return components || [];
 }
 
-function loadComponent(component) {
-    let content = fs.readFileSync(`./components/${component}`, "utf-8");
+/**
+ * Função responsável por carregar o conteúdo de um componente.
+ * @param {string} fileName Nome do arquivo.
+ * @returns {string} Conteúdo do arquivo.
+ */
+function loadComponent(fileName) {
+    let content = fs.readFileSync(`./components/${fileName}`, "utf-8");
     return content;
 }
 
-/** @param {string} content */
+/**
+ * Função responsável por analisar/arrumar os imports de um componente.
+ * @param {string} content Conteúdo do componente.
+ * @returns {{content: string, imports: Set<string>}} Objeto com o conteúdo e os imports arrumados.
+ */
 function parseLitImports(content) {
+    // eslint-disable-next-line no-useless-escape
     const data = content.match(/import {([\w\s,]+)} from "lit[\w\/.]*";/gim);
     const imports = new Set();
 
@@ -30,6 +49,10 @@ function parseLitImports(content) {
     return { content, imports };
 }
 
+/**
+ * Função responsável por gerar o arquivo component-bundle.js
+ * @param {string[]} components Array com os nomes dos arquivos.
+ */
 function bundler(components) {
     let final_imports = new Set();
     let final_code = "";
@@ -46,14 +69,11 @@ function bundler(components) {
 
     final_imports = Array.from(final_imports).join(", ");
 
-    // TODO: Rewrite this Module
-    // INFO: Simple way for now to handle 'fake' imports
     final_code = final_code.replaceAll(
         /import {([\w,\s]+?)} from "\.\.\/modules\/Functions\.js";/gm,
         ""
     );
 
-    // save component-bundle.js
     fs.writeFileSync(
         "./public/component-bundle.js",
         "import { " +
@@ -65,6 +85,9 @@ function bundler(components) {
     SUCCESS("Components bundled!");
 }
 
+/**
+ * Função responsável por compilar os componentes.
+ */
 export function compileComponents() {
     INFO("Compiling components...");
 

@@ -1,18 +1,20 @@
+// Versão: 1.0.0
+// Data: 21.09.2023
+// Autor: Diegiwg (Diego Queiroz <diegiwg@gmail.com>)
+
 /**
- * Cria um Worker, que internamente tem uma fila, que será continuamente analisada, para lidar com os trabalhos nela inserida.
- * @param {Number} concurrentJobLimit Limite de quantos trabalhos pegar por vez para resolver.
- * @param {Number} listeningRate      Taxa de atualização do Woker (em ms).
- * @param {Number} queueSizeLimit     Capacidade maxima da fila (em un).
+ * Cria uma Fila, que internamente tem um Worker, que será acionado para lidar com os trabalhos nela inserida.
+ * @param {number} concurrentJobLimit Limite de quantos trabalhos pegar por vez para resolver.
+ * @param {number} listeningRate Taxa de atualização do Worker interno (em ms).
+ * @param {number} queueSizeLimit Capacidade maxima da fila (em un).
+ * @returns {{start: () => void, stop: () => void, add: (operation: Function) => number | null}} Objeto que representa a Fila.
  */
-export function createWorker(
+export function createQueue(
     concurrentJobLimit = 10,
     listeningRate = 100,
     queueSizeLimit = 100
 ) {
     return {
-        /**
-         * Inicia os trabalhos do Worker.
-         */
         start: function () {
             this._interval = setInterval(
                 this._handleQueue.bind(this),
@@ -20,19 +22,10 @@ export function createWorker(
             );
         },
 
-        /**
-         * Finaliza os trabalhos do Worker.
-         */
         stop: function () {
             clearInterval(this._interval);
         },
 
-        /**
-         * Adiciona uma operação a fila.
-         * @param {Function} operation Função que será executada dentro do Worker.
-         * @param {Number} user        Opcional: Identificação do usuario que mandou a operação.
-         * @returns {Number|null}      Retornar null caso não seja possivel anexar a operação, ou a posição da operação na fila.
-         */
         add: function (operation) {
             if (this._queue.length > queueSizeLimit) return null;
 

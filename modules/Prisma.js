@@ -1,8 +1,10 @@
+// Versão: 1.0.0
+// Data: 21.09.2023
+// Autor: Diegiwg (Diego Queiroz <diegiwg@gmail.com>)
+
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import { safeParse } from "valibot";
 
-import { SessionSchema } from "./Models.js";
 import { createWorker } from "./Workers.js";
 
 const prisma = new PrismaClient();
@@ -10,7 +12,7 @@ const prisma = new PrismaClient();
 const MAX_WORK_OPERATIONS = 10;
 
 export const DatabaseService = {
-    /** @type {{clients: Set<number>, users: Map<number, import("./Models.js").User)>}} */
+    /** @type {{clients: Set<number>, users: Map<number, import("./Models.js").User>}} */
     sessions_cache: {
         clients: new Set(),
         users: new Map(),
@@ -71,9 +73,6 @@ export const $User = {
     },
 
     create: async (name, email, password) => {
-        // const _user = await $User.findByEmail(email);
-        // if (_user) return false;
-
         return await prisma.user.create({
             data: {
                 name,
@@ -107,7 +106,8 @@ export const $User = {
 export const $Character = {
     /**
      * Função para criar um Personagem (vinculado a um Usuário)
-     * @param {{user: import("./Models.js").User, character: import("./Models.js").CreateCharacter}} data
+     * @param {{user: import("./Models.js").User, character: import("./Models.js").CreateCharacter}} data Dados do Personagem
+     * @returns {import("./Models.js").Character} Personagem
      */
     create: async (data) => {
         const { user, character } = data;

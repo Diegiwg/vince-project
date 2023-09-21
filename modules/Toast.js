@@ -1,17 +1,21 @@
+// Versão: 1.0.0
+// Data: 21.09.2023
+// Autor: Diegiwg (Diego Queiroz <diegiwg@gmail.com>)
+
 import { EmitServerEvent } from "./Events.js";
 
 /**
- * @param {import('socket.io').Socket} client
- * @param {import('./Models.js').Toast} data
+ * @param {import('socket.io').Socket} client Objeto que representa a conexão do cliente.
+ * @param {import('./Models.js').Toast} data Dados a serem enviados.
  */
 function _sendToast(client, data) {
     EmitServerEvent(client, "Toast", data);
 }
 
 /**
- * @param {import('socket.io').Socket} client
- * @param {number} time
- * @param {String[]} msg
+ * @param {import('socket.io').Socket} client Objeto que representa a conexão do cliente.
+ * @param {number} time Tempo de exibição do Toast.
+ * @param {string[]} msg Mensagem a ser exibida.
  */
 function INFO(client, time = null, ...msg) {
     _sendToast(client, {
@@ -22,9 +26,9 @@ function INFO(client, time = null, ...msg) {
 }
 
 /**
- * @param {import('socket.io').Socket} client
- * @param {number} time
- * @param {String[]} msg
+ * @param {import('socket.io').Socket} client Objeto que representa a conexão do cliente.
+ * @param {number} time Tempo de exibição do Toast.
+ * @param {string[]} msg Mensagem a ser exibida.
  */
 function ERROR(client, time = null, ...msg) {
     _sendToast(client, {
@@ -35,9 +39,9 @@ function ERROR(client, time = null, ...msg) {
 }
 
 /**
- * @param {import('socket.io').Socket} client
- * @param {number} time
- * @param {String[]} msg
+ * @param {import('socket.io').Socket} client Objeto que representa a conexão do cliente.
+ * @param {number} time Tempo de exibição do Toast.
+ * @param {string[]} msg Mensagem a ser exibida.
  */
 function WARN(client, time = null, ...msg) {
     _sendToast(client, {
@@ -48,9 +52,9 @@ function WARN(client, time = null, ...msg) {
 }
 
 /**
- * @param {import('socket.io').Socket} client
- * @param {number} time
- * @param {String[]} msg
+ * @param {import('socket.io').Socket} client Objeto que representa a conexão do cliente.
+ * @param {number} time Tempo de exibição do Toast.
+ * @param {string[]} msg Mensagem a ser exibida.
  */
 function SUCCESS(client, time = null, ...msg) {
     _sendToast(client, {

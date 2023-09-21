@@ -1,3 +1,7 @@
+// Versão 1.0.5
+// Data: 21.09.2023
+// Autor: Diegiwg (Diego Queiroz <diegiwg@gmail.com>)
+
 import { CONFIG } from "../config.js";
 
 const COLORS = {
@@ -10,30 +14,55 @@ const COLORS = {
     BLUE: "\u001B[34m",
 };
 
-/** @param {typeof COLORS} color  */
+/**
+ * Função responsável por formatar mensagens.
+ * @param {string} value Mensagem a ser formatada.
+ * @param {typeof COLORS} color Cor da mensagem.
+ * @returns {string} Mensagem formatada.
+ */
 function text(value, color) {
     return `${COLORS[color]}[${value}]${COLORS.RESET}`;
 }
 
-export function DEBUG(...msg) {
+/**
+ * Mostrar mensagem da categoria DEBUG.
+ * @param {...any} msgs Mensagens a serem mostradas.
+ */
+export function DEBUG(...msgs) {
     if (CONFIG.mode === "PROD") return;
 
-    console.log(text("DEBUG", "PURPLE"), ...msg);
+    console.log(text("DEBUG", "PURPLE"), ...msgs);
 }
 
-export function INFO(...msg) {
-    console.log(text("INFO", "CYAN"), ...msg);
+/**
+ * Mostrar mensagem da categoria INFO.
+ * @param {...any} msgs Mensagens a serem mostradas.
+ */
+export function INFO(...msgs) {
+    console.log(text("INFO", "CYAN"), ...msgs);
 }
 
-export function ERROR(...msg) {
-    console.log(text("ERROR", "RED"), ...msg);
+/**
+ * Mostrar mensagem da categoria ERROR.
+ * @param {...any} msgs Mensagens a serem mostradas.
+ */
+export function ERROR(...msgs) {
+    console.log(text("ERROR", "RED"), ...msgs);
     process.exit(1);
 }
 
-export function WARN(...msg) {
-    console.log(text("WARN", "YELLOW"), ...msg);
+/**
+ * Mostrar mensagem da categoria WARN.
+ * @param {...any} msgs Mensagens a serem mostradas.
+ */
+export function WARN(...msgs) {
+    console.log(text("WARN", "YELLOW"), ...msgs);
 }
 
-export function SUCCESS(...msg) {
-    console.log(text("SUCCESS", "BLUE"), ...msg);
+/**
+ * Mostrar mensagem da categoria SUCCESS.
+ * @param {...any} msgs Mensagens a serem mostradas.
+ */
+export function SUCCESS(...msgs) {
+    console.log(text("SUCCESS", "BLUE"), ...msgs);
 }
