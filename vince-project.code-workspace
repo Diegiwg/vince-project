@@ -1,0 +1,40 @@
+{
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {
+        "editor.codeActionsOnSave": {
+            "source.fixAll": true,
+            "source.organizeImports": true
+        },
+        "eslint.workingDirectories": ["."],
+        "cSpell.language": "en,pt,pt-BR",
+        // Editor
+        "explorer.compactFolders": false,
+        "explorer.fileNesting.enabled": true,
+        "explorer.sortOrder": "filesFirst",
+        "editor.inlayHints.padding": true,
+        "javascript.inlayHints.functionLikeReturnTypes.enabled": true,
+        "javascript.inlayHints.parameterNames.enabled": "all",
+        "typescript.inlayHints.variableTypes.enabled": true,
+        "typescript.inlayHints.parameterTypes.enabled": true,
+        "typescript.inlayHints.propertyDeclarationTypes.enabled": true,
+        "typescript.inlayHints.parameterNames.enabled": "all",
+        "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
+        "typescript.inlayHints.enumMemberValues.enabled": true,
+        "javascript.inlayHints.variableTypes.enabled": true,
+        "javascript.inlayHints.propertyDeclarationTypes.enabled": true,
+        "javascript.inlayHints.parameterTypes.enabled": true,
+        "javascript.inlayHints.enumMemberValues.enabled": true,
+
+        // prettier
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnPaste": false, // required
+        "editor.formatOnType": false, // required
+        "editor.formatOnSave": true, // optional
+        "editor.formatOnSaveMode": "file", // required to format on save
+        "files.autoSave": "onFocusChange" // optional but recommended
+    }
+}
