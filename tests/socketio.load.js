@@ -1,7 +1,7 @@
 import { io } from "socket.io-client";
 
 const URL = process.env.URL || "http://localhost:7001";
-const MAX_CLIENTS = 4_000;
+const MAX_CLIENTS = 1500;
 const POLLING_PERCENTAGE = 0.05;
 const CLIENT_CREATION_INTERVAL_IN_MS = 10;
 const EMIT_INTERVAL_IN_MS = 1000;

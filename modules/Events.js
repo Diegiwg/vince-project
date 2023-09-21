@@ -2,26 +2,15 @@ import fs from "fs";
 import { Server, Socket } from "socket.io";
 
 import { INFO, SUCCESS } from "./Logger.js";
+import { createWorker } from "./Workers.js";
 
 // Version: 3.0.0
 
-/** @type {{events: Set<string>, functions: Map<string, Function>, queue: [{server, client, data, target}]  }} */
 const EventsService = {
     events: new Set(),
     functions: new Map(),
-    queue: new Array(),
+    queue: createWorker(50, 100, 1000),
 };
-
-function executeRequest() {
-    const batchSize = Math.ceil(EventsService.queue.length * 0.45);
-
-    for (let i = 0; i < batchSize && i < EventsService.queue.length; i++) {
-        const { server, client, data, target } = EventsService.queue[i];
-        EventsService.functions.get(target)({ server, client, data });
-    }
-
-    EventsService.queue.splice(0, batchSize);
-}
 
 export async function EventsBundler() {
     if (!fs.existsSync("events")) return;
@@ -57,7 +46,13 @@ export async function HandlerEvents(server) {
 
                 if (!EventsService.functions.has(target)) return;
 
-                EventsService.queue.push({ server, client, data, target });
+                EventsService.queue.add(() => {
+                    EventsService.functions.get(target)({
+                        server,
+                        client,
+                        data,
+                    });
+                });
             });
         }
     );
@@ -77,7 +72,5 @@ export function EmitServerEvent(target, name, data) {
     });
 }
 
-// Worker que vai monitorar se existe um evento na queue
-setInterval(() => {
-    executeRequest();
-}, 100);
+// Iniciar o Worker
+EventsService.queue.start();
