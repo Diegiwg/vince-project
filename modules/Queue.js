@@ -1,4 +1,4 @@
-// Versão: 1.0.0
+// Versão: 2.0.0
 // Data: 21.09.2023
 // Autor: Diegiwg (Diego Queiroz <diegiwg@gmail.com>)
 

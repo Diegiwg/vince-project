@@ -5,7 +5,7 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
-import { createWorker } from "./Workers.js";
+import { createQueue } from "./Queue.js";
 
 const prisma = new PrismaClient();
 
@@ -18,7 +18,7 @@ export const DatabaseService = {
         users: new Map(),
     },
 
-    queue: createWorker(MAX_WORK_OPERATIONS),
+    queue: createQueue(MAX_WORK_OPERATIONS),
 };
 
 DatabaseService.queue.start();

@@ -6,12 +6,12 @@ import fs from "fs";
 import { Server, Socket } from "socket.io";
 
 import { INFO, SUCCESS } from "./Logger.js";
-import { createWorker } from "./Workers.js";
+import { createQueue } from "./Queue.js";
 
 const EventsService = {
     events: new Set(),
     functions: new Map(),
-    queue: createWorker(50, 100, 1000),
+    queue: createQueue(50, 100, 1000),
 };
 
 /**
