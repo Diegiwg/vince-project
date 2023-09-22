@@ -20,13 +20,21 @@ model User {
 }
 
 model Character {
-    id           Int    @id @default(autoincrement())
-    name         String
-    race         String
-    classe       String
-    hp           Int
-    mp           Int
-    sp           Int
+    id         Int                  @id @default(autoincrement())
+    name       String
+    race       Race                 @relation(fields: [raceId], references: [id])
+    raceId     Int
+    classe     Classe               @relation(fields: [classeId], references: [id])
+    classeId   Int
+    atributtes CharacterAtributtes?
+
+    user                  User @relation(fields: [userId], references: [id])
+    userId                Int
+    characterAtributtesId Int
+}
+
+model CharacterAtributtes {
+    id           Int @id @default(autoincrement())
     experience   Int
     strength     Int
     agility      Int
@@ -34,6 +42,27 @@ model Character {
     intelligence Int
     spirituality Int
 
-    user    User @relation(fields: [user_id], references: [id])
-    user_id Int
+    character   Character @relation(fields: [characterId], references: [id])
+    characterId Int       @unique
+}
+
+model Race {
+    id          Int    @id @default(autoincrement())
+    name        String @unique
+    description String
+    hp          Int
+    mp          Int
+    sp          Int
+
+    characters Character[]
+    classes    Classe[]
+}
+
+model Classe {
+    id          Int    @id @default(autoincrement())
+    name        String @unique
+    description String
+
+    characters Character[]
+    races      Race[]
 }

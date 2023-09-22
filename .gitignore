@@ -1,3 +1,7 @@
+# Ignorar por enquanto a pasta de migrations, até oficialmente montar a versão final do banco
+prisma/migrations/
+
+
 # Logs
 logs
 *.log
@@ -128,3 +132,4 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
