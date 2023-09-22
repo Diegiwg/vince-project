@@ -19,9 +19,9 @@ function parserCommand(string) {
     const commandName = string.matchAll(/\/([\w-]+)?/g)?.next().value[1];
 
     // Split args in pair of key/value
-    const commandArgs = string;
+    const commandArgs = string.matchAll(/([\w]+)?=\[([\w\d\s'"]+)?\]/g).next();
 
-    return commandName;
+    return { commandName, commandArgs };
 }
 
 console.log(parserCommand("olaMundo"));
