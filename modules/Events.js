@@ -14,6 +14,16 @@ const EventsService = {
     queue: createQueue(50, 100, 1000),
 };
 
+// Manualmente cadastrar o Evento de Comandos
+(async function () {
+    const module = await import("../events/+command.js");
+
+    module["CommandsBundler"]();
+
+    EventsService.events.add("command");
+    EventsService.functions.set("command", module["command"]);
+})();
+
 /**
  * Função responsável por analisar e compilar os eventos para torna-los disponíveis.
  */
