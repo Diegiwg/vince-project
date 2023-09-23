@@ -21,11 +21,6 @@ module.exports = {
         sourceType: "module",
     },
     rules: {
-        indent: ["error", 4],
-        "linebreak-style": ["error", "windows"],
-        quotes: ["error", "double"],
-        semi: ["error", "always"],
-
         // JSDOC
         "jsdoc/check-access": 1, // Recommended
         "jsdoc/check-alignment": 1, // Recommended
@@ -75,6 +70,6 @@ module.exports = {
         "jsdoc/require-yields-check": 1, // Recommended
         "jsdoc/sort-tags": 1,
         "jsdoc/tag-lines": 1, // Recommended
-        "jsdoc/valid-types": 1 // Recommended
+        "jsdoc/valid-types": 1, // Recommended
     },
 };

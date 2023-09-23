@@ -3,7 +3,6 @@
 // Autor: Diegiwg (Diego Queiroz <diegiwg@gmail.com>)
 
 import fs from "fs";
-import { Server, Socket } from "socket.io";
 
 import { INFO, SUCCESS } from "../modules/Logger.js";
 
@@ -33,17 +32,15 @@ export async function CommandsBundler() {
     }
 
     SUCCESS("Commands bundled!");
+    INFO(CommandService.functions);
 }
 
 /**
  * @param {import("../modules/Functions.js").EventPayload} payload Objeto contendo os dados da solicitação.
+ * @returns {Promise<void>}
  */
 export async function command(payload) {
-    const { client, data } = payload;
+    if (!CommandService.actions.has(payload.data.name)) return;
 
-    const { command } = data;
-
-    if (!CommandService.functions.has(command)) return;
-
-    CommandService.functions.get(command)(payload);
+    return await CommandService.functions.get(payload.data.name)(payload);
 }

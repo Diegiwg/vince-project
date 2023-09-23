@@ -38,10 +38,27 @@
         "body": [
             "import { DEBUG } from '../modules/Logger.js';",
             "\n",
-            "/** @param {import('../modules/Functions.js').EventPayload} io */",
+            "/** @param {import('../modules/Functions.js').EventPayload} payload Dados da solicitação */",
             "export function $1(payload) {",
             "\n",
             "DEBUG('Event::$1');",
+            "\n",
+            "const { server, client, data } = payload;",
+            "\n",
+            "$2",
+            "}"
+        ]
+    },
+    "new-command": {
+        "prefix": "!new-command",
+        "description": "Criar um novo Comando!",
+        "body": [
+            "import { DEBUG } from '../modules/Logger.js';",
+            "\n",
+            "/** @param {import('../modules/Functions.js').EventPayload} payload Dados da solicitação */",
+            "export function $1(payload) {",
+            "\n",
+            "DEBUG('Command::$1');",
             "\n",
             "const { server, client, data } = payload;",
             "\n",

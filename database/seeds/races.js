@@ -11,10 +11,12 @@ async function classesNamesToId(classes) {
             where: { name: classe },
         });
 
-        ids.add(classeData.id);
+        if (!classeData) continue;
+
+        ids.add({ id: classeData?.id });
     }
 
-    return ids;
+    return Array.from(ids);
 }
 
 const RACES = [
@@ -113,6 +115,8 @@ const RACES = [
 export const RacesSetup = async function () {
     for (const race of RACES) {
         try {
+            const classesIds = await classesNamesToId(race.classes);
+
             await prisma.race.create({
                 data: {
                     name: race.name,
@@ -120,7 +124,9 @@ export const RacesSetup = async function () {
                     hp: race.hp,
                     mp: race.mp,
                     sp: race.sp,
-                    classes: await classesNamesToId(race.classes),
+                    classes: {
+                        connect: classesIds,
+                    },
                 },
             });
             console.log("\tCreated", race.name);

@@ -1,6 +1,6 @@
 export const CONFIG = {
     /** @type {"DEV"|"PROD"} */
-    mode: "PROD",
+    mode: "DEV",
     port: 7001,
     unprotectedRoutes: ["Login", "CreateAccount"],
 };
