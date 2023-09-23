@@ -42,5 +42,7 @@ export async function CommandsBundler() {
 export async function command(payload) {
     if (!CommandService.actions.has(payload.data.name)) return;
 
+    delete payload.data.name;
+
     return await CommandService.functions.get(payload.data.name)(payload);
 }

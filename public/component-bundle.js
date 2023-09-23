@@ -432,6 +432,11 @@ export class ExCommander extends LitElement {
         messages: {
             type: Array,
         },
+        index: {
+            type: {
+                Number,
+            },
+        },
     };
 
     static styles = css`
@@ -453,6 +458,7 @@ export class ExCommander extends LitElement {
         super();
 
         this.messages = [];
+        this.index = -1;
     }
 
     inputNode = createRef();
@@ -480,12 +486,10 @@ export class ExCommander extends LitElement {
 
         if (!name) return null;
 
-        // Split args in pair of key/value
-        const args = Array.from(string.matchAll(/([\w]*)?=([\w\d]*)?/g)).map(
-            (pair) => {
-                return { key: pair[1], value: pair[2] };
-            }
-        );
+        const args = {};
+        Array.from(string.matchAll(/([\w]*)?=([\w\d]*)?/g)).map((pair) => {
+            args[pair[1]] = pair[2];
+        });
 
         return { name, args };
     }
@@ -506,30 +510,51 @@ export class ExCommander extends LitElement {
 
         this.inputHistory.push(input.value);
 
-        input.setAttribute("index", -1);
+        this.index = -1;
         input.value = "";
+
+        console.log(this.inputHistory);
     }
 
     /**
+     * Sistema de navegação de histórico de comandos.
      * @param {KeyboardEvent} event Evento de tecla pressionada.
      */
     historyNavigation(event) {
         if (!event.key === "ArrowUp" || !event.key === "ArrowDown") return;
 
+        const local_index = Number(this.index);
         const input = this.inputNode.value;
 
-        const index = Number(input.getAttribute("index"));
-        if (!index) return;
+        if (this.inputHistory.length === 0) return;
 
-        if (
-            (index === -1 && event.key === "ArrowDown") ||
-            this.inputHistory.length === 0
-        )
-            return;
+        // ArrowDown
+        if (event.key === "ArrowDown") {
+            if (local_index === -1) return;
 
-        if (index === -1 && event.key === "ArrowUp") {
-            input.setAttribute("index", this.inputHistory.length - 1);
-            return;
+            if (this.inputHistory.length > local_index + 1) {
+                this.index = local_index + 1;
+                input.value = this.inputHistory[this.index];
+
+                return;
+            }
+
+            this.index = -1;
+            input.value = "";
+        }
+
+        if (event.key === "ArrowUp") {
+            if (local_index === -1) {
+                this.index = this.inputHistory.length - 1;
+                input.value = this.inputHistory[this.index];
+                return;
+            }
+
+            if (local_index > 0) {
+                this.index = local_index - 1;
+                input.value = this.inputHistory[this.index];
+                return;
+            }
         }
     }
 
@@ -544,7 +569,9 @@ export class ExCommander extends LitElement {
             <form @submit=${this.sendCommand}>
                 <input
                     ${ref(this.inputNode)}
+                    index=${this.index}
                     placeholder="Envie algum comando..."
+                    @keyup=${this.historyNavigation}
                 />
             </form>
         `;
