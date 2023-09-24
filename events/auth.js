@@ -4,10 +4,10 @@
 
 import { safeParse } from "valibot";
 
+import { $User, DatabaseService } from "../modules/Database.js";
 import { DEBUG } from "../modules/Logger.js";
 import { CreateAccountSchema, LoginSchema } from "../modules/Models.js";
 import { RenderPage } from "../modules/Page.js";
-import { $User, DatabaseService } from "../modules/Prisma.js";
 import { TOAST } from "../modules/Toast.js";
 
 /**

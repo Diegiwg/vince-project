@@ -4,11 +4,11 @@
 
 import { safeParse } from "valibot";
 
+import { $User } from "../modules/Database.js";
 import { EmitServerEvent } from "../modules/Events.js";
 import { DEBUG } from "../modules/Logger.js";
 import { NewMessageSchema, SessionSchema } from "../modules/Models.js";
 import { RenderPage } from "../modules/Page.js";
-import { $User } from "../modules/Prisma.js";
 import { TOAST } from "../modules/Toast.js";
 
 /**

@@ -5,10 +5,10 @@
 import { safeParse } from "valibot";
 
 import { CONFIG } from "../config.js";
+import { $User } from "../modules/Database.js";
 import { DEBUG } from "../modules/Logger.js";
 import { RequestPageSchema } from "../modules/Models.js";
 import { RenderPage } from "../modules/Page.js";
-import { $User } from "../modules/Prisma.js";
 
 /**
  * Evento para exibir uma página.

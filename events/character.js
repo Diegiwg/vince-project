@@ -4,10 +4,10 @@
 
 import { safeParse } from "valibot";
 
+import { $Character, $Race, $User } from "../modules/Database.js";
 import { EmitServerEvent } from "../modules/Events.js";
 import { DEBUG } from "../modules/Logger.js";
 import { CreateCharacterSchema } from "../modules/Models.js";
-import { $Character, $Race, $User } from "../modules/Prisma.js";
 import { TOAST } from "../modules/Toast.js";
 
 /**
