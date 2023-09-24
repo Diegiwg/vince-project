@@ -12,9 +12,8 @@ import {
 
 export class ExChat extends LitElement {
     static properties = {
-        data: { type: [String] },
-        messagesRef: {},
-        messageInputRef: {},
+        messages: { type: [String] },
+        inputIndex: { type: Number },
     };
 
     static styles = css`
@@ -32,7 +31,7 @@ export class ExChat extends LitElement {
             padding: 1rem;
             margin: 0;
 
-            > p {
+            > pre {
                 margin: 0;
                 padding: 0;
                 color: #e9e9e9e1;
@@ -55,34 +54,46 @@ export class ExChat extends LitElement {
     constructor() {
         super();
 
-        this.data = [];
-        this.messagesRef = createRef();
-        this.messageInputRef = createRef();
+        this.messages = [];
+        this.inputIndex = -1;
     }
 
-    /**
-     * Envia uma mensagem para o servidor.
-     * @param {KeyboardEvent | MouseEvent} event Evento.
-     */
-    sendMessageCallback(event) {
-        if (event.type === "keyup" && event.key !== "Enter") return;
+    messagesList = createRef();
+    sendMessageInput = createRef();
 
-        const value = this.messageInputRef.value.value;
-        if (!value) return;
+    historyMessages = [];
 
-        EmitEvent("NewMessage", { room: Data.get().page, message: value });
-        this.messageInputRef.value.value = "";
+    render() {
+        return html`
+            <div role="log" aria-labelledby="Chat">
+                <ul ${ref(this.messagesList)} id="history">
+                    ${repeat(this.messages, (message) => {
+                        return html` <pre>${message}</pre> `;
+                    })}
+                </ul>
+                <form id="controls" @submit=${this.sendMessageCallback}>
+                    <input
+                        ${ref(this.sendMessageInput)}
+                        @keyup=${this.navigationInHistory}
+                        index=${this.inputIndex}
+                        type="text"
+                        placeholder="Chat Esferas..."
+                    />
+                    <button>Enviar</button>
+                </form>
+            </div>
+        `;
     }
 
     connectedCallback() {
         super.connectedCallback();
 
         ListenEvent("NewMessage", (payload) => {
-            this.data = [...this.data, payload.message];
+            this.messages = [...this.messages, payload.message];
 
             setTimeout(() => {
-                this.messagesRef.value.scrollTop =
-                    this.messagesRef.value.scrollHeight;
+                this.messagesList.value.scrollTop =
+                    this.messagesList.value.scrollHeight;
             }, 1);
         });
 
@@ -97,25 +108,66 @@ export class ExChat extends LitElement {
         RemoveEvent("NewMessage");
     }
 
-    render() {
-        return html`
-            <div role="log" aria-labelledby="Chat">
-                <ul ${ref(this.messagesRef)} id="history">
-                    ${repeat(this.data, (message) => {
-                        return html` <p>${message}</p> `;
-                    })}
-                </ul>
-                <div id="controls">
-                    <input
-                        ${ref(this.messageInputRef)}
-                        @keyup=${this.sendMessageCallback}
-                        type="text"
-                        placeholder="Digite algo..."
-                    />
-                    <button @click="${this.sendMessageCallback}">Enviar</button>
-                </div>
-            </div>
-        `;
+    /**
+     * Envia uma mensagem para o servidor.
+     * @param {SubmitEvent} event Evento.
+     */
+    sendMessageCallback(event) {
+        event.preventDefault();
+
+        const local_input = this.sendMessageInput.value;
+        const local_value = local_input.value;
+        if (!local_value) return;
+
+        EmitEvent("NewMessage", {
+            room: Data.get().page,
+            message: local_value,
+        });
+
+        this.historyMessages.push(local_value);
+        this.inputIndex = -1;
+        local_input.value = "";
+    }
+
+    /**
+     * Sistema de navegação de histórico de comandos.
+     * @param {KeyboardEvent} event Evento de tecla pressionada.
+     */
+    navigationInHistory(event) {
+        if (!event.key === "ArrowUp" || !event.key === "ArrowDown") return;
+
+        const local_index = Number(this.inputIndex);
+        const local_input = this.sendMessageInput.value;
+
+        if (this.historyMessages.length === 0) return;
+
+        if (event.key === "ArrowDown") {
+            if (local_index === -1) return;
+
+            if (this.historyMessages.length > local_index + 1) {
+                this.inputIndex = local_index + 1;
+                local_input.value = this.historyMessages[this.inputIndex];
+
+                return;
+            }
+
+            this.inputIndex = -1;
+            local_input.value = "";
+        }
+
+        if (event.key === "ArrowUp") {
+            if (local_index === -1) {
+                this.inputIndex = this.historyMessages.length - 1;
+                local_input.value = this.historyMessages[this.inputIndex];
+                return;
+            }
+
+            if (local_index > 0) {
+                this.inputIndex = local_index - 1;
+                local_input.value = this.historyMessages[this.inputIndex];
+                return;
+            }
+        }
     }
 }
 
