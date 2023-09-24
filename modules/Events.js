@@ -25,7 +25,7 @@ export async function EventsBundler() {
     INFO("Bundling events...");
 
     for (const file of files) {
-        if (!file.endsWith("Handler.js")) continue;
+        if (!file.endsWith(".js")) continue;
 
         const l_module = await import(`../events/${file}`);
 
