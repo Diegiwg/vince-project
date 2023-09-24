@@ -7,295 +7,6 @@ import { LitElement, css, html, createRef, ref, repeat } from 'https://cdn.jsdel
 
 
 
-export class ExChat extends LitElement {
-    static properties = {
-        messages: { type: [String] },
-        inputIndex: { type: Number },
-    };
-
-    static styles = css`
-        :host {
-            display: block;
-            background-color: #363636;
-            padding: 0;
-            margin: 0;
-            width: 600px;
-        }
-
-        #history {
-            height: 250px;
-            overflow-y: scroll;
-            padding: 1rem;
-            margin: 0;
-
-            > pre {
-                margin: 0;
-                padding: 0;
-                color: #e9e9e9e1;
-            }
-        }
-
-        #controls {
-            display: flex;
-
-            > input {
-                width: 80%;
-            }
-
-            > button {
-                width: 20%;
-            }
-        }
-    `;
-
-    constructor() {
-        super();
-
-        this.messages = [];
-        this.inputIndex = -1;
-    }
-
-    messagesList = createRef();
-    sendMessageInput = createRef();
-
-    historyMessages = [];
-
-    render() {
-        return html`
-            <div role="log" aria-labelledby="Chat">
-                <ul ${ref(this.messagesList)} id="history">
-                    ${repeat(this.messages, (message) => {
-                        return html` <pre>${message}</pre> `;
-                    })}
-                </ul>
-                <form id="controls" @submit=${this.sendMessageCallback}>
-                    <input
-                        ${ref(this.sendMessageInput)}
-                        @keyup=${this.navigationInHistory}
-                        index=${this.inputIndex}
-                        type="text"
-                        placeholder="Chat Esferas..."
-                    />
-                    <button>Enviar</button>
-                </form>
-            </div>
-        `;
-    }
-
-    connectedCallback() {
-        super.connectedCallback();
-
-        ListenEvent("NewMessage", (payload) => {
-            this.messages = [...this.messages, payload.message];
-
-            setTimeout(() => {
-                this.messagesList.value.scrollTop =
-                    this.messagesList.value.scrollHeight;
-            }, 1);
-        });
-
-        EmitEvent("RegisterRoom", {
-            room: Data.get().page,
-        });
-    }
-
-    disconnectedCallback() {
-        super.disconnectedCallback();
-
-        RemoveEvent("NewMessage");
-    }
-
-    /**
-     * Envia uma mensagem para o servidor.
-     * @param {SubmitEvent} event Evento.
-     */
-    sendMessageCallback(event) {
-        event.preventDefault();
-
-        const local_input = this.sendMessageInput.value;
-        const local_value = local_input.value;
-        if (!local_value) return;
-
-        EmitEvent("NewMessage", {
-            room: Data.get().page,
-            message: local_value,
-        });
-
-        this.historyMessages.push(local_value);
-        this.inputIndex = -1;
-        local_input.value = "";
-    }
-
-    /**
-     * Sistema de navegação de histórico de comandos.
-     * @param {KeyboardEvent} event Evento de tecla pressionada.
-     */
-    navigationInHistory(event) {
-        if (!event.key === "ArrowUp" || !event.key === "ArrowDown") return;
-
-        const local_index = Number(this.inputIndex);
-        const local_input = this.sendMessageInput.value;
-
-        if (this.historyMessages.length === 0) return;
-
-        if (event.key === "ArrowDown") {
-            if (local_index === -1) return;
-
-            if (this.historyMessages.length > local_index + 1) {
-                this.inputIndex = local_index + 1;
-                local_input.value = this.historyMessages[this.inputIndex];
-
-                return;
-            }
-
-            this.inputIndex = -1;
-            local_input.value = "";
-        }
-
-        if (event.key === "ArrowUp") {
-            if (local_index === -1) {
-                this.inputIndex = this.historyMessages.length - 1;
-                local_input.value = this.historyMessages[this.inputIndex];
-                return;
-            }
-
-            if (local_index > 0) {
-                this.inputIndex = local_index - 1;
-                local_input.value = this.historyMessages[this.inputIndex];
-                return;
-            }
-        }
-    }
-}
-
-customElements.define("ex-chat", ExChat);
-
-/* eslint-disable indent */
-
-
-
-
-
-
-export class ExClasseSelector extends LitElement {
-    static properties = {
-        _node: { type: Object },
-        _value: { type: String },
-        classes: { type: Object },
-    };
-
-    static styles = css`
-        p {
-            margin: 0 !important;
-            padding: 0 !important;
-        }
-    `;
-
-    constructor() {
-        super();
-
-        /** @type {{value: HTMLSelectElement}} */
-        this._node = createRef();
-        this._value = "";
-        this.classes = null;
-    }
-
-    /**
-     * Retorna a Classe selecionada.
-     * @returns {string} Nome da Classe.
-     */
-    get() {
-        if (
-            this._value === "" ||
-            !this.classes ||
-            !this.classes.includes(this._value)
-        )
-            return null;
-
-        return this._value;
-    }
-
-    _raceChangeHandler(event) {
-        this.classes = null;
-        this._value = "";
-        this._node.value.value = "";
-
-        if (event.detail === "") return;
-
-        this.classes = Data.get().page_data.races[event.detail].classes;
-    }
-
-    _changeHandler() {
-        this._value = this._node.value.value;
-    }
-
-    _classeOption(classe) {
-        return html` <option value="${classe}">${classe}</option> `;
-    }
-
-    _renderClasseInfo() {
-        if (
-            this._value === "" ||
-            !this.classes ||
-            !this.classes.includes(this._value)
-        )
-            return "";
-
-        /** @type {{description: string}} */
-        const l_classe = Data.get().page_data.classes[this._value];
-
-        return html` <p>Descrição:<br />${l_classe.description}</p> `;
-    }
-
-    render() {
-        return html`
-            <select
-                ${ref(this._node)}
-                @change=${this._changeHandler}
-                ?disabled=${!this.classes}
-            >
-                <option value="">Escolha uma Classe</option>
-                ${!this.classes
-                    ? ""
-                    : repeat(
-                          this.classes,
-                          (classe) => classe,
-                          (classe) => html`${this._classeOption(classe)}`
-                      )}
-            </select>
-            ${this._renderClasseInfo()}
-        `;
-    }
-
-    connectedCallback() {
-        super.connectedCallback();
-
-        Page.addEventListener(
-            "ex-race-selector:change",
-            this._raceChangeHandler
-        );
-    }
-
-    disconnectedCallback() {
-        super.disconnectedCallback();
-
-        Page.removeEventListener(
-            "ex-race-selector:change",
-            this._raceChangeHandler,
-            true
-        );
-    }
-}
-
-customElements.define("ex-classe-selector", ExClasseSelector);
-
-/* eslint-disable indent */
-
-
-
-
-
-
 /**
  * Retorna um valor aleatório.
  * @param {number} max Valor máximo.
@@ -469,6 +180,217 @@ customElements.define(
     ExCreateCharacterAttributes
 );
 
+/* eslint-disable indent */
+
+
+
+
+
+
+export class ExClasseSelector extends LitElement {
+    static properties = {
+        _node: { type: Object },
+        _value: { type: String },
+        classes: { type: Object },
+    };
+
+    static styles = css`
+        p {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+    `;
+
+    constructor() {
+        super();
+
+        /** @type {{value: HTMLSelectElement}} */
+        this._node = createRef();
+        this._value = "";
+        this.classes = null;
+    }
+
+    /**
+     * Retorna a Classe selecionada.
+     * @returns {string} Nome da Classe.
+     */
+    get() {
+        if (
+            this._value === "" ||
+            !this.classes ||
+            !this.classes.includes(this._value)
+        )
+            return null;
+
+        return this._value;
+    }
+
+    _raceChangeHandler(event) {
+        this.classes = null;
+        this._value = "";
+        this._node.value.value = "";
+
+        if (event.detail === "") return;
+
+        this.classes = Data.get().page_data.races[event.detail].classes;
+    }
+
+    _changeHandler() {
+        this._value = this._node.value.value;
+    }
+
+    _classeOption(classe) {
+        return html` <option value="${classe}">${classe}</option> `;
+    }
+
+    _renderClasseInfo() {
+        if (
+            this._value === "" ||
+            !this.classes ||
+            !this.classes.includes(this._value)
+        )
+            return "";
+
+        /** @type {{description: string}} */
+        const l_classe = Data.get().page_data.classes[this._value];
+
+        return html` <p>Descrição:<br />${l_classe.description}</p> `;
+    }
+
+    render() {
+        return html`
+            <select
+                ${ref(this._node)}
+                @change=${this._changeHandler}
+                ?disabled=${!this.classes}
+            >
+                <option value="">Escolha uma Classe</option>
+                ${!this.classes
+                    ? ""
+                    : repeat(
+                          this.classes,
+                          (classe) => classe,
+                          (classe) => html`${this._classeOption(classe)}`
+                      )}
+            </select>
+            ${this._renderClasseInfo()}
+        `;
+    }
+
+    connectedCallback() {
+        super.connectedCallback();
+
+        Page.addEventListener(
+            "ex-race-selector:change",
+            this._raceChangeHandler
+        );
+    }
+
+    disconnectedCallback() {
+        super.disconnectedCallback();
+
+        Page.removeEventListener(
+            "ex-race-selector:change",
+            this._raceChangeHandler,
+            true
+        );
+    }
+}
+
+customElements.define("ex-classe-selector", ExClasseSelector);
+
+/* eslint-disable indent */
+
+
+
+
+import { Data, Page } from "../../modules/Functions.js";
+
+export class ExRaceSelector extends LitElement {
+    static properties = {
+        _node: { type: Object },
+        _value: { type: String },
+        races: { type: Object },
+    };
+
+    static styles = css`
+        p {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+    `;
+
+    constructor() {
+        super();
+
+        /** @type {{value: HTMLSelectElement}} */
+        this._node = createRef();
+        this._value = "";
+        this.races = null;
+    }
+
+    set(races) {
+        this.races = races;
+    }
+
+    /**
+     * Retorna a Raça selecionada.
+     * @returns {string} Nome da Raça.
+     */
+    get() {
+        if (this._value === "" || !this.races.includes(this._value))
+            return null;
+
+        return this._value;
+    }
+
+    _changeHandler() {
+        this._value = this._node.value.value;
+
+        Page.dispatchEvent(
+            new CustomEvent("ex-race-selector:change", {
+                detail: this._value,
+            })
+        );
+    }
+
+    _raceOption(race) {
+        return html` <option value="${race}">${race}</option> `;
+    }
+
+    _renderRaceInfo() {
+        if (this._value === "" || !this.races.includes(this._value)) return "";
+
+        /** @type {{hp: number, sp: number, mp: number, description: string}} */
+        const l_race = Data.get().page_data.races[this._value];
+
+        return html`
+            <p>Vida: ${l_race.hp}</p>
+            <p>Vigor: ${l_race.sp}</p>
+            <p>Mana: ${l_race.mp}</p>
+            <p>Descrição:<br />${l_race.description}</p>
+        `;
+    }
+
+    render() {
+        return !this.races
+            ? ""
+            : html`
+                  <select ${ref(this._node)} @change=${this._changeHandler}>
+                      <option value="">Escolha uma Raça</option>
+                      ${repeat(
+                          this.races,
+                          (race) => race,
+                          (race) => html`${this._raceOption(race)}`
+                      )}
+                  </select>
+                  ${this._renderRaceInfo()}
+              `;
+    }
+}
+
+customElements.define("ex-race-selector", ExRaceSelector);
+
 
 
 export class ExData extends LitElement {
@@ -595,98 +517,6 @@ export class ExPage extends LitElement {
 }
 
 customElements.define("ex-page", ExPage);
-
-/* eslint-disable indent */
-
-
-
-
-
-
-export class ExRaceSelector extends LitElement {
-    static properties = {
-        _node: { type: Object },
-        _value: { type: String },
-        races: { type: Object },
-    };
-
-    static styles = css`
-        p {
-            margin: 0 !important;
-            padding: 0 !important;
-        }
-    `;
-
-    constructor() {
-        super();
-
-        /** @type {{value: HTMLSelectElement}} */
-        this._node = createRef();
-        this._value = "";
-        this.races = null;
-    }
-
-    set(races) {
-        this.races = races;
-    }
-
-    /**
-     * Retorna a Raça selecionada.
-     * @returns {string} Nome da Raça.
-     */
-    get() {
-        if (this._value === "" || !this.races.includes(this._value))
-            return null;
-
-        return this._value;
-    }
-
-    _changeHandler() {
-        this._value = this._node.value.value;
-
-        Page.dispatchEvent(
-            new CustomEvent("ex-race-selector:change", {
-                detail: this._value,
-            })
-        );
-    }
-
-    _raceOption(race) {
-        return html` <option value="${race}">${race}</option> `;
-    }
-
-    _renderRaceInfo() {
-        if (this._value === "" || !this.races.includes(this._value)) return "";
-
-        /** @type {{hp: number, sp: number, mp: number, description: string}} */
-        const l_race = Data.get().page_data.races[this._value];
-
-        return html`
-            <p>Vida: ${l_race.hp}</p>
-            <p>Vigor: ${l_race.sp}</p>
-            <p>Mana: ${l_race.mp}</p>
-            <p>Descrição:<br />${l_race.description}</p>
-        `;
-    }
-
-    render() {
-        return !this.races
-            ? ""
-            : html`
-                  <select ${ref(this._node)} @change=${this._changeHandler}>
-                      <option value="">Escolha uma Raça</option>
-                      ${repeat(
-                          this.races,
-                          (race) => race,
-                          (race) => html`${this._raceOption(race)}`
-                      )}
-                  </select>
-                  ${this._renderRaceInfo()}
-              `;
-    }
-}
-
-customElements.define("ex-race-selector", ExRaceSelector);
 
 /* eslint-disable indent */
 // Versão: 1.0.0
@@ -817,3 +647,173 @@ export class ExToast extends LitElement {
 }
 
 customElements.define("ex-toast", ExToast);
+
+/* eslint-disable indent */
+
+
+
+
+
+
+export class ExChat extends LitElement {
+    static properties = {
+        messages: { type: [String] },
+        inputIndex: { type: Number },
+    };
+
+    static styles = css`
+        :host {
+            display: block;
+            background-color: #363636;
+            padding: 0;
+            margin: 0;
+            width: 600px;
+        }
+
+        #history {
+            height: 250px;
+            overflow-y: scroll;
+            padding: 1rem;
+            margin: 0;
+
+            > pre {
+                margin: 0;
+                padding: 0;
+                color: #e9e9e9e1;
+            }
+        }
+
+        #controls {
+            display: flex;
+
+            > input {
+                width: 80%;
+            }
+
+            > button {
+                width: 20%;
+            }
+        }
+    `;
+
+    constructor() {
+        super();
+
+        this.messages = [];
+        this.inputIndex = -1;
+    }
+
+    messagesList = createRef();
+    sendMessageInput = createRef();
+
+    historyMessages = [];
+
+    render() {
+        return html`
+            <div role="log" aria-labelledby="Chat">
+                <ul ${ref(this.messagesList)} id="history">
+                    ${repeat(this.messages, (message) => {
+                        return html` <pre>${message}</pre> `;
+                    })}
+                </ul>
+                <form id="controls" @submit=${this.sendMessageCallback}>
+                    <input
+                        ${ref(this.sendMessageInput)}
+                        @keyup=${this.navigationInHistory}
+                        index=${this.inputIndex}
+                        type="text"
+                        placeholder="Chat Esferas..."
+                    />
+                    <button>Enviar</button>
+                </form>
+            </div>
+        `;
+    }
+
+    connectedCallback() {
+        super.connectedCallback();
+
+        ListenEvent("NewMessage", (payload) => {
+            this.messages = [...this.messages, payload.message];
+
+            setTimeout(() => {
+                this.messagesList.value.scrollTop =
+                    this.messagesList.value.scrollHeight;
+            }, 1);
+        });
+
+        EmitEvent("RegisterRoom", {
+            room: Data.get().page,
+        });
+    }
+
+    disconnectedCallback() {
+        super.disconnectedCallback();
+
+        RemoveEvent("NewMessage");
+    }
+
+    /**
+     * Envia uma mensagem para o servidor.
+     * @param {SubmitEvent} event Evento.
+     */
+    sendMessageCallback(event) {
+        event.preventDefault();
+
+        const local_input = this.sendMessageInput.value;
+        const local_value = local_input.value;
+        if (!local_value) return;
+
+        EmitEvent("NewMessage", {
+            room: Data.get().page,
+            message: local_value,
+        });
+
+        this.historyMessages.push(local_value);
+        this.inputIndex = -1;
+        local_input.value = "";
+    }
+
+    /**
+     * Sistema de navegação de histórico de comandos.
+     * @param {KeyboardEvent} event Evento de tecla pressionada.
+     */
+    navigationInHistory(event) {
+        if (!event.key === "ArrowUp" || !event.key === "ArrowDown") return;
+
+        const local_index = Number(this.inputIndex);
+        const local_input = this.sendMessageInput.value;
+
+        if (this.historyMessages.length === 0) return;
+
+        if (event.key === "ArrowDown") {
+            if (local_index === -1) return;
+
+            if (this.historyMessages.length > local_index + 1) {
+                this.inputIndex = local_index + 1;
+                local_input.value = this.historyMessages[this.inputIndex];
+
+                return;
+            }
+
+            this.inputIndex = -1;
+            local_input.value = "";
+        }
+
+        if (event.key === "ArrowUp") {
+            if (local_index === -1) {
+                this.inputIndex = this.historyMessages.length - 1;
+                local_input.value = this.historyMessages[this.inputIndex];
+                return;
+            }
+
+            if (local_index > 0) {
+                this.inputIndex = local_index - 1;
+                local_input.value = this.historyMessages[this.inputIndex];
+                return;
+            }
+        }
+    }
+}
+
+customElements.define("ex-chat", ExChat);

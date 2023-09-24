@@ -3,7 +3,7 @@ import { LitElement, css, html } from "lit";
 import { createRef, ref } from "lit/directives/ref";
 import { repeat } from "lit/directives/repeat";
 
-import { Data, Page } from "../modules/Functions.js";
+import { Data, Page } from "../../modules/Functions.js";
 
 export class ExRaceSelector extends LitElement {
     static properties = {

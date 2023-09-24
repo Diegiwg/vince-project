@@ -136,13 +136,21 @@ export const $Character = {
 };
 
 export const $Race = {
-    _: () => {
-        return {
-            hp: 1,
-            sp: 1,
-            mp: 1,
-        };
-    },
+    create: () => {},
+
+    findAll: () => {},
 };
 
 export const $Classe = {};
+
+export const $GameRoom = {
+    create: () => {},
+
+    delete: () => {},
+
+    listOnline: () => {},
+
+    join: () => {},
+
+    leave: () => {},
+};

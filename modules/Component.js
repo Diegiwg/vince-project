@@ -4,6 +4,7 @@
 // TODO: Reescrever esse módulo para adicionar a capacidade de carregar componentes que estejam dentro de sub-pastas. Ex: /components/buttons/cool.js
 
 import fs from "fs";
+import path from "path";
 
 import { DEBUG, INFO, SUCCESS } from "./Logger.js";
 
@@ -12,8 +13,29 @@ import { DEBUG, INFO, SUCCESS } from "./Logger.js";
  * @returns {string[]} Array com os nomes dos arquivos.
  */
 function searchComponents() {
-    const components = fs.readdirSync("./components");
-    return components || [];
+    const components = new Set();
+
+    /**
+     * @param {string} directory Diretório a procurar.
+     */
+    function searchRecursively(directory) {
+        const files = fs.readdirSync(directory);
+
+        files.forEach((file) => {
+            const filePath = path.join(directory, file);
+            const isDirectory = fs.statSync(filePath).isDirectory();
+
+            if (isDirectory) {
+                searchRecursively(filePath);
+            } else {
+                components.add(path.relative("components", filePath));
+            }
+        });
+    }
+
+    searchRecursively("components");
+
+    return Array.from(components);
 }
 
 /**
