@@ -1,86 +1,59 @@
+import { $Classe, $Race } from "../../modules/Database.js";
 import { Data, EmitEvent, Page, Toast } from "../../modules/Functions.js";
 
+/**
+ *
+ */
 export async function load() {
-    // TODO: Pegar esses valores do Banco de Dados.
+    const races = {
+        elements: [],
+    };
+
+    for (const race of await $Race.findAll()) {
+        races.elements.push(race.name);
+
+        races[race.name] = {
+            id: race.id,
+            name: race.name,
+            description: race.description,
+            hp: race.hp,
+            sp: race.sp,
+            mp: race.mp,
+
+            classes: race.classes.map((c) => c.name),
+        };
+    }
+
+    const classes = {};
+
+    for (const classe of await $Classe.findAll()) {
+        classes[classe.name] = classe;
+    }
+
     return {
         points_limit: 30,
-        races: {
-            elements: ["Elfo", "Anão", "Humano", "Orc"],
-            Elfo: {
-                id: 1,
-                name: "Elfo",
-                hp: 80,
-                sp: 120,
-                mp: 100,
-                description:
-                    "Os elfos são conhecidos por sua graça e agilidade. São uma raça que vive em sintonia com a natureza e são habilidosos arqueiros.",
-                classes: ["Arqueiro", "Mago"],
-            },
-            Anão: {
-                id: 2,
-                name: "Anão",
-                hp: 120,
-                sp: 60,
-                mp: 40,
-                description:
-                    "Os anões são conhecidos por sua força e resistência. São habilidosos ferreiros e mineradores, e vivem nas profundezas das montanhas.",
-                classes: ["Guerreiro", "Bárbaro"],
-            },
-            Humano: {
-                id: 3,
-                name: "Humano",
-                hp: 100,
-                sp: 100,
-                mp: 80,
-                description:
-                    "Os humanos são uma raça versátil e adaptável. Eles não possuem características físicas sobrenaturais, mas são conhecidos por sua capacidade de aprender e dominar a magia.",
-                classes: ["Mago", "Guerreiro", "Arqueiro"],
-            },
-            Orc: {
-                id: 4,
-                name: "Orc",
-                hp: 150,
-                sp: 80,
-                mp: 20,
-                description:
-                    "Os orcs são uma raça musculosa e agressiva. Eles têm uma afinidade natural com a brutalidade e são temidos em combate.",
-                classes: ["Bárbaro", "Guerreiro"],
-            },
-        },
-        classes: {
-            classes: ["Arqueiro", "Guerreiro", "Mago", "Bárbaro"],
-            Arqueiro: {
-                id: 1,
-                description:
-                    "Um mestre do arco e flecha, especializado em ataques à distância.",
-            },
-            Guerreiro: {
-                id: 2,
-                description:
-                    "Um combatente resistente que usa armas pesadas e armaduras.",
-            },
-            Mago: {
-                id: 3,
-                description:
-                    "Um usuário de magia que pode lançar feitiços poderosos.",
-            },
-            Bárbaro: {
-                id: 4,
-                description:
-                    "Um guerreiro feroz que entra em frenesi durante a batalha.",
-            },
-        },
+        races,
+        classes,
     };
 }
 
+/**
+ *
+ */
 export function mount() {
     /** @type {{points_limit: number, races: Array, classes: Array}} */
     const l_data = Data.get().page_data;
 
+    /**
+     *
+     */
     function _setRaces() {
         Page.querySelector("ex-race-selector").set(l_data.races.elements);
     }
 
+    /**
+     *
+     */
     function _setAttributesFields() {
         Page.querySelector("ex-create-character-attributes").setFields([
             { name: "strength", text: "Força" },
@@ -91,6 +64,10 @@ export function mount() {
         ]);
     }
 
+    /**
+     *
+     * @param event
+     */
     function _submitHandler(event) {
         event.preventDefault();
 

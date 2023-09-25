@@ -4,6 +4,7 @@
 
 import {
     array,
+    boolean,
     email,
     minValue,
     number,
@@ -84,4 +85,11 @@ export let CreateCharacterSchema = object({
         intelligence: number(),
         spirituality: number(),
     }),
+});
+
+/** @typedef {import('valibot').Output<typeof CreateGameRoomSchema>} CreateGameRoom */
+export let CreateGameRoomSchema = object({
+    name: string(),
+    isPublic: boolean(),
+    password: string(),
 });

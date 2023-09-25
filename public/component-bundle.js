@@ -204,7 +204,6 @@ export class ExClasseSelector extends LitElement {
     constructor() {
         super();
 
-        /** @type {{value: HTMLSelectElement}} */
         this._node = createRef();
         this._value = "";
         this.classes = null;
@@ -225,18 +224,18 @@ export class ExClasseSelector extends LitElement {
         return this._value;
     }
 
-    _raceChangeHandler(event) {
+    _raceChangeHandler(race) {
+        if (race === "") return;
+
         this.classes = null;
         this._value = "";
         this._node.value.value = "";
 
-        if (event.detail === "") return;
-
-        this.classes = Data.get().page_data.races[event.detail].classes;
+        this.classes = Data.get().page_data.races[race].classes;
     }
 
     _changeHandler() {
-        this._value = this._node.value.value;
+        this._value = this._node.value?.value;
     }
 
     _classeOption(classe) {
@@ -259,18 +258,14 @@ export class ExClasseSelector extends LitElement {
 
     render() {
         return html`
-            <select
-                ${ref(this._node)}
-                @change=${this._changeHandler}
-                ?disabled=${!this.classes}
-            >
+            <select ${ref(this._node)} @change=${this._changeHandler}>
                 <option value="">Escolha uma Classe</option>
                 ${!this.classes
                     ? ""
                     : repeat(
                           this.classes,
                           (classe) => classe,
-                          (classe) => html`${this._classeOption(classe)}`
+                          (classe) => this._classeOption(classe)
                       )}
             </select>
             ${this._renderClasseInfo()}
@@ -280,10 +275,9 @@ export class ExClasseSelector extends LitElement {
     connectedCallback() {
         super.connectedCallback();
 
-        Page.addEventListener(
-            "ex-race-selector:change",
-            this._raceChangeHandler
-        );
+        Page.addEventListener("ex-race-selector:change", (e) => {
+            this._raceChangeHandler(e.detail);
+        });
     }
 
     disconnectedCallback() {
@@ -304,7 +298,7 @@ customElements.define("ex-classe-selector", ExClasseSelector);
 
 
 
-import { Data, Page } from "../../modules/Functions.js";
+
 
 export class ExRaceSelector extends LitElement {
     static properties = {

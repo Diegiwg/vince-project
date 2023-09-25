@@ -10,59 +10,64 @@ datasource db {
 }
 
 model User {
-    id       Int    @id @default(autoincrement())
-    name     String
-    email    String @unique
-    password String
-    token    String @default("")
-
+    id         Int         @id @default(autoincrement())
+    name       String
+    email      String      @unique
+    password   String
+    token      String      @default("")
     characters Character[]
+    rooms      GameRoom[]
 }
 
 model Character {
-    id         Int                  @id @default(autoincrement())
-    name       String
-    race       Race                 @relation(fields: [raceId], references: [id])
-    raceId     Int
-    classe     Classe               @relation(fields: [classeId], references: [id])
-    classeId   Int
-    atributtes CharacterAtributtes?
-
-    user                  User @relation(fields: [userId], references: [id])
-    userId                Int
+    id                    Int                  @id @default(autoincrement())
+    name                  String
+    race                  Race                 @relation(fields: [raceId], references: [id])
+    raceId                Int
+    classe                Classe               @relation(fields: [classeId], references: [id])
+    classeId              Int
+    atributtes            CharacterAtributtes?
     characterAtributtesId Int
+    user                  User                 @relation(fields: [userId], references: [id])
+    userId                Int
 }
 
 model CharacterAtributtes {
-    id           Int @id @default(autoincrement())
+    id           Int       @id @default(autoincrement())
     experience   Int
     strength     Int
     agility      Int
     vitality     Int
     intelligence Int
     spirituality Int
-
-    character   Character @relation(fields: [characterId], references: [id])
-    characterId Int       @unique
+    character    Character @relation(fields: [characterId], references: [id])
+    characterId  Int       @unique
 }
 
 model Race {
-    id          Int    @id @default(autoincrement())
-    name        String @unique
+    id          Int         @id @default(autoincrement())
+    name        String      @unique
     description String
     hp          Int
     mp          Int
     sp          Int
-
-    characters Character[]
-    classes    Classe[]
+    characters  Character[]
+    classes     Classe[]
 }
 
 model Classe {
-    id          Int    @id @default(autoincrement())
-    name        String @unique
+    id          Int         @id @default(autoincrement())
+    name        String      @unique
     description String
+    characters  Character[]
+    races       Race[]
+}
 
-    characters Character[]
-    races      Race[]
+model GameRoom {
+    id       Int     @id @default(autoincrement())
+    name     String  @unique
+    isPublic Boolean
+    password String
+    master   User    @relation(fields: [masterId], references: [id])
+    masterId Int
 }

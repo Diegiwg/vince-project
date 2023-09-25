@@ -152,19 +152,55 @@ export const $Character = {
 };
 
 export const $Race = {
-    create: () => {},
+    findAll: () => {
+        return prisma.race.findMany({
+            include: {
+                classes: true,
+            },
+        });
+    },
 
-    findAll: () => {},
+    create: () => {},
 };
 
-export const $Classe = {};
+export const $Classe = {
+    findAll: () => {
+        return prisma.classe.findMany();
+    },
+};
 
 export const $GameRoom = {
-    create: () => {},
+    listOnline: () => {},
+
+    /**
+     *
+     * @param {{name: string, isPublic: boolean, password: string, master: number}} data Dados da sala.
+     * @returns {object} Objeto que representa a sala criada.
+     */
+    create: async (data) => {
+        const { name, isPublic, password, master } = data;
+
+        const user = await $User.findById(master);
+        if (!user) return null;
+
+        const nameNotAvailable = await prisma.gameRoom.findUnique({
+            where: {
+                name,
+            },
+        });
+        if (nameNotAvailable) return null;
+
+        return await prisma.gameRoom.create({
+            data: {
+                name,
+                isPublic,
+                password,
+                masterId: user.id,
+            },
+        });
+    },
 
     delete: () => {},
-
-    listOnline: () => {},
 
     join: () => {},
 

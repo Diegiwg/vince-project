@@ -8,8 +8,8 @@ export function mount() {
         EmitEvent("RequestPage", { page: "CreateCharacter" });
     };
 
-    Page.querySelector("#TestCommands").onclick = () => {
-        EmitEvent("RequestPage", { page: "TestCommands" });
+    Page.querySelector("#CreateGameRoom").onclick = () => {
+        EmitEvent("RequestPage", { page: "CreateGameRoom" });
     };
 
     Page.querySelector("#Logout").onclick = () => {

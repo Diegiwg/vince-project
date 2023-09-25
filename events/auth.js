@@ -93,11 +93,11 @@ export async function CreateAccount(payload) {
  * @param {import("../modules/Functions.js").EventPayload} payload Objeto contendo os dados da solicitação.
  */
 export function Logout(payload) {
-    const { client } = payload;
+    const { client, data } = payload;
 
     DEBUG("Event::Logout");
 
-    // TODO: Verificar a necessidade de invalidar o token atual no banco de dados!
+    $User.updateSessionToken(data.id, true);
 
     TOAST.SUCCESS(client, null, "Deslogado com sucesso.");
     RenderPage(client, "Login");

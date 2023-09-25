@@ -92,7 +92,7 @@ function bundler(components) {
     final_imports = Array.from(final_imports).join(", ");
 
     final_code = final_code.replaceAll(
-        /import {([\w,\s]+?)} from "\.\.\/modules\/Functions\.js";/gm,
+        /import {([\w,\s]+?)} from "([\w.-/\\]+?)Functions.js";/gm,
         ""
     );
 
