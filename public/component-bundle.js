@@ -79,6 +79,9 @@ export class ExCreateCharacterAttributes extends LitElement {
             node.value = index === _temp_length - 1 ? this.points : value;
             this._changeHandler({ target: { id: node.id } });
         }
+
+        // Focar no primeiro input
+        this._getField(Object.keys(this.inputs_nodes)[0]).focus();
     }
 
     /**

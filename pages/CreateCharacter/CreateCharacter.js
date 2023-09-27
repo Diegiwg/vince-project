@@ -45,14 +45,14 @@ export function mount() {
     const l_data = Data.get().page_data;
 
     /**
-     *
+     * Popula a lista de Raças do selector de Raças.
      */
     function _setRaces() {
         Page.querySelector("ex-race-selector").set(l_data.races.elements);
     }
 
     /**
-     *
+     * Popula a lista de Atributos que um Personagem tem.
      */
     function _setAttributesFields() {
         Page.querySelector("ex-create-character-attributes").setFields([
@@ -65,39 +65,48 @@ export function mount() {
     }
 
     /**
-     *
-     * @param event
+     * Verifica se todos os inputs estão corretos e envia o evento de criação de personagem ao servidor.
+     * @param {SubmitEvent} event Evento.
      */
     function _submitHandler(event) {
         event.preventDefault();
 
-        const l_name = Page.querySelector("input[name='name']").value;
-        const l_race = Page.querySelector("ex-race-selector").get();
-        const l_classe = Page.querySelector("ex-classe-selector").get();
-        const l_attributes = Page.querySelector(
+        const nameInput = Page.querySelector("input[name='name']").value;
+        const raceSelector = Page.querySelector("ex-race-selector").get();
+        const classeSelector = Page.querySelector("ex-classe-selector").get();
+        const characterAttrs = Page.querySelector(
             "ex-create-character-attributes"
         ).get();
 
         // Verificar se algum valor é vazio ou nulo
-        if (!l_name || l_name.length === 0 || !l_race || !l_classe)
-            return Toast.add({
+        if (
+            !nameInput ||
+            nameInput.length === 0 ||
+            !raceSelector ||
+            !classeSelector
+        ) {
+            Toast.add({
                 type: "WARN",
                 message: "Preencha todos os campos.",
             });
+            return;
+        }
 
         // Verificar se ainda tem pontos sobrando
-        if (!l_attributes)
-            return Toast.add({
+        if (!characterAttrs) {
+            Toast.add({
                 type: "WARN",
                 message: "Você ainda tem pontos para distribuir.",
             });
+            return;
+        }
 
         // TODO: Adicionar a verificação do Schema com o ValiBot.
         EmitEvent("CreateCharacter", {
-            name: l_name,
-            race: l_race,
-            classe: l_classe,
-            attributes: l_attributes,
+            name: nameInput,
+            race: raceSelector,
+            classe: classeSelector,
+            attributes: characterAttrs,
         });
     }
 

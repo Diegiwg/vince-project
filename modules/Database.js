@@ -128,26 +128,33 @@ export const $Character = {
     create: async (data) => {
         const { user, character } = data;
 
-        const l_character = await prisma.character.create({
+        return await prisma.character.create({
             data: {
                 name: character.name,
 
-                race: character.race,
-                hp: character.hp,
-                sp: character.sp,
-                mp: character.mp,
+                attributes: {
+                    create: character.attributes,
+                },
 
-                classe: character.classe,
+                user: {
+                    connect: {
+                        id: user.id,
+                    },
+                },
 
-                ...character.attributes,
-                ...data.race_data,
+                race: {
+                    connect: {
+                        name: character.race,
+                    },
+                },
 
-                experience: 0,
-                user_id: user.id,
+                classe: {
+                    connect: {
+                        name: character.classe,
+                    },
+                },
             },
         });
-
-        return l_character;
     },
 };
 
