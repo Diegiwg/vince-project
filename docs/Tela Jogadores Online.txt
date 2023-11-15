@@ -1,7 +1,0 @@
-a página de lista de jogadores online:
-
-        Play Esferas - Pessoas Online
-
-tela com o nome das pessoas e a sala
-
-botão voltar para a página principal.w

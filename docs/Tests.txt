@@ -1,8 +1,0 @@
-Primeira tentativa:
-client count: 4017 ; average packets received per second: 3674.19
-
-Segunda tentativa:
-client count: 5882 ; average packets received per second: 2351.19
-
-Terceira tentativa:
-client count: 6197 ; average packets received per second: 5513.26
