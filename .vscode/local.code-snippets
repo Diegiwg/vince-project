@@ -65,5 +65,16 @@
             "$2",
             "}"
         ]
+    },
+    "EX-new-event": {
+        "prefix": "!x-event",
+        "description": "Criar um novo Evento!",
+        "body": [
+            "/** @param {Payload} payload */",
+            "export function event_$1(payload) {",
+            "const { req, res } = payload;",
+            "$2",
+            "}"
+        ]
     }
 }

@@ -1,9 +1,22 @@
 import fs from "fs";
 
+export function genHash(str) {
+    return Buffer.from(str).toString("base64");
+}
+
+export function compareHash(str, hash) {
+    return genHash(str) == hash;
+}
+
 export function Player(obj) {
     if (!obj?.rooms) obj["rooms"] = [];
 
+    // Password fake 'hashing' with base64
+    if (obj?.password) obj["password"] = genHash(obj?.password);
+
     return {
+        email: obj?.email,
+        password: obj?.password,
         name: obj?.name,
         rooms: obj?.rooms,
     };
@@ -15,10 +28,29 @@ const Players = {
     next_id: () => Players.id++,
     add: (obj) => {
         const id = Players.id;
-        Players.values[Players.next_id()] = obj;
+        Players.next_id();
+        Players.values[id] = obj;
         return id;
     },
-    get: (id) => Players?.values[id],
+    get: (id) => {
+        return { id, ...Players?.values[id] };
+    },
+    remove: (id) => {
+        delete Players.values[id];
+    },
+    update: (id, obj) => {
+        Players.values[id] = obj;
+    },
+    query: (key, value) => {
+        const arr = [];
+        for (const id in Players.values) {
+            const player = Players.values[id];
+            if (player[key] == value) {
+                arr.push({ id, ...player });
+            }
+        }
+        return arr;
+    },
 };
 
 export function Room(obj) {
@@ -37,6 +69,22 @@ const Rooms = {
         return id;
     },
     get: (id) => Rooms?.values[id],
+    remove: (id) => {
+        delete Rooms.values[id];
+    },
+    update: (id, obj) => {
+        Rooms.values[id] = obj;
+    },
+    query: (key, value) => {
+        const arr = [];
+        for (const id in Rooms.values) {
+            const room = Rooms.values[id];
+            if (room[key] == value) {
+                arr.push(room);
+            }
+        }
+        return arr;
+    },
 };
 
 export const database = {
