@@ -54,8 +54,14 @@ const Players = {
 };
 
 export function Room(obj) {
+    if (!obj?.players) obj["players"] = [];
+    if (!obj?.messages) obj["messages"] = [];
+
     return {
+        owner_id: obj?.owner_id,
         name: obj?.name,
+        players: obj?.players,
+        messages: obj?.messages,
     };
 }
 
@@ -65,10 +71,13 @@ const Rooms = {
     next_id: () => Rooms.id++,
     add: (obj) => {
         const id = Rooms.id;
-        Rooms.values[Rooms.next_id()] = obj;
+        Rooms.next_id();
+        Rooms.values[id] = obj;
         return id;
     },
-    get: (id) => Rooms?.values[id],
+    get: (id) => {
+        return { id, ...Rooms?.values[id] };
+    },
     remove: (id) => {
         delete Rooms.values[id];
     },
@@ -80,7 +89,7 @@ const Rooms = {
         for (const id in Rooms.values) {
             const room = Rooms.values[id];
             if (room[key] == value) {
-                arr.push(room);
+                arr.push({ id, ...room });
             }
         }
         return arr;
@@ -93,7 +102,7 @@ export const database = {
 };
 
 export function save() {
-    const json = JSON.stringify(database);
+    const json = JSON.stringify(database, null, 2);
     fs.writeFileSync("./database.json", json);
 }
 

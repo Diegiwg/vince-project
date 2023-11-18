@@ -1,0 +1,15 @@
+ [LOG] Player Test created with id 1
+ [LOG] Player Test logged in
+ [LOG] Player Player-1 created with id 2
+ [LOG] Player Player-2 created with id 3
+ [LOG] Player Player-3 created with id 4
+ [LOG] Room Test Room created with id 1
+ [LOG] Player Player-1 added to room Test Room
+ [LOG] Player Player-2 added to room Test Room
+ [LOG] Message added to room Test Room
+[CHAT] Test (Master): Oi, logo iremos começar a jogar, só esperando mais um dos jogadores!
+ [LOG] Message added to room Test Room
+[CHAT] Player-1: Ahh beleza.
+ [LOG] Message added to room Test Room
+[CHAT] Player-2: Quem será o outro jogador?
+ [LOG] Player Player-3 added to room Test Room

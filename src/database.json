@@ -1,1 +1,69 @@
-{"Players":{"id":1,"values":{}},"Rooms":{"id":1,"values":{}}}
+{
+  "Players": {
+    "id": 5,
+    "values": {
+      "1": {
+        "email": "test@test.test",
+        "password": "dGVzdA==",
+        "name": "Test",
+        "rooms": []
+      },
+      "2": {
+        "id": 2,
+        "email": "player1@player1.player1",
+        "password": "cGxheWVyMQ==",
+        "name": "Player-1",
+        "rooms": [
+          1
+        ]
+      },
+      "3": {
+        "id": 3,
+        "email": "player2@player2.player2",
+        "password": "cGxheWVyMg==",
+        "name": "Player-2",
+        "rooms": [
+          1
+        ]
+      },
+      "4": {
+        "id": 4,
+        "email": "player3@player3.player3",
+        "password": "cGxheWVyMw==",
+        "name": "Player-3",
+        "rooms": [
+          1
+        ]
+      }
+    }
+  },
+  "Rooms": {
+    "id": 2,
+    "values": {
+      "1": {
+        "id": 1,
+        "owner_id": "1",
+        "name": "Test Room",
+        "players": [
+          2,
+          3,
+          4
+        ],
+        "messages": [
+          {
+            "author_id": "1",
+            "message": "Oi, logo iremos começar a jogar, só esperando mais um dos jogadores!"
+          },
+          {
+            "author_id": 2,
+            "message": "Ahh beleza."
+          },
+          {
+            "author_id": 3,
+            "message": "Quem será o outro jogador?"
+          }
+        ]
+      }
+    }
+  }
+}
